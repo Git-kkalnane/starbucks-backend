@@ -1,0 +1,61 @@
+title: "YYMMDD {YOUR NAEM}[Daily Work Report] "
+labels: ["Daily Report", "Work Log"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📋 Daily Work Report
+
+        이 템플릿을 사용하여 오늘 수행한 업무 내용을 기록하고, 진행 상황 및 계획을 공유해주세요.
+
+  - type: textarea
+    id: today-goals-plans
+    attributes:
+      label: 🎯 당일 목표 및 계획 (Today's Goals and Plans)
+      description: "오늘 어떤 목표를 가지고 어떤 작업을 수행할 계획이었는지 기록해주세요.(업무 수행 후 성과에 대해서 입력해주세요)"
+      placeholder: |
+        - [ ] 목표 1: 상세 내용
+        - [ ] 목표 2: 상세 내용
+        ...
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: problems-issues
+    attributes:
+      label: ⚠️ 문제점 및 이슈 공유 (Sharing Problems and Issues)
+      description: "작업 중 발생했거나 직면하고 있는 문제점, 블로커, 또는 논의가 필요한 이슈를 공유해주세요."
+      placeholder: |
+        - 문제점 1: 발생 내용 및 현재 상태
+        - 이슈 1: 관련 팀원/담당자 (@username)
+        ...
+      render: markdown
+    validations:
+      required: false
+
+  - type: textarea
+    id: technical-feedback-improvements
+    attributes:
+      label: 💡 기술적 피드백 및 개선사항 (Technical Feedback and Improvements)
+      description: "코드, 프로세스, 또는 기술 스택과 관련하여 제안하고 싶은 피드백이나 개선 아이디어가 있다면 공유해주세요."
+      placeholder: |
+        - 개선 아이디어 1: 상세 내용
+        - 피드백 1: 관련 컴포넌트/모듈
+        ...
+      render: markdown
+    validations:
+      required: false
+
+  - type: textarea
+    id: tomorrow-plans
+    attributes:
+      label: 🗓️ 다음 날 계획 (Tomorrow's Plans)
+      description: "내일 어떤 작업을 우선적으로 수행할 계획인지 작성해주세요."
+      placeholder: |
+        - [ ] 계획 1: 상세 내용
+        - [ ] 계획 2: 상세 내용
+        ...
+      render: markdown
+    validations:
+      required: true
