@@ -1,4 +1,4 @@
-title: "[Daily Work Report] "
+title: "YYMMDD {YOUR NAEM}[Daily Work Report] "
 labels: ["Daily Report", "Work Log"]
 body:
   - type: markdown
