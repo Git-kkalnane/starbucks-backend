@@ -2,8 +2,8 @@ package git_kkalnane.backend.starbucks.auth.service;
 
 import git_kkalnane.backend.starbucks.auth.domain.AuthInfo;
 import git_kkalnane.backend.starbucks.auth.repository.AuthInfoRepository;
-import git_kkalnane.backend.starbucks.auth.service.jwt.JwtToken;
-import git_kkalnane.backend.starbucks.auth.service.jwt.JwtTokenProvider;
+import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
+import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

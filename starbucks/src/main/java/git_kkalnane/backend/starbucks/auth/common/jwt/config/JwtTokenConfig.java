@@ -1,6 +1,6 @@
-package git_kkalnane.backend.starbucks.auth.service.jwt.config;
+package git_kkalnane.backend.starbucks.auth.common.jwt.config;
 
-import git_kkalnane.backend.starbucks.auth.service.jwt.JwtTokenProvider;
+import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
