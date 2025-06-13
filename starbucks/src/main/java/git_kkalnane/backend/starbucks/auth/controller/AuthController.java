@@ -32,13 +32,9 @@ public class AuthController {
                     description = "토큰 생성 성공"
             ),
             @ApiResponse(
-                    responseCode = "401",
-                    description = "인증 실패"
+                    responseCode = "404",
+                    description = "멤버 아이디가 존재하지 않음"
             ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류"
-            )
     })
     public ResponseEntity<SuccessResponse<JwtToken>> createToken() {
         JwtToken token = authInfoService.createToken(1L);
