@@ -3,7 +3,7 @@ package git_kkalnane.backend.starbucks.auth.controller;
 
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
 import git_kkalnane.backend.starbucks.auth.service.AuthService;
-import git_kkalnane.backend.starbucks.auth.service.jwt.JwtToken;
+import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
 import git_kkalnane.backend.starbucks.global.success.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
