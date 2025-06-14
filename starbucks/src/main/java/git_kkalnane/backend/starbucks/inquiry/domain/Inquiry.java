@@ -3,15 +3,12 @@ package git_kkalnane.backend.starbucks.inquiry.domain;
 import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "inquiries")
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Inquiry extends BaseTimeEntity {
@@ -40,7 +37,7 @@ public class Inquiry extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
-    private Store store;                //store 테이블 import
+    private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
