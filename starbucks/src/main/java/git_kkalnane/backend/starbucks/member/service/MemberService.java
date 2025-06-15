@@ -55,9 +55,9 @@ public class MemberService {
         Member member = memberRepository.findMemberByEmail(request.getEmail())
             .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new MemberException(MemberErrorCode.INVALID_PASSWORD);
-        }
+//        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+//            throw new MemberException(MemberErrorCode.INVALID_PASSWORD);
+//        }
 
         // JWT 토큰 생성 로직 merge 시 적용
         //return jwtTokenProvider.createToken(member.getEmail());
@@ -87,8 +87,8 @@ public class MemberService {
         }
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            String encodedPassword = passwordEncoder.encode(request.getPassword());
-            member.updatePassword(encodedPassword);
+//            String encodedPassword = passwordEncoder.encode(request.getPassword());
+//            member.updatePassword(encodedPassword);
         }
     }
 
