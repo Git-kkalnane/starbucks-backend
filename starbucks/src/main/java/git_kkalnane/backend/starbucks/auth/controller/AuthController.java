@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authInfoService;
+    private final AuthService authService;
 
     @PostMapping("/create-token")
     @Operation(
@@ -37,7 +37,7 @@ public class AuthController {
             ),
     })
     public ResponseEntity<SuccessResponse<JwtToken>> createToken() {
-        JwtToken token = authInfoService.createToken(1L);
+        JwtToken token = authService.createToken(1L);
         return ResponseEntity.ok((SuccessResponse.of(AuthSuccessCode.SIGN_UP_COMPLETED,token)));
     }
 }
