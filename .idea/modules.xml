@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/starbucks-backend.iml" filepath="$PROJECT_DIR$/.idea/starbucks-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/starbucks.main.iml" filepath="$PROJECT_DIR$/.idea/modules/starbucks.main.iml" />
     </modules>
   </component>
 </project>
