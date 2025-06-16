@@ -1,6 +1,5 @@
 package git_kkalnane.backend.starbucks.auth.controller;
 
-
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
 import git_kkalnane.backend.starbucks.auth.service.AuthService;
@@ -13,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequiredArgsConstructor
