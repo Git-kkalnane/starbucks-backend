@@ -20,7 +20,7 @@ public class ItemOption extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "syrup_name", nullable = false, length = 10)
-    private String surupName;
+    private String syrupName;
 
     @Column(name = "is_required")
     private boolean isRequired = false;
