@@ -9,7 +9,7 @@ import lombok.*;
 @Table(name = "inquiries")
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Inquiry extends BaseTimeEntity {
 

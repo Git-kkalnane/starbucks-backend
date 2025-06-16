@@ -8,7 +8,7 @@ import lombok.*;
 @Table(name = "stores")
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Store extends BaseTimeEntity {
 
