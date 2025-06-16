@@ -19,8 +19,8 @@ public class ItemOption extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "option_name", nullable = false, length = 50)
-    private String optionName;
+    @Column(name = "syrup_name", nullable = false, length = 10)
+    private String surupName;
 
     @Column(name = "is_required")
     private boolean isRequired = false;
@@ -28,16 +28,7 @@ public class ItemOption extends BaseTimeEntity {
     @Column(name = "display_order")
     private int displayOrder;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "item_option_type")
-    private ItemOptionType itemOptionType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private Item item;
-
-    @OneToMany(mappedBy = "option_value", cascade = CascadeType.REMOVE)
-    private List<ItemOptionValue> optionValues = new ArrayList<>();
-
+    @Column(name = "additonal_price", nullable = false)
+    private int additonalPrice;
 
 }

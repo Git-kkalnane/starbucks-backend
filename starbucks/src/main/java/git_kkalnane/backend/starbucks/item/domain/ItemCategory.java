@@ -26,9 +26,15 @@ public class ItemCategory extends BaseTimeEntity {
     @JoinColumn(name = "parent_category_id")
     private ItemCategory parent;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "beverage_item_id")
+    private BervergeItem beverageItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dessert_item_id")
+    private DessertItem dessertItem;
+
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
     private List<ItemCategory> children;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    private List<Item> items = new ArrayList<>();
 }

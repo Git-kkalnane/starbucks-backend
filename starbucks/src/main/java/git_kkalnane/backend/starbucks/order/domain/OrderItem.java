@@ -1,6 +1,8 @@
 package git_kkalnane.backend.starbucks.order.domain;
 
 import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks.item.domain.BervergeItem;
+import git_kkalnane.backend.starbucks.item.domain.DessertItem;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,17 +19,24 @@ public class OrderItem extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "product_name_at_order", nullable = false)
-    private String productName;
+    @Column(name = "item_name_at_order", nullable = false)
+    private String itemName;
 
-    @Column(name = "order_item_quantity",nullable = false, precision = 10, scale = 2)
+    @Column(name = "order_item_quantity",nullable = false)
     private int orderItemQuantity = 1;
 
     @Column(name = "unit_price_at_order", nullable = false)
-    private double unitPrice;
+    private int unitPrice;
 
-//    @Type(JsonType.class)
-//    @Column(name = "select_option_json", columnDefinition = "json")
-//    private SelectedOption selectedOption;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "beverage_item_id")
+    private BervergeItem bergiveItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dessert_item_id")
+    private DessertItem dessertItem;
 }
