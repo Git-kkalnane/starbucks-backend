@@ -7,9 +7,7 @@ import lombok.*;
 @Entity
 @Table(name = "merchant")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Merchant extends BaseTimeEntity {
 
     @Id
