@@ -15,11 +15,11 @@ public class DessertItem extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "item_name_ko", nullable = false, unique = true, length = 50)
-    private String itemNameKo;
+    @Column(name = "dessert_item_name_ko", nullable = false, unique = true, length = 50)
+    private String dessertItemNameKo;
 
-    @Column(name = "item_name_en", nullable = false, unique = true, length = 50)
-    private String itemNameEn;
+    @Column(name = "dessert_item_name_en", nullable = false, unique = true, length = 50)
+    private String dessertItemNameEn;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
@@ -28,7 +28,7 @@ public class DessertItem extends BaseTimeEntity {
     private int price;
 
     @Column(name = "image_url", length = 254)
-    private String image_url;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;

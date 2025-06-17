@@ -8,12 +8,12 @@ public enum BeverageSizeOption {
     SOLO(0),
     DOPPIO(0);
 
-    private final int extrePrice;
+    private final int extraPrice;
 
     BeverageSizeOption(int extrePrice) {
-        this.extrePrice = extrePrice;
+        this.extraPrice = extrePrice;
     }
-    public int getExtrePrice() {
-        return extrePrice;
+    public int getExtraPrice() {
+        return extraPrice;
     }
 }

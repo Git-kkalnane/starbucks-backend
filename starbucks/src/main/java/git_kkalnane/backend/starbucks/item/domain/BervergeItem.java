@@ -15,11 +15,11 @@ public class BervergeItem extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Beverage_item_name_ko", nullable = false, unique = true, length = 50)
-    private String itemNameKo;
+    @Column(name = "beverage_item_name_ko", nullable = false, unique = true, length = 50)
+    private String beverageItemNameKo;
 
-    @Column(name = "item_name_en", nullable = false, unique = true, length = 50)
-    private String itemNameEn;
+    @Column(name = "beverage_item_name_en", nullable = false, unique = true, length = 50)
+    private String beverageItemNameEn;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
