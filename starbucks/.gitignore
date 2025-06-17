@@ -198,4 +198,4 @@ src/main/generated
 
 
 # 커스텀
-.env
+*.env
