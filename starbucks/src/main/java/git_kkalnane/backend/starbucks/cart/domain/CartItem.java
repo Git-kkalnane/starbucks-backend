@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.cart.domain;
 
 import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
-import git_kkalnane.backend.starbucks.item.domain.BervergeItem;
+import git_kkalnane.backend.starbucks.item.domain.BeverageItem;
 import git_kkalnane.backend.starbucks.item.domain.DessertItem;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,7 +27,7 @@ public class CartItem extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beverage_item_id")
-    private BervergeItem beverageItem;
+    private BeverageItem beverageItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dessert_item_id")

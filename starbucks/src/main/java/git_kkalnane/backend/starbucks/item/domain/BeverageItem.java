@@ -5,11 +5,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "beverage_items")
 @NoArgsConstructor
-public class BervergeItem extends BaseTimeEntity {
+public class BeverageItem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +37,7 @@ public class BervergeItem extends BaseTimeEntity {
     private ItemStatus status = ItemStatus.AVAILABLE;
 
     @Enumerated(EnumType.STRING)
-    private BevarageShotOption shotOption = BevarageShotOption.SHOT;
+    private BeverageShotOption shotOption = BeverageShotOption.SHOT;
 
     @Enumerated(EnumType.STRING)
     private BeverageSizeOption sizeOption;
@@ -42,8 +45,7 @@ public class BervergeItem extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BeverageTemperatureOption temperatureOption;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_option_id")
-    private ItemOption option;
+    @OneToMany(mappedBy = "beverage_item", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BeverageItemSyrup> beverageItemSyrup = new ArrayList<>();
 
 }

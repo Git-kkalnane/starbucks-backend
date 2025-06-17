@@ -31,4 +31,10 @@ public class ItemOption extends BaseTimeEntity {
     @Column(name = "additonal_price", nullable = false)
     private int additonalPrice;
 
+    @Column(name = "quantity", nullable = false)
+    private int quantity = 1;
+
+    @OneToMany(mappedBy = "item_option", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BeverageItemSyrup> beverageItemSyrup = new ArrayList<>();
+
 }
