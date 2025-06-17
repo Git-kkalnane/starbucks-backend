@@ -16,9 +16,9 @@ public class Store extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "merchant_id", nullable = false)
-    private Merchant merchant;           // Merchant import
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "merchant_id", nullable = false)
+//    private Merchant merchant;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -50,4 +50,11 @@ public class Store extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "current_crowd_level", nullable = false)
     private CrowdLevel currentCrowdLevel = CrowdLevel.LOW;
+
+    public void updateCrowdLevel(CrowdLevel newLevel) {
+        if (newLevel == null) {
+            throw new IllegalArgumentException("CrowdLevel은 null이 될 수 없습니다.");
+        }
+        this.currentCrowdLevel=newLevel;
+    }
 }

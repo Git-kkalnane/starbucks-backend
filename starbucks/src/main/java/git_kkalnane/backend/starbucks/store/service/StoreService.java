@@ -23,5 +23,14 @@ public class StoreService {
         return StoreDetailsResponse.from(store);
     }
 
-
+    @Transactional
+    public StoreDetailsResponse updateCrowdLevel(Long storeId, CrowdLevel newCrowdLevel) {
+        if (newCrowdLevel == null) {
+            throw new StoreException(StoreErrorCode.INVALID_CROWD_LEVEL);
+        }
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new StoreException(StoreErrorCode.STORE_NOT_FOUND));
+        store.updateCrowdLevel(newCrowdLevel);
+        return StoreDetailsResponse.from(store);
+    }
 }
