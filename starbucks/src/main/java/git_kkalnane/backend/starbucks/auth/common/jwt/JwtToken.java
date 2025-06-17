@@ -2,7 +2,7 @@ package git_kkalnane.backend.starbucks.auth.common.jwt;
 
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
-import git_kkalnane.backend.starbucks.global.utils.GlobalLogger;
+import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.StringUtils;

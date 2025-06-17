@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.member.controller;
 
 
-import git_kkalnane.backend.starbucks.global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.member.common.success.MemberSuccessCode;
 import git_kkalnane.backend.starbucks.member.dto.request.SignUpRequest;
 import git_kkalnane.backend.starbucks.member.service.MemberService;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/profile")
+@RequestMapping("/api/v1/profile") // /api/v1 삭제
 @RequiredArgsConstructor
 public class MemberController {
 

@@ -1,6 +1,6 @@
-package git_kkalnane.backend.starbucks.global.error.handler;
+package git_kkalnane.backend.starbucks._global.error.handler;
 
-import git_kkalnane.backend.starbucks.global.error.core.ErrorCode;
+import git_kkalnane.backend.starbucks._global.error.core.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

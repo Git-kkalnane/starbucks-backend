@@ -1,10 +1,9 @@
-package git_kkalnane.backend.starbucks.global.config;
+package git_kkalnane.backend.starbucks._global.config;
 
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
-import git_kkalnane.backend.starbucks.auth.domain.AuthInfo;
 import git_kkalnane.backend.starbucks.auth.service.AuthService;
-import git_kkalnane.backend.starbucks.global.utils.GlobalLogger;
+import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

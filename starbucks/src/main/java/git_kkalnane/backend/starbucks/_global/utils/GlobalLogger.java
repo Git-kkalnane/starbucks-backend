@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.global.utils;
+package git_kkalnane.backend.starbucks._global.utils;
 
 
 import lombok.extern.slf4j.Slf4j;

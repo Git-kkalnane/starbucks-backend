@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.global.entity;
+package git_kkalnane.backend.starbucks._global.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
