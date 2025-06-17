@@ -1,9 +1,9 @@
-package git_kkalnane.backend.starbucks.global.error.handler;
+package git_kkalnane.backend.starbucks._global.error.handler;
 
-import git_kkalnane.backend.starbucks.global.error.core.BaseException;
-import git_kkalnane.backend.starbucks.global.error.core.ErrorCode;
-import git_kkalnane.backend.starbucks.global.error.core.ErrorResponse;
-import git_kkalnane.backend.starbucks.global.utils.GlobalLogger;
+import git_kkalnane.backend.starbucks._global.error.core.BaseException;
+import git_kkalnane.backend.starbucks._global.error.core.ErrorCode;
+import git_kkalnane.backend.starbucks._global.error.core.ErrorResponse;
+import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingRequestHeaderException;

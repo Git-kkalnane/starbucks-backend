@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.global.success;
+package git_kkalnane.backend.starbucks._global.success;
 
 import org.springframework.http.HttpStatus;
 

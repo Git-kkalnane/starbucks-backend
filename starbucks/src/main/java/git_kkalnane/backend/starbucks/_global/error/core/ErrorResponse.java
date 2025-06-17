@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.global.error.core;
+package git_kkalnane.backend.starbucks._global.error.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

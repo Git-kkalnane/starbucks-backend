@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.global.config;
+package git_kkalnane.backend.starbucks._global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
