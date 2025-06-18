@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.payment.domain;
 
-import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.paycard.domain.PointTransaction;
@@ -37,6 +37,6 @@ public class Payment extends BaseTimeEntity {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @OneToMany(mappedBy = "point_transaction")
-    private List<PointTransaction> pointTransactionList = new ArrayList<>();
+    @OneToMany(mappedBy = "payment")
+    private List<PointTransaction> pointTransaction = new ArrayList<>();
 }
