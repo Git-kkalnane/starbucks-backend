@@ -38,10 +38,10 @@ public class Store extends BaseTimeEntity {
     @Column(name = "seating_capacity", nullable = false)
     private int seatingCapacity;
 
-    @Column(name = "latitude", precision = 9)
+    @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name = "longitude", precision = 9)
+    @Column(name = "longitude")
     private Double longitude;
 
     @Column(name = "image_url", length = 255)
