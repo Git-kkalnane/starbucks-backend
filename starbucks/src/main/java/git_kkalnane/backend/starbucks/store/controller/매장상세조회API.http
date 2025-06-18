@@ -1,0 +1,11 @@
+### 1. 매장 상세 정보 조회 성공
+# 특정 ID를 가진 매장의 상세 정보를 조회합니다.
+GET http://localhost:8080/api/v1/stores/1
+
+### 2. 매장 상세 정보 조회 실패 (존재하지 않는 ID)
+# 존재하지 않는 ID로 매장 상세 정보를 조회하여 404 Not Found 응답을 확인합니다.
+GET http://localhost:8080/api/v1/stores/55
+
+### 3. 매장 상세 정보 조회 실패 (잘못된 형식의 ID)
+# 숫자가 아닌 다른 형식의 ID로 요청하여 400 Bad Request 응답을 확인합니다.
+GET http://localhost:8080/api/v1/stores/abc
