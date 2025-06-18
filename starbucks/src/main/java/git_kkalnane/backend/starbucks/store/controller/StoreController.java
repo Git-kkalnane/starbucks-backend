@@ -12,6 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 스타벅스 매장 관련 API를 제공하는 컨트롤러입니다.
+ * 매장 정보 조회 기능을 담당합니다.
+ *
+ * @author Seongjun In
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/stores")
 @RequiredArgsConstructor
@@ -19,6 +26,12 @@ import org.springframework.web.bind.annotation.*;
 public class StoreController {
 
     private final StoreService storeService;
+
+    /**
+     *
+     * @param storeId 조회할 매장의 고유 ID
+     * @return 매장의 상세 정보를 담은 응답 DTO와 성공 응답 (HTTP 200 OK)
+     */
 
     @Operation(
             summary = "지점 상세 정보 조회",

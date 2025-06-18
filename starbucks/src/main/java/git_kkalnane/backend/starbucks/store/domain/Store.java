@@ -4,6 +4,14 @@ import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * 스타벅스 매장 정보를 나타내는 엔티티 클래스입니다.
+ * 데이터베이스의 'stores' 테이블과 매핑됩니다.
+ * 매장의 기본 정보, 위치, 편의시설, 혼잡도 등을 관리합니다.
+ *
+ * @author Seongjun In
+ * @version 1.0
+ */
 @Entity
 @Table(name = "stores")
 @Getter
@@ -51,10 +59,4 @@ public class Store extends BaseTimeEntity {
     @Column(name = "current_crowd_level", nullable = false)
     private CrowdLevel currentCrowdLevel = CrowdLevel.LOW;
 
-    public void updateCrowdLevel(CrowdLevel newLevel) {
-        if (newLevel == null) {
-            throw new IllegalArgumentException("CrowdLevel은 null이 될 수 없습니다.");
-        }
-        this.currentCrowdLevel=newLevel;
-    }
 }

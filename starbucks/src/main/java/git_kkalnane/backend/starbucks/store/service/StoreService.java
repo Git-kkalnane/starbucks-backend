@@ -10,6 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 매장 관련 비즈니스 로직을 처리하는 서비스 클래스
+ *
+ * @author Seongjun In
+ * @version 1.0
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -17,6 +23,13 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
 
+    /**
+     * 특정 매장의 상세 정보를 조회합니다.
+     *
+     * @param storeId 조회할 매장의 ID
+     * @return 매장의 상세 정보 DTO
+     * @throws StoreException 매장을 찾지 못한 경우
+     */
     public StoreDetailsResponse getStoreDetails(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new StoreException(StoreErrorCode.STORE_NOT_FOUND));
