@@ -17,8 +17,12 @@ public enum StoreErrorCode implements ErrorCode {
     /**
      * 요청된 ID에 해당하는 매장을 찾을 수 없을 때 사용됩니다. (HTTP 404 Not Found)
      */
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 지점을 찾을 수 없습니다."),
 
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 지점을 찾을 수 없습니다.");
+    /**
+     * 요청된 ID에 형식이 올바르지 않을 때 사용됩니다. (HTTP 400 Not Found)
+     */
+    INVALID_STORE_ID_FORMAT(HttpStatus.BAD_REQUEST, "요청된 매장 ID의 형식이 올바르지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
