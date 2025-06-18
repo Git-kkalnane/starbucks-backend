@@ -2,7 +2,11 @@ package git_kkalnane.backend.starbucks.notification.domain;
 
 import git_kkalnane.backend.starbucks.notification.common.exception.NotificationErrorCode;
 import git_kkalnane.backend.starbucks.notification.common.exception.NotificationException;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
 public enum NotificationType {
 
     SUBSCRIBE("알림 구독"),
@@ -13,14 +17,6 @@ public enum NotificationType {
     ;
 
     private final String description;
-
-    NotificationType(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public String getDescription(Object ... args) {
         return description.formatted(args);
