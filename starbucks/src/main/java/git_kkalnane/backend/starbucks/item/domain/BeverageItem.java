@@ -2,6 +2,8 @@ package git_kkalnane.backend.starbucks.item.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "beverage_items")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BeverageItem extends BaseTimeEntity {
 
     @Id
