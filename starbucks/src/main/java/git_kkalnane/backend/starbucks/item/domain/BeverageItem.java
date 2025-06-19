@@ -31,7 +31,7 @@ public class BeverageItem extends BaseTimeEntity {
     private int price;
 
     @Column(name = "image_url", length = 254)
-    private String image_url;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;

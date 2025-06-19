@@ -2,7 +2,7 @@ package git_kkalnane.backend.starbucks.item.domain;
 
 public enum BeverageSizeOption {
     TALL(0),
-    GRANDED(500),
+    GRANDE(500),
     VENTI(500),
     SHORT(0),
     SOLO(0),
@@ -10,8 +10,8 @@ public enum BeverageSizeOption {
 
     private final int extraPrice;
 
-    BeverageSizeOption(int extrePrice) {
-        this.extraPrice = extrePrice;
+    BeverageSizeOption(int extraPrice) {
+        this.extraPrice = extraPrice;
     }
     public int getExtraPrice() {
         return extraPrice;

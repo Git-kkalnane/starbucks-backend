@@ -28,8 +28,8 @@ public class ItemOption extends BaseTimeEntity {
     @Column(name = "display_order")
     private int displayOrder;
 
-    @Column(name = "additonal_price", nullable = false)
-    private int additonalPrice;
+    @Column(name = "additional_price", nullable = false)
+    private int additionalPrice;
 
     @Column(name = "quantity", nullable = false)
     private int quantity = 1;
