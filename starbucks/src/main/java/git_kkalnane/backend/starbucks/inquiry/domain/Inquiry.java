@@ -1,6 +1,7 @@
 package git_kkalnane.backend.starbucks.inquiry.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.merchant.domain.Merchant;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import jakarta.persistence.*;
@@ -18,9 +19,9 @@ public class Inquiry extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;              // user 테이블에서 import
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
