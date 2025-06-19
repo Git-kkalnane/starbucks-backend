@@ -2,6 +2,9 @@ package git_kkalnane.backend.starbucks.notification.domain;
 
 
 import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
+import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
+import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,23 +22,46 @@ public class Notification extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String emitterId; // 알림을 발생시킨 Member의 ID
-    private String eventId;
-    private Long receivingMemberId;
-    private String content;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String message;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private boolean isRead;
-    private String url;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "event_id", nullable = false, unique = true))
+    private NotificationEvent event;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "sender_id", nullable = false))
+    private NotificationSender sender;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "receiver_id", nullable = false))
+    private NotificationReceiver receiver;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NotificationTargetType notificationTargetType;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType notificationType;
 
 
-    public NotificationResponse toDto(){
+    public NotificationResponse toDto(String emitterId) {
         return NotificationResponse.builder()
                 .emitterId(emitterId)
-                .eventId(eventId)
-                .receivingMemberId(receivingMemberId)
+                .eventId(event.value())
+                .message(message)
+                .title(title)
+                .senderId(sender.value())
+                .receiverId(receiver.value())
+                .notificationTargetType(notificationTargetType.name())
                 .notificationType(notificationType.name())
                 .build();
     }
