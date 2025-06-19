@@ -2,7 +2,6 @@ package git_kkalnane.backend.starbucks.store.service;
 
 import git_kkalnane.backend.starbucks.store.common.exception.StoreErrorCode;
 import git_kkalnane.backend.starbucks.store.common.exception.StoreException;
-import git_kkalnane.backend.starbucks.store.domain.CrowdLevel;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.dto.response.StoreDetailsResponse;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;

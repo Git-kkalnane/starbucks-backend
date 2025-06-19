@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.store.controller;
 
-import git_kkalnane.backend.starbucks.global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.store.common.success.StoreSuccessCode;
 import git_kkalnane.backend.starbucks.store.dto.response.StoreDetailsResponse;
 import git_kkalnane.backend.starbucks.store.service.StoreService;

@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.store.common.exception;
 
-import git_kkalnane.backend.starbucks.global.error.core.ErrorCode;
+import git_kkalnane.backend.starbucks._global.error.core.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 

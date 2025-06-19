@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.store.common.exception;
 
-import git_kkalnane.backend.starbucks.global.error.core.BaseException;
+import git_kkalnane.backend.starbucks._global.error.core.BaseException;
 
 /**
  * 매장(Store) 관련 비즈니스 로직 처리 중 발생하는 예외를 나타냅니다.
