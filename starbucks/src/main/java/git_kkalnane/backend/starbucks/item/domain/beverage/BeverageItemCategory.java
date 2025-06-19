@@ -1,6 +1,7 @@
-package git_kkalnane.backend.starbucks.item.domain;
+package git_kkalnane.backend.starbucks.item.domain.beverage;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks.item.domain.ItemCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
