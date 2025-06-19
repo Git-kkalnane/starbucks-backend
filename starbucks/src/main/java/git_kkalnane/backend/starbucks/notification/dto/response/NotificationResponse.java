@@ -9,7 +9,10 @@ import lombok.Getter;
 public class NotificationResponse {
     private String eventId;
     private String emitterId;
-    private Long receivingMemberId;
+    private Long senderId;
+    private Long receiverId;
+    private String title;
     private String message;
     private String notificationType;
+    private String notificationTargetType;
 }
