@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.notification.repository;
 
 
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
+import git_kkalnane.backend.starbucks.notification.domain.SseEmitterId;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -15,8 +16,8 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
 
     @Override
-    public SseEmitter save(String emitterId, SseEmitter sseEmitter) {
-        emitters.put(emitterId, sseEmitter);
+    public SseEmitter save(SseEmitterId emitterId, SseEmitter sseEmitter) {
+        emitters.put(emitterId.getId(), sseEmitter);
         return sseEmitter;
     }
 
@@ -28,7 +29,7 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     @Override
     public Map<String, SseEmitter> findAllEmitterStartWithByReceiverIdAndNotificationTargetType
             (Long receiverId, NotificationTargetType notificationTargetType) {
-        String prefix = "%s_%s".formatted(receiverId, notificationTargetType.name());
+        String prefix = SseEmitterId.getEmitterIdPrefix(receiverId, notificationTargetType);
 
         return emitters.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(prefix))
@@ -38,7 +39,7 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     @Override
     public Map<String, Object> findAllEventCacheStartWithByReceiverIdAndNotificationTargetType
             (Long receiverId, NotificationTargetType notificationTargetType) {
-        String prefix = "%s_%s".formatted(receiverId, notificationTargetType.name());
+        String prefix = SseEmitterId.getEmitterIdPrefix(receiverId, notificationTargetType);
 
         return eventCache.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(prefix))
@@ -57,10 +58,16 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     }
 
     @Override
-    public void deleteAllEmitterStartWithId(String memberId) {
+    public void deleteById(SseEmitterId sseEmitterId) {
+        emitters.remove(sseEmitterId.getId());
+    }
+
+    @Override
+    public void deleteAllEmitterStartWithNotificationTargetTypeAndReceiverId(
+            Long receiverId, NotificationTargetType notificationTargetType) {
         emitters.forEach(
                 (key, emitter) -> {
-                    if (key.startsWith(memberId)) {
+                    if (key.startsWith(SseEmitterId.getEmitterIdPrefix(receiverId, notificationTargetType))) {
                         emitters.remove(key);
                     }
                 }
@@ -68,10 +75,11 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     }
 
     @Override
-    public void deleteAllEventCacheStartWithId(String memberId) {
+    public void deleteAllEventCacheStartWithNotificationTargetTypeAndReceiverId(
+            Long receiverId, NotificationTargetType notificationTargetType) {
         eventCache.forEach(
                 (key, emitter) -> {
-                    if (key.startsWith(memberId)) {
+                    if (key.startsWith(SseEmitterId.getEmitterIdPrefix(receiverId, notificationTargetType))) {
                         eventCache.remove(key);
                     }
                 }

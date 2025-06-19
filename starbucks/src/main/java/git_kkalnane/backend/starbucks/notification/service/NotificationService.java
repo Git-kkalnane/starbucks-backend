@@ -5,6 +5,7 @@ import git_kkalnane.backend.starbucks.notification.common.success.NotificationSu
 import git_kkalnane.backend.starbucks.notification.domain.Notification;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationType;
+import git_kkalnane.backend.starbucks.notification.domain.SseEmitterId;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
@@ -34,20 +35,20 @@ public class NotificationService {
         NotificationTargetType notificationTargetType =
                 NotificationTargetType.findByName(notificationTargetTypeName);
 
-        String emitterId = createEmitterId(receiverId, notificationTargetType);
+        SseEmitterId sseEmitterId = SseEmitterId.of(receiverId, notificationTargetType);
 
         // 하나의 클라이언트에 대한 emitter 저장
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(sseEmitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         // 클라이언트의 연결 종료 및 타임아웃에 대한 이벤트 처리 -> Emiiter 삭제
-        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
-        emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+        emitter.onCompletion(() -> emitterRepository.deleteById(sseEmitterId.getId()));
+        emitter.onTimeout(() -> emitterRepository.deleteById(sseEmitterId.getId()));
 
         // 503 에러를 방지하기 위한 구독용 더미 이벤트 전송
         NotificationEvent event = NotificationEvent.of
                 (receiverId, NotificationTargetType.CUSTOMER, NotificationType.SUBSCRIBE);
 
-        send(emitter, event, emitterId,
+        send(emitter, event, sseEmitterId.getId(),
                 NotificationSuccessCode.NOTIFICATION_SUBSCRIBED.getMessage(receiverId));
 
         return emitter;
@@ -121,13 +122,6 @@ public class NotificationService {
         return emitterRepository.findAllEmitterStartWithByReceiverIdAndNotificationTargetType(
                 receiverId,
                 notificationTargetType);
-    }
-
-    private String createEmitterId(Long receiverId, NotificationTargetType notificationTargetType) {
-        return "%s_%s_%s".formatted(
-                notificationTargetType.name(),
-                receiverId,
-                System.currentTimeMillis());
     }
 
     private Notification createNotification(

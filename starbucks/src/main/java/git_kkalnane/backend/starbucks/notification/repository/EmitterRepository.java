@@ -1,14 +1,15 @@
 package git_kkalnane.backend.starbucks.notification.repository;
 
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
+import git_kkalnane.backend.starbucks.notification.domain.SseEmitterId;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
 
 public interface EmitterRepository {
-    SseEmitter save(String emitterId, SseEmitter sseEmitter);
+    SseEmitter save(SseEmitterId emitterId, SseEmitter sseEmitter);
 
-    void saveEventCache(String emitterId, Object event);
+    void saveEventCache(String emitterIdValue, Object event);
 
     Map<String, SseEmitter> findAllEmitterStartWithByReceiverIdAndNotificationTargetType
             (Long receiverId, NotificationTargetType notificationTargetType);
@@ -20,8 +21,13 @@ public interface EmitterRepository {
 
     void deleteById(String id);
 
-    void deleteAllEmitterStartWithId(String memberId);
+    void deleteById(SseEmitterId id);
 
-    void deleteAllEventCacheStartWithId(String memberId);
+    void deleteAllEmitterStartWithNotificationTargetTypeAndReceiverId
+            (Long receiverId, NotificationTargetType notificationTargetType);
+
+    void deleteAllEventCacheStartWithNotificationTargetTypeAndReceiverId
+            (Long receiverId, NotificationTargetType notificationTargetType);
+
 
 }
