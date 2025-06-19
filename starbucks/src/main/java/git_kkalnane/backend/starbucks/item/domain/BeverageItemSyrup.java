@@ -1,5 +1,6 @@
 package git_kkalnane.backend.starbucks.item.domain;
 
+import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,15 +10,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "beverage_item_syrup")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BeverageItemSyrup {
+public class BeverageItemSyrup extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "beverage_item_syrup_id")
-    private BeverageItemSyrup beverageItemSyrup;
+    @JoinColumn(name = "item_option")
+    private ItemOption itemOption;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beverage_item")

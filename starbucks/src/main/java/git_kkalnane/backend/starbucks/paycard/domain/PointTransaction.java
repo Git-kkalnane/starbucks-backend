@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.paycard.domain;
 
-import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.payment.domain.Payment;
 import jakarta.persistence.*;

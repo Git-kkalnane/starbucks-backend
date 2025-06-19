@@ -1,5 +1,6 @@
 package git_kkalnane.backend.starbucks.item.domain;
 
+import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,12 +13,12 @@ import java.util.List;
 @Entity
 @Table(name = "beverage_category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BeverageCategory {
+public class BeverageCategory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "beverage_item_category", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "beverageCategory", cascade = CascadeType.REMOVE)
     private List<BeverageItemCategory> beverageItemCategory = new ArrayList<>();
 }
