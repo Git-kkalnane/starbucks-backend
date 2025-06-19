@@ -6,5 +6,27 @@
 # 등록된 모든 음료 및 디저트 아이템의 목록을 조회합니다.
 GET {{baseUrl}}/items
 
+### 2. 아이템 타입별 필터링 조회 (음료만)
+# 'DRINK' 타입의 아이템(음료)만 조회합니다.
+GET {{baseUrl}}/items?type=DRINK
 
+### 3. 아이템 타입별 필터링 조회 (디저트만)
+# 'DESSERT' 타입의 아이템(디저트)만 조회합니다.
+GET {{baseUrl}}/items?type=DESSERT
+
+### 4. 페이지네이션 적용 조회 (첫 번째 페이지, 2개씩)
+# 첫 번째 페이지(page=0)의 아이템을 2개씩(size=2) 조회합니다.
+GET {{baseUrl}}/items?page=0&size=2
+
+### 5. 페이지네이션 적용 조회 (두 번째 페이지, 2개씩)
+# 두 번째 페이지(page=1)의 아이템을 2개씩(size=2) 조회합니다.
+GET {{baseUrl}}/items?page=1&size=2
+
+### 6. 필터링 및 페이지네이션 동시 적용 (음료, 첫 번째 페이지, 1개씩)
+# 'DRINK' 타입의 아이템 중 첫 번째 페이지(page=0)에서 1개씩 조회합니다.
+GET {{baseUrl}}/items?type=DRINK&page=0&size=1
+
+### 7. 필터링 및 페이지네이션 동시 적용 (디저트, 첫 번째 페이지, 2개씩)
+# 'DESSERT' 타입의 아이템 중 첫 번째 페이지(page=0)에서 2개씩 조회합니다.
+GET {{baseUrl}}/items?type=DESSERT&page=0&size=2
 
