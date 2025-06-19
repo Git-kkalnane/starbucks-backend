@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.cart.domain;
 
-import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -24,6 +24,6 @@ public class Cart extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "cart_item", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 }

@@ -18,9 +18,9 @@ public class Inquiry extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;              // user 테이블에서 import
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;              // user 테이블에서 import
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)

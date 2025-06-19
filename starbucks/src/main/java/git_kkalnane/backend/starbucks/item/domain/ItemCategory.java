@@ -1,6 +1,6 @@
     package git_kkalnane.backend.starbucks.item.domain;
 
-    import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+    import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
     import jakarta.persistence.*;
     import lombok.AccessLevel;
     import lombok.Getter;
@@ -32,10 +32,10 @@
         @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
         private List<ItemCategory> children= new ArrayList<>();
 
-        @OneToMany(mappedBy = "beverage_item_category", cascade = CascadeType.REMOVE)
+        @OneToMany(mappedBy = "itemCategory", cascade = CascadeType.REMOVE)
         private List<BeverageItemCategory> beverageItemCategory = new ArrayList<>();
 
-        @OneToMany(mappedBy = "dessert_item_category", cascade = CascadeType.REMOVE)
+        @OneToMany(mappedBy = "itemCategory", cascade = CascadeType.REMOVE)
         private List<DessertItemCategory> dessertItemCategory = new ArrayList<>();
 
     }
