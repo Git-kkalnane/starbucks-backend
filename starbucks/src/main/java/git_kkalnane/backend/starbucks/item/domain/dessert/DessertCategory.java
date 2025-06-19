@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.item.domain;
+package git_kkalnane.backend.starbucks.item.domain.dessert;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
