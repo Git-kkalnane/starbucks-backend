@@ -3,8 +3,10 @@ package git_kkalnane.backend.starbucks.store.controller;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.store.common.success.StoreSuccessCode;
 import git_kkalnane.backend.starbucks.store.dto.response.StoreDetailsResponse;
+import git_kkalnane.backend.starbucks.store.dto.response.StoreListResponse;
 import git_kkalnane.backend.starbucks.store.service.StoreService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,6 +51,31 @@ public class StoreController {
         StoreDetailsResponse response = storeService.getStoreDetails(storeId);
 
         return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.STORE_DETAIL_RETRIEVED, response));
+    }
+
+    /**
+     * 페이징 처리된 전체 지점 목록을 조회합니다.
+     *
+     * @param page 조회할 페이지 번호 (0부터 시작)
+     * @param size 한 페이지당 지점 개수
+     * @return 페이징된 지점 목록 정보를 담은 ResponseEntity
+     */
+    @Operation(summary = "전체 지점 목록 조회", description = "페이징 처리된 전체 지점 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "지점 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 페이지 번호 또는 크기 요청 시"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생 시")
+    })
+    @GetMapping
+    public ResponseEntity<SuccessResponse<StoreListResponse>>getStoreList(
+            @Parameter(description = "조회할 페이지 번호 (0부터 시작)")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "한 페이지당 지점 개수")
+            @RequestParam(defaultValue = "15") int size
+    ) {
+        StoreListResponse response = storeService.getStoreList(page, size);
+        return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.STORE_LIST_RETRIEVED, response));
     }
 
 }
