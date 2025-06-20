@@ -31,7 +31,6 @@ public class MemberController {
      * @param request SingUpRequest 객체
      * @return SignUpResponse 객체를 담고 있는 ResponseEntity 객체
      */
-    @PostMapping("/signup")
     @Operation(
             summary = "회원가입",
             description = "회원가입 시 사용하는 API"
@@ -52,11 +51,10 @@ public class MemberController {
             @Parameter(name = "email", description = "회원 이메일", example = "user0123@gmail.com"),
             @Parameter(name = "password", description = "비밀번호", example = "password0123")
     })
+    @PostMapping("/signup")
     public ResponseEntity<SuccessResponse<SignUpResponse>> signup(@RequestBody SignUpRequest request) {
 
-        memberService.createMember(request);
-
         return ResponseEntity.ok(
-                (SuccessResponse.of(MemberSuccessCode.SIGN_UP_COMPLETED)));
+                (SuccessResponse.of(MemberSuccessCode.SIGN_UP_COMPLETED, memberService.createMember(request))));
     }
 }
