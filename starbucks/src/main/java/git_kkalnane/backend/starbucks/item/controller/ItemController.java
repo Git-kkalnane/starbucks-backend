@@ -37,7 +37,7 @@ public class ItemController {
      * 모든 아이템(음료, 디저트)의 목록을 조회합니다.
      * 특정 아이템 타입으로 필터링하고 페이지네이션을 적용하여 조회할 수 있습니다.
      *
-     * @param type 조회할 아이템의 타입 (선택 사항: {@link ItemType#DRINK}, {@link ItemType#DESSERT}). 지정하지 않으면 모든 타입 조회.
+     * @param type 조회할 아이템의 타입 (선택 사항: {@link ItemType#COFFEE}, {@link ItemType#BEVERAGE}, {@link ItemType#DESSERT}).
      * @param page 조회할 페이지 번호
      * @param size 한 페이지당 아이템 개수. 기본값은 15개.
      * @return {@link ItemListResponse} 형식의 아이템 목록과 성공 응답.

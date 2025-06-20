@@ -34,8 +34,15 @@ public class BeverageItem extends BaseTimeEntity {
     @Column(name = "price", nullable = false)
     private int price;
 
-    @Column(name = "image_url", length = 254)
-    private String imageUrl;
+    @Column(name = "hot_image_url", length = 254)
+    private String hotImageUrl;
+
+    @Column(name = "ice_image_url", length = 254)
+    private String iceImageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ItemType category;
 
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;

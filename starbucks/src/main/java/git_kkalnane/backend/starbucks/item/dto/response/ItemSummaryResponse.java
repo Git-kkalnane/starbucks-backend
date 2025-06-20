@@ -22,7 +22,9 @@ public class ItemSummaryResponse {
     private String nameKo;
     private String nameEn;
     private int price;
-    private String imageUrl;
+    private String hotImageUrl;
+    private String iceImageUrl;
+    private String dessertImageUrl;
     private ItemStatus status;
     private ItemType type;
 
@@ -38,9 +40,10 @@ public class ItemSummaryResponse {
                 .nameKo(beverageItem.getBeverageItemNameKo())
                 .nameEn(beverageItem.getBeverageItemNameEn())
                 .price(beverageItem.getPrice())
-                .imageUrl(beverageItem.getImageUrl())
+                .hotImageUrl(beverageItem.getHotImageUrl())
+                .iceImageUrl(beverageItem.getIceImageUrl())
                 .status(beverageItem.getStatus())
-                .type(ItemType.DRINK)
+                .type(beverageItem.getCategory())
                 .build();
     }
 
@@ -56,7 +59,7 @@ public class ItemSummaryResponse {
                 .nameKo(dessertItem.getDessertItemNameKo())
                 .nameEn(dessertItem.getDessertItemNameEn())
                 .price(dessertItem.getPrice())
-                .imageUrl(dessertItem.getImageUrl())
+                .dessertImageUrl(dessertItem.getImageUrl())
                 .status(dessertItem.getStatus())
                 .type(ItemType.DESSERT)
                 .build();
