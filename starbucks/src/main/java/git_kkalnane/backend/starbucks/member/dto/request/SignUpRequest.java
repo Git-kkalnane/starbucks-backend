@@ -3,12 +3,15 @@ package git_kkalnane.backend.starbucks.member.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.ToString;
 
-@Getter
 @AllArgsConstructor
+@Getter
+@ToString
 public class SignUpRequest {
-    String memberName;
-    String email;
-    String planePassword;
+
+    private String name;
+    private String nickname;
+    private String email;
+    private String password;
 }
