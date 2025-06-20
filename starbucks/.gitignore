@@ -199,3 +199,5 @@ src/main/generated
 
 # 커스텀
 dev.env
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
