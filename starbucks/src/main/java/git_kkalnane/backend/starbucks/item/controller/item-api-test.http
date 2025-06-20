@@ -2,34 +2,34 @@
 @port = 8080
 @baseUrl = http://{{host}}:{{port}}/api/v1
 
-### 1. 모든 아이템 목록 조회 (정상)
-# type 파라미터 없이 모든 아이템(음료+디저트)을 조회합니다.
-GET {{baseUrl}}/items
+### ========================================
+### 음료 (Drinks) API 테스트
+### ========================================
 
-### 2. 아이템 타입별 필터링 조회 (커피만)
-# 'COFFEE' 타입의 아이템만 조회합니다.
-GET {{baseUrl}}/items?type=COFFEE
+### 1. 모든 음료 목록 조회
+# 페이지네이션 없이 모든 음료(커피 포함) 목록을 조회합니다.
+GET {{baseUrl}}/items/drinks
 
-### 3. 아이템 타입별 필터링 조회
-# 'BEVERAGE' 타입의 아이템만 조회합니다.
-GET {{baseUrl}}/items?type=BEVERAGE
 
-### 4. 아이템 타입별 필터링 조회 (디저트만) (정상)
-# 'DESSERT' 타입의 아이템만 조회합니다.
-GET {{baseUrl}}/items?type=DESSERT
+### 2. 음료 목록 페이지네이션 적용 조회 (첫 번째 페이지, 2개씩)
+# 음료 목록의 첫 번째 페이지(page=0)를 2개씩(size=2) 조회합니다.
+GET {{baseUrl}}/items/drinks?page=0&size=2
 
-### 5. 페이지네이션 적용 조회 (첫 번째 페이지, 2개씩) (정상)
-# 전체 아이템 중 첫 번째 페이지(page=0)의 아이템을 2개씩(size=2) 조회합니다.
-GET {{baseUrl}}/items?page=0&size=2
 
-### 6. 페이지네이션 적용 조회 (두 번째 페이지, 2개씩) (정상)
-# 전체 아이템 중 두 번째 페이지(page=1)의 아이템을 2개씩(size=2) 조회합니다.
-GET {{baseUrl}}/items?page=1&size=2
+### 3. 음료 목록 페이지네이션 적용 조회 (두 번째 페이지, 3개씩)
+# 음료 목록의 두 번째 페이지(page=1)를 3개씩(size=3) 조회합니다.
+GET {{baseUrl}}/items/drinks?page=1&size=3
 
-### 7. 필터링 및 페이지네이션 동시 적용 (커피, 첫 번째 페이지, 1개씩)
-# 'COFFEE' 타입의 아이템 중 첫 번째 페이지(page=0)에서 1개씩 조회합니다.
-GET {{baseUrl}}/items?type=COFFEE&page=0&size=1
 
-### 8. 필터링 및 페이지네이션 동시 적용 (디저트, 첫 번째 페이지, 2개씩) (정상)
-# 'DESSERT' 타입의 아이템 중 첫 번째 페이지(page=0)에서 2개씩 조회합니다.
-GET {{baseUrl}}/items?type=DESSERT&page=0&size=2
+### ========================================
+### 디저트 (Desserts) API 테스트
+### ========================================
+
+### 4. 모든 디저트 목록 조회
+# 페이지네이션 없이 모든 디저트 목록을 조회합니다.
+GET {{baseUrl}}/items/desserts
+
+
+### 5. 디저트 목록 페이지네이션 적용 조회 (첫 번째 페이지, 2개씩)
+# 디저트 목록의 첫 번째 페이지(page=0)를 2개씩(size=2) 조회합니다.
+GET {{baseUrl}}/items/desserts?page=0&size=2
