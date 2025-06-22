@@ -3,7 +3,7 @@ package git_kkalnane.backend.starbucks.auth.controller;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
 import git_kkalnane.backend.starbucks.auth.service.AuthService;
-import git_kkalnane.backend.starbucks.global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
