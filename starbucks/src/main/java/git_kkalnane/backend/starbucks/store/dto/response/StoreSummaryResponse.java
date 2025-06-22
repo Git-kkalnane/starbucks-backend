@@ -13,9 +13,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class StoreSummaryResponse {
-   private final String name;
-   private final String address;
-   private final String imageUrl;
+    private final Long id;
+    private final String name;
+    private final String address;
+    private final String imageUrl;
 
     /**
      * Store 엔티티를 StoreSummaryResponse DTO로 변환합니다.
@@ -24,6 +25,7 @@ public class StoreSummaryResponse {
      */
     public static StoreSummaryResponse from(Store store) {
         return new StoreSummaryResponse(
+                store.getId(),
                 store.getName(),
                 store.getAddress(),
                 store.getImageUrl()
