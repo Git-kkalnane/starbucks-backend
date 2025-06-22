@@ -95,7 +95,7 @@ class StoreServiceTest {
         given(storeRepository.findAll(any(Pageable.class))).willReturn(storePage);
 
         // When
-        StoreListResponse result = storeService.getStoreList(page, size);
+        StoreListResponse result = storeService.getStoreList(pageable);
 
         // Then
         verify(storeRepository, times(1)).findAll(any(Pageable.class));
