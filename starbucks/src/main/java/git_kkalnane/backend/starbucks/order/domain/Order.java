@@ -4,16 +4,17 @@ import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "orders")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseTimeEntity {
 
@@ -23,10 +24,10 @@ public class Order extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "order_number", nullable = false)
-    private Long orderNumber;
+    private String orderNumber;
 
     @Column(name = "order_total_price", nullable = false)
-    private Long orderTotalPrice;
+    private int orderTotalPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
@@ -40,7 +41,7 @@ public class Order extends BaseTimeEntity {
     private String orderRequestMemo;
 
     @Column(name = "order_expected_pickup_time", nullable = false)
-    private Long orderExpectedPickupTime;
+    private LocalDateTime orderExpectedPickupTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
@@ -51,8 +52,11 @@ public class Order extends BaseTimeEntity {
     private Member member;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<OrderItem> OrderItems = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
-
+    public void addOrderItem(OrderItem item) {
+        orderItems.add(item);
+        item.setOrder(this);
+    }
 
 }
