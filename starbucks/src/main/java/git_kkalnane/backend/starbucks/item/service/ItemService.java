@@ -7,6 +7,8 @@ import git_kkalnane.backend.starbucks.item.dto.response.ItemSummaryResponse;
 import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
 import git_kkalnane.backend.starbucks.item.repository.DessertItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,67 +28,45 @@ public class ItemService {
     /**
      * 모든 음료(커피 포함) 목록을 조회, 정렬, 페이징하여 반환합니다.
      *
-     * @param page  페이지 번호
-     * @param size  페이지 크기
+     * @param pageable 페이징 및 정렬 정보
      * @return ItemListResponse
      */
-    public ItemListResponse getDrinkItems(int page, int size) {
-        List<BeverageItem> beverageItems = beverageItemRepository.findAll();
+    public ItemListResponse getDrinkItems(Pageable pageable) {
+        Page<BeverageItem> beveragePage = beverageItemRepository.findAll(pageable);
 
-        List<ItemSummaryResponse> summaries = beverageItems.stream()
+        List<ItemSummaryResponse> summaries = beveragePage.getContent().stream()
                 .map(ItemSummaryResponse::from)
                 .collect(Collectors.toList());
 
-        return paginateAndBuildResponse(summaries, page, size);
+        return ItemListResponse.builder()
+                .items(summaries)
+                .totalCount(beveragePage.getTotalElements())
+                .currentPage(beveragePage.getNumber())
+                .totalPages(beveragePage.getTotalPages())
+                .pageSize(beveragePage.getSize())
+                .build();
     }
 
     /**
      * 모든 디저트 목록을 조회, 정렬, 페이징하여 반환합니다.
      *
-     * @param page  페이지 번호
-     * @param size  페이지 크기
+     * @param pageable 페이징 및 정렬 정보
      * @return ItemListResponse
      */
-    public ItemListResponse getDessertItems(int page, int size) {
-        List<DessertItem> dessertItems = dessertItemRepository.findAll();
+    public ItemListResponse getDessertItems(Pageable pageable) {
+        Page<DessertItem> dessertPage = dessertItemRepository.findAll(pageable);
 
-        List<ItemSummaryResponse> summaries = dessertItems.stream()
+        List<ItemSummaryResponse> summaries = dessertPage.getContent().stream()
                 .map(ItemSummaryResponse::from)
                 .collect(Collectors.toList());
 
-        return paginateAndBuildResponse(summaries, page, size);
-    }
-
-    /**
-     * 아이템 목록을 정렬하고 페이지네이션을 적용하여 최종 응답 객체를 생성하는 private 헬퍼 메서드입니다.
-     *
-     * @param items 정렬 및 페이징할 아이템 DTO 리스트
-     * @param page  페이지 번호
-     * @param size  페이지 크기
-     * @return ItemListResponse 최종 응답
-     */
-    private ItemListResponse paginateAndBuildResponse(List<ItemSummaryResponse> items, int page, int size) {
-        items.sort(Comparator.comparing(ItemSummaryResponse::getNameKo));
-
-        int start = page * size;
-        List<ItemSummaryResponse> pagedItems;
-
-        if (start >= items.size()) {
-            pagedItems = new ArrayList<>();
-        } else {
-            int end = Math.min(start + size, items.size());
-            pagedItems = items.subList(start, end);
-        }
-
-        long totalElements = items.size();
-        int totalPages = (totalElements == 0) ? 0 : (int) Math.ceil((double) totalElements / size);
-
         return ItemListResponse.builder()
-                .items(pagedItems)
-                .totalCount(totalElements)
-                .currentPage(page)
-                .totalPages(totalPages)
-                .pageSize(size)
+                .items(summaries)
+                .totalCount(dessertPage.getTotalElements())
+                .currentPage(dessertPage.getNumber())
+                .totalPages(dessertPage.getTotalPages())
+                .pageSize(dessertPage.getSize())
                 .build();
     }
+
 }

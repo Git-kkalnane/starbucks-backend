@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-@RequestMapping("/items") // 경로 일관성을 위해 /api/v1 추가
+@RequestMapping("/items")
 @RequiredArgsConstructor
 @Tag(name = "Item", description = "스타벅스 아이템(상품) 관련 API")
 public class ItemController {
@@ -40,10 +43,10 @@ public class ItemController {
     })
     @GetMapping("/drinks")
     public ResponseEntity<SuccessResponse<ItemListResponse>> getDrinkItems(
-            @Parameter(description = "조회할 페이지 번호 (0부터 시작)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "한 페이지당 아이템 개수") @RequestParam(defaultValue = "15") int size
+           @PageableDefault(size= 15, sort = "beverageItemNameKo", direction = Sort.Direction.ASC)
+    Pageable pageable
     ) {
-        ItemListResponse response = itemService.getDrinkItems(page, size);
+        ItemListResponse response = itemService.getDrinkItems(pageable);
         return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DRINKS_LIST_RETRIEVED, response));
     }
 
@@ -56,10 +59,10 @@ public class ItemController {
     })
     @GetMapping("/desserts")
     public ResponseEntity<SuccessResponse<ItemListResponse>> getDessertItems(
-            @Parameter(description = "조회할 페이지 번호 (0부터 시작)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "한 페이지당 아이템 개수") @RequestParam(defaultValue = "15") int size
+            @PageableDefault(size = 15, sort = "dessertItemNameKo", direction = Sort.Direction.ASC)
+            Pageable pageable
     ) {
-        ItemListResponse response = itemService.getDessertItems(page, size);
+        ItemListResponse response = itemService.getDessertItems(pageable);
         return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DESSERT_LIST_RETRIEVED, response));
     }
 }
