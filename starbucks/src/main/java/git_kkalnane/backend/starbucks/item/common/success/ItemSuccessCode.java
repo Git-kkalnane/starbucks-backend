@@ -15,9 +15,13 @@ import org.springframework.http.HttpStatus;
 public enum ItemSuccessCode implements SuccessCode {
 
     /**
-     * 아이템 목록을 성공적으로 조회했을 때 사용됩니다.
+     * 음료 목록을 성공적으로 조회했을 때 사용됩니다.
      */
-    ITEM_LIST_RETRIEVED(HttpStatus.OK, "아이템 목록 조회 성공");
+    DRINKS_LIST_RETRIEVED(HttpStatus.OK, "음료 목록 조회 성공"),
+    /**
+     * 디저트 목록을 성공적으로 조회했을 때 사용됩니다.
+     */
+    DESSERT_LIST_RETRIEVED(HttpStatus.OK, "디저트 목록 조회 성공");
 
     private final HttpStatus status;
     private final String message;

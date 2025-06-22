@@ -44,7 +44,7 @@ public class ItemController {
             @Parameter(description = "한 페이지당 아이템 개수") @RequestParam(defaultValue = "15") int size
     ) {
         ItemListResponse response = itemService.getDrinkItems(page, size);
-        return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.ITEM_LIST_RETRIEVED, response));
+        return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DRINKS_LIST_RETRIEVED, response));
     }
 
     /**
@@ -60,6 +60,6 @@ public class ItemController {
             @Parameter(description = "한 페이지당 아이템 개수") @RequestParam(defaultValue = "15") int size
     ) {
         ItemListResponse response = itemService.getDessertItems(page, size);
-        return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.ITEM_LIST_RETRIEVED, response));
+        return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DESSERT_LIST_RETRIEVED, response));
     }
 }
