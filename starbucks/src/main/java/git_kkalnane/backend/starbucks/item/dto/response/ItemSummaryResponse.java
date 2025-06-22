@@ -1,9 +1,6 @@
 package git_kkalnane.backend.starbucks.item.dto.response;
 
-import git_kkalnane.backend.starbucks.item.domain.BeverageItem;
-import git_kkalnane.backend.starbucks.item.domain.DessertItem;
-import git_kkalnane.backend.starbucks.item.domain.ItemStatus;
-import git_kkalnane.backend.starbucks.item.domain.ItemType;
+import git_kkalnane.backend.starbucks.item.domain.*;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,15 +15,18 @@ import lombok.Getter;
 @Builder
 public class ItemSummaryResponse {
 
-    private Long id;
-    private String nameKo;
-    private String nameEn;
-    private int price;
-    private String hotImageUrl;
-    private String iceImageUrl;
-    private String dessertImageUrl;
-    private ItemStatus status;
-    private ItemType type;
+    private final Long id;
+    private final String nameKo;
+    private final String nameEn;
+    private final int price;
+    private final String hotImageUrl;
+    private final String iceImageUrl;
+    private final String dessertImageUrl;
+    private final ItemStatus status;
+    private final ItemType type;
+    private final BeverageSizeOption sizeOption;
+    private final BeverageTemperatureOption temperatureOption;
+    private final BeverageShotOption shotOption;
 
     /**
      * {@link BeverageItem} 엔티티로부터 {@link ItemSummaryResponse} DTO를 생성하는 팩토리 메서드입니다.
@@ -44,6 +44,9 @@ public class ItemSummaryResponse {
                 .iceImageUrl(beverageItem.getIceImageUrl())
                 .status(beverageItem.getStatus())
                 .type(beverageItem.getCategory())
+                .sizeOption(beverageItem.getSizeOption())
+                .temperatureOption(beverageItem.getTemperatureOption())
+                .shotOption(beverageItem.getShotOption())
                 .build();
     }
 
@@ -62,6 +65,9 @@ public class ItemSummaryResponse {
                 .dessertImageUrl(dessertItem.getImageUrl())
                 .status(dessertItem.getStatus())
                 .type(ItemType.DESSERT)
+                .sizeOption(null)
+                .temperatureOption(null)
+                .shotOption(null)
                 .build();
     }
 
