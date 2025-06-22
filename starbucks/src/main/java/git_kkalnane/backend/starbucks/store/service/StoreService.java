@@ -9,10 +9,7 @@ import git_kkalnane.backend.starbucks.store.dto.response.StoreSummaryResponse;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +45,7 @@ public class StoreService {
     /**
      * 페이징 처리된 전체 지점 목록을 조회합니다.
      */
-    public StoreListResponse getStoreList(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
+    public StoreListResponse getStoreList(Pageable pageable) {
         Page<Store> storePage = storeRepository.findAll(pageable);
         List<StoreSummaryResponse> storeSummaries = storePage.getContent().stream()
                 .map(StoreSummaryResponse::from)

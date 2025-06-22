@@ -6,11 +6,13 @@ import git_kkalnane.backend.starbucks.store.dto.response.StoreDetailsResponse;
 import git_kkalnane.backend.starbucks.store.dto.response.StoreListResponse;
 import git_kkalnane.backend.starbucks.store.service.StoreService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,9 +57,9 @@ public class StoreController {
 
     /**
      * 페이징 처리된 전체 지점 목록을 조회합니다.
+     * 클라이언트에서 page, size, sort 파라미터를 통해 페이징 및 정렬을 제어할 수 있습니다.
      *
-     * @param page 조회할 페이지 번호 (0부터 시작)
-     * @param size 한 페이지당 지점 개수
+     * @param pageable 페이징 및 정렬 정보를 담은 객체
      * @return 페이징된 지점 목록 정보를 담은 ResponseEntity
      */
     @Operation(summary = "전체 지점 목록 조회", description = "페이징 처리된 전체 지점 목록을 조회합니다.")
@@ -68,13 +70,10 @@ public class StoreController {
     })
     @GetMapping
     public ResponseEntity<SuccessResponse<StoreListResponse>>getStoreList(
-            @Parameter(description = "조회할 페이지 번호 (0부터 시작)")
-            @RequestParam(defaultValue = "0") int page,
-
-            @Parameter(description = "한 페이지당 지점 개수")
-            @RequestParam(defaultValue = "15") int size
+           @PageableDefault(size = 15, sort = "name", direction = Sort.Direction.ASC)
+    Pageable pageable
     ) {
-        StoreListResponse response = storeService.getStoreList(page, size);
+        StoreListResponse response = storeService.getStoreList(pageable);
         return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.STORE_LIST_RETRIEVED, response));
     }
 
