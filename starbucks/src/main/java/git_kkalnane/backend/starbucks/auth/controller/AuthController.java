@@ -31,6 +31,11 @@ public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * HTTP Request Body에 전송된 정보를 이용해 로그인 요청을 처리하는 컨트롤러 메서드이다.
+     * @param request - LoginRequest 객체
+     * @return - accessToken과 사용자 정보를 담고있는 LoginResponse를 담고 있는 ResponseEntity 객체
+     */
     @Operation(
             summary = "로그인",
             description = "로그인 시 사용하는 API"

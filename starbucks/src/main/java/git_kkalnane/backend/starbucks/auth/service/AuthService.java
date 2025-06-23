@@ -5,7 +5,6 @@ import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
-import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
@@ -29,6 +28,12 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final Encryptor encryptor;
 
+    /**
+     * LoginRequest를 바탕으로 토큰을 발행한 뒤 토큰과 사용자 정보를 반환하는 메서드
+     *
+     * @param request SignUpRequest 객체
+     * @return 멤버의 이름을 담은 SignUpResponse 객체
+     */
     public LoginDto login(LoginRequest request) {
 
         // 로그인 요청에 포함된 이메일을 가진 멤버가 존재하는지 조회
@@ -47,9 +52,9 @@ public class AuthService {
         return LoginDto.of(token, userInfo);
     }
 
-    public AccessToken verifyToken(String accessToken) {
-        String memberId = jwtTokenProvider.getMemberId(accessToken);
-
-        return accessTokenRepository.findByMemberId(Long.parseLong(memberId));
-    }
+//    public AccessToken verifyToken(String accessToken) {
+//        String memberId = jwtTokenProvider.getMemberId(accessToken);
+//
+//        return accessTokenRepository.findByMemberId(Long.parseLong(memberId));
+//    }
 }
