@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.notification.common.success;
 
-import git_kkalnane.backend.starbucks.global.success.SuccessCode;
+import git_kkalnane.backend.starbucks._global.success.SuccessCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

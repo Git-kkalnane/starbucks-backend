@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.notification.controller;
 
 
-import git_kkalnane.backend.starbucks.global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.notification.common.success.NotificationSuccessCode;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
 import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
