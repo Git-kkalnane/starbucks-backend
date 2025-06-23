@@ -11,10 +11,10 @@ public class JwtTokenConfig {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.access-token-validity-in-seconds}")
+    @Value("${jwt.access-token-validity-in-milli-seconds}")
     private Long accessTokenExpired;
 
-    @Value("${jwt.refresh-token-validity-in-seconds}")
+    @Value("${jwt.refresh-token-validity-in-milli-seconds}")
     private Long refreshTokenExpired;
 
     @Bean
