@@ -229,7 +229,7 @@ class JwtTokenProviderTest {
 
         @Test
         @DisplayName("생성된 토큰이 서로 다른지 확인한다")
-        void createJwtToken_TokensAreDifferent() throws InterruptedException {
+        void createJwtToken_TokensAreDifferent() {
             // given
             when(accessTokenRepository.save(any(AccessToken.class))).thenReturn(
                     AccessToken.builder().memberId(MEMBER_ID).token("test").expiration(new Date()).build());
