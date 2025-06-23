@@ -55,9 +55,9 @@ public class NotificationController {
             responseCode = "200",
             description = "알림 구독 목록 조회 완료"
     )
-    public ResponseEntity<SuccessResponse<?>> fetchSubscribeList(@RequestParam Long receiverId) {
+    public ResponseEntity<SuccessResponse<?>> fetchSubscribeList(@RequestAttribute Long memberId) {
         return ResponseEntity.ok(SuccessResponse.of(
                 NotificationSuccessCode.NOTIFICATION_SUBSCRIPTION_RETRIEVED
-                ,notificationService.getEmitters(receiverId, NotificationTargetType.CUSTOMER)));
+                ,notificationService.getEmitters(memberId, NotificationTargetType.CUSTOMER)));
     }
 }
