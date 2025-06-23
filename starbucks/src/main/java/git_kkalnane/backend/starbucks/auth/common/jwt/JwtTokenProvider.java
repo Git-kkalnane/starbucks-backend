@@ -81,11 +81,6 @@ public class JwtTokenProvider {
         return generateToken("refreshToken", memberId, REFRESH_TOKEN_EXPIRED);
     }
 
-    public String createAccessTokenIfValid(String refreshToken) {
-        String memberId = getMemberId(refreshToken);
-        return createAccessToken(Long.parseLong(memberId));
-    }
-
     /**
      * @param type        토큰의 종류 (accessToken, refreshToken)
      * @param memberId    멤버 테이블에 저장된 엔티티의 인덱스
@@ -143,6 +138,11 @@ public class JwtTokenProvider {
                 .token(token)
                 .expiration(expiredAt)
                 .build());
+    }
+
+    public String createAccessTokenIfValid(String refreshToken) {
+        String memberId = getMemberId(refreshToken);
+        return createAccessToken(Long.parseLong(memberId));
     }
 
     /**
