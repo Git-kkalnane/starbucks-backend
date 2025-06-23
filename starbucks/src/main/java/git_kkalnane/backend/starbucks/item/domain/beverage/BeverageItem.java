@@ -6,6 +6,8 @@ import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageShotOpt
 import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageSizeOption;
 import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +18,8 @@ import java.util.List;
 @Entity
 @Table(name = "beverage_items")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BeverageItem extends BaseTimeEntity {
 
     @Id
@@ -34,8 +38,15 @@ public class BeverageItem extends BaseTimeEntity {
     @Column(name = "price", nullable = false)
     private int price;
 
-    @Column(name = "image_url", length = 254)
-    private String image_url;
+    @Column(name = "hot_image_url", length = 254)
+    private String hotImageUrl;
+
+    @Column(name = "ice_image_url", length = 254)
+    private String iceImageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ItemType category;
 
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;
