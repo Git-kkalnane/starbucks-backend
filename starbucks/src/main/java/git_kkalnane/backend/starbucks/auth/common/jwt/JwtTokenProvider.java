@@ -4,7 +4,8 @@ package git_kkalnane.backend.starbucks.auth.common.jwt;
 import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
-import git_kkalnane.backend.starbucks.auth.dto.TokenDto;
+import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
+import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -28,11 +29,9 @@ public class JwtTokenProvider {
 
     public static final String ACCESS_PREFIX_STRING = "Bearer ";
     public static final String ACCESS_HEADER_STRING = "Authorization";
-
-    private SecretKey signingKey;
     private final AccessTokenRepository accessTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private SecretKey signingKey;
     @Value("${jwt.access-token-validity-in-milli-seconds}")
     private long ACCESS_TOKEN_EXPIRED;
     @Value("${jwt.refresh-token-validity-in-milli-seconds}")
@@ -68,7 +67,7 @@ public class JwtTokenProvider {
      * @param memberId 멤버 테이블에 저장된 엔티티의 인덱스
      * @return String 타입의 accessToken
      */
-    public String createAccessToken(Long memberId) {
+    private String createAccessToken(Long memberId) {
         return generateToken("accessToken", memberId, ACCESS_TOKEN_EXPIRED);
     }
 
@@ -114,7 +113,7 @@ public class JwtTokenProvider {
         }
 
         // 토큰을 리파지토리에 저장
-        saveTokenToRepository(type, new TokenDto(memberId, token, expiredAt));
+        saveTokenToRepository(type, memberId, token, expiredAt);
 
         return token;
     }
@@ -122,17 +121,27 @@ public class JwtTokenProvider {
     /**
      * 생성된 토큰을 리파지토리에 저장하는 메서드
      *
-     * @param type     토큰의 종류 (accessToken, refreshToken)
-     * @param tokenDto 토큰에 대한 정보를 담기 위한 DTO
+     * @param type      토큰의 종류 (accessToken, refreshToken)
+     * @param memberId  사용자 ID (식별자)
+     * @param token     생성된 토큰
+     * @param expiredAt 토큰 만료시점
      */
-    private void saveTokenToRepository(String type, TokenDto tokenDto) {
+    private void saveTokenToRepository(String type, Long memberId, String token, Date expiredAt) {
         if (Objects.equals(type, "accessToken")) {
-            accessTokenRepository.removeAccessTokenByMemberId(tokenDto.memberId());
-            accessTokenRepository.save(tokenDto.mapToAccessToken());
+            accessTokenRepository.removeAccessTokenByMemberId(memberId);
+            accessTokenRepository.save(AccessToken.builder()
+                    .memberId(memberId)
+                    .token(token)
+                    .expiration(expiredAt)
+                    .build());
         }
 
-        refreshTokenRepository.removeRefreshTokenByMemberId(tokenDto.memberId());
-        refreshTokenRepository.save(tokenDto.mapToRefreshToken());
+        refreshTokenRepository.removeRefreshTokenByMemberId(memberId);
+        refreshTokenRepository.save(RefreshToken.builder()
+                .memberId(memberId)
+                .token(token)
+                .expiration(expiredAt)
+                .build());
     }
 
     /**
