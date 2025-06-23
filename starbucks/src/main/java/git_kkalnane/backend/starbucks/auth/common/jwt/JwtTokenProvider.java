@@ -134,6 +134,7 @@ public class JwtTokenProvider {
                     .token(token)
                     .expiration(expiredAt)
                     .build());
+            return;
         }
 
         refreshTokenRepository.removeRefreshTokenByMemberId(memberId);
