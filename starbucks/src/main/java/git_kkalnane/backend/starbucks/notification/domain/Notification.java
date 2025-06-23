@@ -53,9 +53,8 @@ public class Notification extends BaseTimeEntity {
     private NotificationType notificationType;
 
 
-    public NotificationResponse toDto(String emitterId) {
+    public NotificationResponse toDto() {
         return NotificationResponse.builder()
-                .emitterId(emitterId)
                 .eventId(event.value())
                 .message(message)
                 .title(title)
