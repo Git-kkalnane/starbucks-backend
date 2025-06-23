@@ -151,7 +151,7 @@ public class JwtTokenProvider {
      * @param token String 타입의 토큰
      * @return memberId - 회원 테이블에 저장된 엔티티의 인덱스
      */
-    public String getMemberId(String token) {
+    private String getMemberId(String token) {
         try {
             Jws<Claims> claims = Jwts.parser()
                     .verifyWith(signingKey)
