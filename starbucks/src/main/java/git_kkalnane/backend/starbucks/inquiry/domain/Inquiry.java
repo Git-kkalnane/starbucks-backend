@@ -43,8 +43,7 @@ public class Inquiry extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_id")
-    private Merchant merchant;          // merchant 테이블에서 import
-
+    private Merchant merchant;
 }
 
 

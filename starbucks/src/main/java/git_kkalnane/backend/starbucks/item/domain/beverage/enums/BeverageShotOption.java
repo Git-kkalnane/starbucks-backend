@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.item.domain;
+package git_kkalnane.backend.starbucks.item.domain.beverage.enums;
 
 public enum BeverageShotOption {
     NO_SHOT(0),

@@ -1,6 +1,10 @@
-package git_kkalnane.backend.starbucks.item.domain;
+package git_kkalnane.backend.starbucks.item.domain.beverage;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks.item.domain.ItemStatus;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageShotOption;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageSizeOption;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

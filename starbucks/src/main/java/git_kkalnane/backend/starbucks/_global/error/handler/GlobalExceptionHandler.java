@@ -4,15 +4,28 @@ import git_kkalnane.backend.starbucks._global.error.core.BaseException;
 import git_kkalnane.backend.starbucks._global.error.core.ErrorCode;
 import git_kkalnane.backend.starbucks._global.error.core.ErrorResponse;
 import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
+import git_kkalnane.backend.starbucks.store.common.exception.StoreErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        ErrorCode errorCode;
+        if ("storeId".equals(e.getName()) && Long.class.equals(e.getRequiredType())) {
+            errorCode = StoreErrorCode.INVALID_STORE_ID_FORMAT;
+        } else {
+            errorCode = GlobalErrorCode.INVALID_PATH_VARIABLE_FORMAT;
+        }
+        return getErrorResponse(e, errorCode);
+    }
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
