@@ -68,6 +68,10 @@ public class NotificationService {
                         NotificationSender.of(senderId),
                         notificationType, notificationTargetType);
 
+
+        // TODO : 스프링 이벤트 분리를 통해 비동기 작업으로 처리
+        notificationRepository.save(notification);
+
         Map<String, SseEmitter> emitters = emitterRepository
                 .findAllEmitterStartWithByReceiverIdAndNotificationTargetType(
                         receiverId,
@@ -82,10 +86,6 @@ public class NotificationService {
                     send(emitter, event, key, responseDto);
                 }
         );
-
-
-        // TODO : 스프링 이벤트 분리를 통해 비동기 작업으로 처리
-        notificationRepository.save(notification);
     }
 
     @Transactional
