@@ -49,7 +49,5 @@ public class BeverageItem extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BeverageTemperatureOption temperatureOption;
 
-    @OneToMany(mappedBy = "beverageItem", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BeverageItemSyrup> beverageItemSyrup = new ArrayList<>();
 
 }

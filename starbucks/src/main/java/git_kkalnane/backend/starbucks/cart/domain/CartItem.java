@@ -2,15 +2,19 @@ package git_kkalnane.backend.starbucks.cart.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
+import git_kkalnane.backend.starbucks.item.domain.beverage.CartItemOption;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @Table(name = "cart_items")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItem extends BaseTimeEntity {
 
@@ -32,6 +36,18 @@ public class CartItem extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dessert_item_id")
     private DessertItem dessertItem;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItemOption> cartItemOption = new ArrayList<>();
+
+    public void setCartItemOption(List<CartItemOption> options) {
+        this.cartItemOption.clear();
+        for (CartItemOption option : options) {
+            this.cartItemOption.add(option);
+            option.setCartItem(this);
+        }
+    }
 
 
 }

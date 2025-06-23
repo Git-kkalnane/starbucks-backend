@@ -23,7 +23,7 @@ public class Order extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "order_number", nullable = false)
-    private Long orderNumber;
+    private String orderNumber;
 
     @Column(name = "order_total_price", nullable = false)
     private Long orderTotalPrice;

@@ -1,11 +1,9 @@
 package git_kkalnane.backend.starbucks.item.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
-import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItemSyrup;
+import git_kkalnane.backend.starbucks.item.domain.beverage.CartItemOption;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +11,8 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "item_options")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemOption extends BaseTimeEntity {
 
@@ -36,6 +36,6 @@ public class ItemOption extends BaseTimeEntity {
     private int quantity = 1;
 
     @OneToMany(mappedBy = "itemOption", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BeverageItemSyrup> beverageItemSyrup = new ArrayList<>();
+    private List<CartItemOption> cartItemOption = new ArrayList<>();
 
 }
