@@ -9,17 +9,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum NotificationType {
 
-    SUBSCRIBE("알림 구독"),
-    ORDER_ACCEPTED("주문 접수가 완료 되었습니다. 주문번호 %s"),
-    ORDER_REJECTED("주문이 거절 되었습니다. 사유 : %s"),
-    ORDER_SET("주문번호 : %s 준비 완료되었습니다."),
-
+    SUBSCRIBE("알림 구독", "알림 구독이 완료되었습니다."),
+    ORDER_ACCEPTED("주문 접수 완료","%s님의 주문을 %s번째 메뉴로 준비 중입니다. (%s)"),
+    ORDER_SET("메뉴 준비 완료","메뉴가 모두 준비되었어요. (%s) 픽업대에서 메뉴를 픽업해주세요!"),
+    ORDER_CREATED("주문 발생", "새로운 주문이 발생했습니다."),
     ;
 
-    private final String description;
+    private final String title;
+    private final String message;
 
-    public String getDescription(Object ... args) {
-        return description.formatted(args);
+    public String getTitle(Object ... args) {
+        return title.formatted(args);
+    }
+    public String getMessage(Object ... args) {
+        return message.formatted(args);
     }
 
     public static NotificationType findByName(String givenName){
