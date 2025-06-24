@@ -10,6 +10,7 @@ import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
 import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
+import git_kkalnane.backend.starbucks.notification.dto.response.NotificationItemResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationsResponse;
 import git_kkalnane.backend.starbucks.notification.repository.EmitterRepository;
@@ -72,8 +73,44 @@ public class NotificationService {
                 .totalPages(notifications.getTotalPages()).build();
     }
 
+    // TODO: 매장에 전달하는 알림은 데이터 전송 용도로 활용할 것
     @Transactional
-    public void sendNotification(String title, String message,
+    public <T> Notification sendNotification(T item, String title, String message,
+                                     Long senderId, Long receiverId,
+                                     NotificationType notificationType,
+                                     NotificationTargetType notificationTargetType) {
+        NotificationEvent event =
+                NotificationEvent.of(receiverId, notificationTargetType, notificationType);
+
+        Notification notification =
+                createNotification(message, title, event,
+                        NotificationReceiver.of(receiverId),
+                        NotificationSender.of(senderId),
+                        notificationType, notificationTargetType);
+
+        // TODO : 스프링 이벤트 분리를 통해 비동기 작업으로 처리
+        notificationRepository.save(notification);
+
+        Map<String, SseEmitter> emitters = emitterRepository
+                .findAllEmitterStartWithByReceiverIdAndNotificationTargetType(
+                        receiverId,
+                        notificationTargetType);
+
+        // TODO: 트랜잭션 실패로 인한 롤백 처리 등의 안정성 고려하기
+        emitters.forEach(
+                (key, emitter) -> {
+                    NotificationItemResponse<T> responseDto = notification.toDto(item);
+
+                    emitterRepository.saveEventCache(key, notification);
+                    send(emitter, event, key, responseDto);
+                }
+        );
+
+        return notification;
+    }
+
+    @Transactional
+    public Notification sendNotification(String title, String message,
                                  Long senderId, Long receiverId,
                                  NotificationType notificationType,
                                  NotificationTargetType notificationTargetType) {
@@ -104,16 +141,18 @@ public class NotificationService {
                     send(emitter, event, key, responseDto);
                 }
         );
+
+        return notification;
     }
 
     @Transactional
-    public void sendNotification(NotificationSendRequest requestDto) {
+    public Notification sendNotification(NotificationSendRequest requestDto) {
         NotificationType notificationType =
                 NotificationType.findByName(requestDto.getNotificationType());
         NotificationTargetType notificationTargetType =
                 NotificationTargetType.findByName(requestDto.getNotificationTargetType());
 
-        sendNotification(
+        return sendNotification(
                 requestDto.getTitle(),
                 requestDto.getMessage(),
                 requestDto.getSenderId(),
