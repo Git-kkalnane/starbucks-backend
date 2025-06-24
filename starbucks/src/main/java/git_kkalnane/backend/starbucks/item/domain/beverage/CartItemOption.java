@@ -8,7 +8,7 @@ import lombok.*;
 
 @Getter
 @Entity
-@Table(name = "beverage_item_syrup")
+@Table(name = "cart_item_options")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,11 +19,11 @@ public class CartItemOption extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_option")
+    @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_item")
+    @JoinColumn(name = "cart_item_id")
     private CartItem cartItem;
 
     public void setCartItem(CartItem cartItem) {

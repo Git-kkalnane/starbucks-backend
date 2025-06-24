@@ -10,6 +10,8 @@ import git_kkalnane.backend.starbucks.cart.dto.request.ItemsRequest;
 import git_kkalnane.backend.starbucks.cart.dto.response.CartAddItemResponse;
 import git_kkalnane.backend.starbucks.cart.repository.CartItemRepository;
 import git_kkalnane.backend.starbucks.cart.repository.CartRepository;
+import git_kkalnane.backend.starbucks.item.common.exception.ItemErrorCode;
+import git_kkalnane.backend.starbucks.item.common.exception.ItemException;
 import git_kkalnane.backend.starbucks.item.domain.ItemOption;
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
@@ -40,7 +42,7 @@ public class CartService {
 
 
     @Transactional
-    public CartAddItemResponse AddItem(CartAddItemRequest cartAddItemRequest, Long memberId) {
+    public CartAddItemResponse addItem(CartAddItemRequest cartAddItemRequest, Long memberId) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 사용자입니다."));
@@ -67,7 +69,7 @@ public class CartService {
     private CartItemOption addCartItemOption(CartItemOptionRequest cartItemOptionRequest) {
         if(cartItemOptionRequest.itemType() ==ItemType.DRINK) {
             ItemOption itemOption = itemOptionRepository.findById(cartItemOptionRequest.itemOptionId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 옵션입니다."));
+                    .orElseThrow(() -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
             return CartItemOption.builder()
                     .itemOption(itemOption)
                     .build();
@@ -76,7 +78,7 @@ public class CartService {
                    .build();
 
         } else {
-            throw new IllegalArgumentException("메뉴 타입이 잘못됐습니다.");
+            throw new ItemException(ItemErrorCode.MENU_NOT_FOUND);
         }
     }
 
@@ -89,7 +91,7 @@ public class CartService {
         switch (itemsRequest.itemType()) {
             case DRINK:
                 BeverageItem beverageItem = beverageItemRepository.findById(itemsRequest.itemId()).orElseThrow(
-                        () -> new IllegalArgumentException("존재하지 않는 음료입니다."));
+                        () -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
                 cartItem = CartItem.builder()
                         .cartItemQuantity(itemsRequest.quantity())
                         .cart(cart)
@@ -98,7 +100,7 @@ public class CartService {
                 break;
                 case DESSERT:
                     DessertItem dessertItem = dessertItemRepository.findById(itemsRequest.itemId()).orElseThrow(
-                            ()-> new IllegalArgumentException("존재하지 않는 디저트입니다."));
+                            ()-> new ItemException(ItemErrorCode.DESSERT_NOT_FOUND));
                     cartItem = CartItem.builder()
                             .cartItemQuantity(itemsRequest.quantity())
                             .cart(cart)
@@ -106,7 +108,7 @@ public class CartService {
                             .build();
                     break;
                     default:
-                        throw new IllegalArgumentException("잘못된 메뉴입니다.");
+                        throw new ItemException(ItemErrorCode.MENU_NOT_FOUND);
         }
 
         cartItemOptions.forEach(option -> option.setCartItem(cartItem));

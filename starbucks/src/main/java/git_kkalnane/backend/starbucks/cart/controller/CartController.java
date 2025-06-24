@@ -41,7 +41,7 @@ public class CartController {
 
         Long memberId = 1L;
 
-        cartService.AddItem(cartAddItemRequest, memberId);
+        cartService.addItem(cartAddItemRequest, memberId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
