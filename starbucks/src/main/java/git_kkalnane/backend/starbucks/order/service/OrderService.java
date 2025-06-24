@@ -14,7 +14,6 @@ import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
-import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
@@ -30,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderService {
 
 
@@ -39,7 +39,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final BeverageItemRepository beverageItemRepository;
     private final DessertItemRepository dessertItemRepository;
-    private final OrderItemRepository orderItemRepository;
 
     /**
      * 주문생성 로직
@@ -79,15 +78,12 @@ public class OrderService {
             order.addOrderItem(item);
         }
 
-        orderRepository.save(order);
-        orderItemRepository.saveAll(orderItems);
-
-
+        Order savedOrder = orderRepository.save(order);
 
         return new CreateResponse(
                 200,
                 "주문이 성공적으로 생성되었습니다.",
-                order.getId()
+                savedOrder.getId()
         );
     }
 
@@ -99,14 +95,16 @@ public class OrderService {
      */
 
     private OrderItem validateAndCreateOrderItems(OrderItemRequest request) {
+        int orderQuantity = request.quantity();
+
         if (request.itemType() == ItemType.DRINK) {
             BeverageItem item = beverageItemRepository.findById(request.itemId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
 
             return OrderItem.builder()
                     .itemName(item.getBeverageItemNameKo())
-                    .unitPrice(request.itemPrice())
-                    .orderItemQuantity(1)
+                    .unitPrice(item.getPrice())
+                    .orderItemQuantity(orderQuantity)
                     .beverageItem(item)
                     .build();
 
@@ -116,8 +114,8 @@ public class OrderService {
 
             return OrderItem.builder()
                     .itemName(item.getDessertItemNameKo())
-                    .unitPrice(request.itemPrice())
-                    .orderItemQuantity(1)
+                    .unitPrice(item.getPrice())
+                    .orderItemQuantity(orderQuantity)
                     .dessertItem(item)
                     .build();
         }

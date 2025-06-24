@@ -5,6 +5,7 @@ import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
+import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,10 +39,10 @@ public class OrderController {
     public ResponseEntity<SuccessResponse> createOrder(@Valid @RequestBody CreateRequest request) {
 
         Long memberId = 1L;
-        orderService.createOrder(request, memberId);
+        CreateResponse createResponse = orderService.createOrder(request, memberId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(OrderSuccessCode.ORDER_SUCCESS_CREATED, request));
+                .body(SuccessResponse.of(OrderSuccessCode.ORDER_SUCCESS_CREATED, createResponse));
     }
 
 }

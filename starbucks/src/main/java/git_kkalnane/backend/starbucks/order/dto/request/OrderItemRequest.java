@@ -23,7 +23,8 @@ public record OrderItemRequest(
         BeverageTemperatureOption beverageTemperatureOption,
         List<ItemOptionRequest> options,
         int itemPrice,
-        int totalPrice
+        int totalPrice,
+        int quantity
         ) {
 
 }
