@@ -34,6 +34,13 @@ public class NotificationService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
+    /**
+     * SSE 연결을 구독하는 메서드
+     *
+     * @param receiverId                    수신자 ID
+     * @param notificationTargetTypeName    알림 대상 타입 이름 (CUSTOMER, MERCHANT 등)
+     * @return 생성된 SSE Emitter
+     */
     public SseEmitter subscribe(Long receiverId, String notificationTargetTypeName) {
         // emitterId 생성
         NotificationTargetType notificationTargetType =
@@ -58,6 +65,13 @@ public class NotificationService {
         return emitter;
     }
 
+    /**
+     * 회원 ID로 알림 목록을 페이징하여 조회하는 메서드
+     *
+     * @param memberId  조회할 회원 ID
+     * @param pageable  페이징 정보
+     * @return 알림 목록과 페이징 정보를 포함한 응답
+     */
     public NotificationsResponse fetchNotificationsByMemberId(Long memberId, Pageable pageable){
         Page<Notification> notifications = notificationRepository.findAllByReceiverId(memberId, pageable);
 
@@ -73,6 +87,19 @@ public class NotificationService {
                 .totalPages(notifications.getTotalPages()).build();
     }
 
+    /**
+     * 아이템과 함께 알림을 전송하는 메서드 (매장용)
+     *
+     * @param item                        전송할 아이템 데이터
+     * @param title                       알림 제목
+     * @param message                     알림 메시지
+     * @param senderId                    발신자 ID
+     * @param receiverId                  수신자 ID
+     * @param notificationType            알림 타입
+     * @param notificationTargetType      알림 대상 타입
+     * @param <T>                        아이템 타입
+     * @return 생성된 알림 엔티티
+     */
     // TODO: 매장에 전달하는 알림은 데이터 전송 용도로 활용할 것
     @Transactional
     public <T> Notification sendNotification(T item, String title, String message,
@@ -109,6 +136,17 @@ public class NotificationService {
         return notification;
     }
 
+    /**
+     * 기본 알림을 전송하는 메서드
+     *
+     * @param title                       알림 제목
+     * @param message                     알림 메시지
+     * @param senderId                    발신자 ID
+     * @param receiverId                  수신자 ID
+     * @param notificationType            알림 타입
+     * @param notificationTargetType      알림 대상 타입
+     * @return 생성된 알림 엔티티
+     */
     @Transactional
     public Notification sendNotification(String title, String message,
                                  Long senderId, Long receiverId,
@@ -145,6 +183,12 @@ public class NotificationService {
         return notification;
     }
 
+    /**
+     * NotificationSendRequest를 통해 알림을 전송하는 메서드
+     *
+     * @param requestDto 알림 전송 요청 DTO
+     * @return 생성된 알림 엔티티
+     */
     @Transactional
     public Notification sendNotification(NotificationSendRequest requestDto) {
         NotificationType notificationType =
@@ -162,6 +206,14 @@ public class NotificationService {
         );
     }
 
+    /**
+     * SSE Emitter를 통해 이벤트를 전송하는 메서드
+     *
+     * @param emitter    전송할 SSE Emitter
+     * @param event      전송할 이벤트
+     * @param emitterId  Emitter ID
+     * @param data       전송할 데이터
+     */
     private void send(SseEmitter emitter, NotificationEvent event, String emitterId, Object data) {
         try {
             emitter.send(SseEmitter.event()
@@ -174,6 +226,13 @@ public class NotificationService {
         }
     }
 
+    /**
+     * 특정 수신자와 알림 대상 타입에 해당하는 모든 Emitter를 조회하는 메서드
+     *
+     * @param receiverId               수신자 ID
+     * @param notificationTargetType   알림 대상 타입
+     * @return Emitter ID와 Emitter의 맵
+     */
     public Map<String, SseEmitter> getEmitters(Long receiverId,
                                                NotificationTargetType notificationTargetType) {
         return emitterRepository.findAllEmitterStartWithByReceiverIdAndNotificationTargetType(
@@ -181,6 +240,18 @@ public class NotificationService {
                 notificationTargetType);
     }
 
+    /**
+     * 알림 엔티티를 생성하는 메서드
+     *
+     * @param message                   알림 메시지
+     * @param title                     알림 제목
+     * @param event                     알림 이벤트
+     * @param receiver                  수신자 정보
+     * @param sender                    발신자 정보
+     * @param notificationType          알림 타입
+     * @param notificationTargetType    알림 대상 타입
+     * @return 생성된 알림 엔티티
+     */
     private Notification createNotification(
                                             String message, String title,
                                             NotificationEvent event,
