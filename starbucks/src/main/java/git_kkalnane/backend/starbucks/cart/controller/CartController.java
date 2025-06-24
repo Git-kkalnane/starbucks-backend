@@ -5,7 +5,7 @@ import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.cart.common.success.CartSuccessCode;
 import git_kkalnane.backend.starbucks.cart.dto.request.AddCartItemRequest;
 import git_kkalnane.backend.starbucks.cart.dto.request.ModifyCartItemRequest;
-import git_kkalnane.backend.starbucks.cart.dto.response.ModifiedCartItemResponse;
+import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemResponse;
 import git_kkalnane.backend.starbucks.cart.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,10 +55,10 @@ public class CartController {
     public ResponseEntity<SuccessResponse> updateItem(@RequestBody ModifyCartItemRequest modifyCartItemRequest) {
         Long memberId = 1L;
 
-        ModifiedCartItemResponse modifiedCartItemResponse = cartService.modifiyCartItem(modifyCartItemRequest, memberId);
+        ModifyCartItemResponse modifyCartItemResponse = cartService.modifiyCartItem(modifyCartItemRequest, memberId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(SuccessResponse.of(CartSuccessCode.CART_SUCCESS_MODIFIED, modifiedCartItemResponse));
+                .body(SuccessResponse.of(CartSuccessCode.CART_SUCCESS_MODIFIED, modifyCartItemResponse));
     }
 }

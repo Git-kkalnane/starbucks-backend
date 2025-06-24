@@ -4,7 +4,7 @@ import java.util.List;
 
 public record AddCartItemRequest(
         Long id,
-        List<ItemsRequest> items,
+        List<AddItemsRequest> items,
         int totalPrice
 ) {
 }

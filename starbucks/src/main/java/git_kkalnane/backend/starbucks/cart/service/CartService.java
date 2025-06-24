@@ -8,7 +8,7 @@ import git_kkalnane.backend.starbucks.cart.dto.request.*;
 import git_kkalnane.backend.starbucks.cart.dto.response.AddCartItemResponse;
 import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemsResponse;
 import git_kkalnane.backend.starbucks.cart.dto.response.AddCartItemsResponse;
-import git_kkalnane.backend.starbucks.cart.dto.response.ModifiedCartItemResponse;
+import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemResponse;
 import git_kkalnane.backend.starbucks.cart.repository.CartItemRepository;
 import git_kkalnane.backend.starbucks.cart.repository.CartRepository;
 import git_kkalnane.backend.starbucks.item.common.exception.ItemErrorCode;
@@ -100,17 +100,17 @@ public class CartService {
 
 
     /**
-     * @param cartItemOptionRequest : 카트에 담는 아이템 옵션 DTO
+     * @param addCartItemOptionRequest : 카트에 담는 아이템 옵션 DTO
      * @return : cartItemOption 반환
      */
-    private CartItemOption addCartItemOption(CartItemOptionRequest cartItemOptionRequest) {
-        if (cartItemOptionRequest.itemType() == ItemType.DRINK) {
-            ItemOption itemOption = itemOptionRepository.findById(cartItemOptionRequest.itemOptionId())
+    private CartItemOption addCartItemOption(AddCartItemOptionRequest addCartItemOptionRequest) {
+        if (addCartItemOptionRequest.itemType() == ItemType.DRINK) {
+            ItemOption itemOption = itemOptionRepository.findById(addCartItemOptionRequest.itemOptionId())
                     .orElseThrow(() -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
             return CartItemOption.builder()
                     .itemOption(itemOption)
                     .build();
-        } else if (cartItemOptionRequest.itemType() == ItemType.DESSERT) {
+        } else if (addCartItemOptionRequest.itemType() == ItemType.DESSERT) {
             return CartItemOption.builder()
                     .build();
 
@@ -120,31 +120,31 @@ public class CartService {
     }
 
     /**
-     * @param itemsRequest : 여러가지 아이템 받을 수 있게 ItemListDTO
+     * @param addItemsRequest : 여러가지 아이템 받을 수 있게 ItemListDTO
      * @param cart         : 어떤 카트에 담는지 알아야하기에 cart 함께 받음
      * @return : cartItem 반환
      */
-    private CartItem addCartItem(ItemsRequest itemsRequest, Cart cart) {
-        List<CartItemOption> cartItemOptions = itemsRequest.itemOptions().stream()
+    private CartItem addCartItem(AddItemsRequest addItemsRequest, Cart cart) {
+        List<CartItemOption> cartItemOptions = addItemsRequest.itemOptions().stream()
                 .map(this::addCartItemOption)
                 .collect(Collectors.toList());
 
         CartItem cartItem;
-        switch (itemsRequest.itemType()) {
+        switch (addItemsRequest.itemType()) {
             case DRINK:
-                BeverageItem beverageItem = beverageItemRepository.findById(itemsRequest.itemId()).orElseThrow(
+                BeverageItem beverageItem = beverageItemRepository.findById(addItemsRequest.itemId()).orElseThrow(
                         () -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
                 cartItem = CartItem.builder()
-                        .cartItemQuantity(itemsRequest.quantity())
+                        .cartItemQuantity(addItemsRequest.quantity())
                         .cart(cart)
                         .beverageItem(beverageItem)
                         .build();
                 break;
             case DESSERT:
-                DessertItem dessertItem = dessertItemRepository.findById(itemsRequest.itemId()).orElseThrow(
+                DessertItem dessertItem = dessertItemRepository.findById(addItemsRequest.itemId()).orElseThrow(
                         () -> new ItemException(ItemErrorCode.DESSERT_NOT_FOUND));
                 cartItem = CartItem.builder()
-                        .cartItemQuantity(itemsRequest.quantity())
+                        .cartItemQuantity(addItemsRequest.quantity())
                         .cart(cart)
                         .dessertItem(dessertItem)
                         .build();
@@ -172,7 +172,7 @@ public class CartService {
      * @return : ResponseDTO
      */
     @Transactional
-    public ModifiedCartItemResponse modifiyCartItem(ModifyCartItemRequest modifyCartItemRequest, Long memberId) {
+    public ModifyCartItemResponse modifiyCartItem(ModifyCartItemRequest modifyCartItemRequest, Long memberId) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -182,7 +182,7 @@ public class CartService {
 
         List<ModifyCartItemsResponse> updatedCartItems = new ArrayList<>();
 
-        for (CartItemsRequest cartItems : modifyCartItemRequest.cartItems()) {
+        for (ModifyCartItemsRequest cartItems : modifyCartItemRequest.cartItems()) {
             CartItem cartItem = cartItemRepository.findById(cartItems.cartItemId()).orElseThrow(
                     () -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
 
@@ -208,7 +208,7 @@ public class CartService {
                 .mapToInt(ModifyCartItemsResponse::totalPrice)
                 .sum();
 
-        return new ModifiedCartItemResponse(
+        return new ModifyCartItemResponse(
                 200,
                 "아이템 수량이 성공적으로 수정되었습니다.",
                 updatedCartItems,

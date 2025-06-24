@@ -4,6 +4,6 @@ import java.util.List;
 
 public record ModifyCartItemRequest(
         Long id,
-        List<CartItemsRequest> cartItems
+        List<ModifyCartItemsRequest> cartItems
 ) {
 }
