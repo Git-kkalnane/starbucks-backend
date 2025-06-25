@@ -15,6 +15,8 @@ import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,11 +60,6 @@ public class AuthService {
         return LoginDto.of(tokens, userInfo);
     }
 
-//    public AccessToken verifyToken(String accessToken) {
-//        String memberId = jwtTokenProvider.getMemberId(accessToken);
-//
-//        return accessTokenRepository.findByMemberId(Long.parseLong(memberId));
-//    }
     /**
      * 생성된 accessToken을 accessTokenRepository에 저장하는 메서드
      *
@@ -113,5 +110,27 @@ public class AuthService {
         RefreshToken refreshToken = maybeRefreshToken.get();
         refreshToken.modifyToken(tokenInfo.getToken());
         refreshToken.modifyExpiration(tokenInfo.getExpiration());
+    }
+
+    /**
+     * HTTP 요청의 헤더에 있는 AccessToken의 유효성을 검증하는 메서드이다.
+     *
+     * @param accessToken
+     * @return bearerToken에 포함된 멤버 엔티티 식별자
+     */
+    public Long verifyTokenIncludedInRequest(String accessToken) {
+
+        Long memberId = Long.parseLong(jwtTokenProvider.getMemberId(accessToken));
+
+        // DB에 액세스 토큰이 존재하지 않으면 예외 발생
+        AccessToken accessTokenObj = accessTokenRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_DOESNT_EXIST_IN_DB));
+
+        // DB에 저장된 액세스 토큰값과 HTTP 요청에 포함된 토큰값이 일치하지 않으면 예외 발생
+        if (!Objects.equals(accessTokenObj.getToken(), accessToken)) {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+        }
+
+        return accessTokenObj.getMemberId();
     }
 }
