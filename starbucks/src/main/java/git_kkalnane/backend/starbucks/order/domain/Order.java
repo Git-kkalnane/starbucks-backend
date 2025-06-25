@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class Order extends BaseTimeEntity {
     private String orderRequestMemo;
 
     @Column(name = "order_expected_pickup_time", nullable = false)
-    private Long orderExpectedPickupTime;
+    private LocalDateTime orderExpectedPickupTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")

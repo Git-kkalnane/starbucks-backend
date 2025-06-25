@@ -67,9 +67,10 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "카트 Item 삭제")
     })
     @DeleteMapping
-    public ResponseEntity<SuccessResponse> deleteItem(@RequestParam Long id) {
+    public ResponseEntity<SuccessResponse> deleteItem(@RequestParam Long cartItemId) {
 
         Long memberId = 1L;
+        cartService.deleteCartItem(cartItemId, memberId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
