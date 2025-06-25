@@ -1,6 +1,7 @@
 package git_kkalnane.backend.starbucks.notification.event;
 
 
+import git_kkalnane.backend.starbucks.notification.domain.NotificationType;
 import git_kkalnane.backend.starbucks.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -20,6 +21,22 @@ public class NotificationEventListener {
     @EventListener(OrderNotificationSendEvent.class)
     @Async // 이벤트 발생 -> 알림 전송 로직을 비동기로 실행, TODO: 비동기 설정 시 쓰레드 풀 컨트롤
     public void handle(OrderNotificationSendEvent event) {
+
+        // 멤버에게 주문 접수 알림 전송
+        notificationService.sendNotificationWithOrder(
+                event.getItem(),
+                NotificationType.ORDER_ACCEPTED.getTitle(),
+                NotificationType.ORDER_ACCEPTED.getMessage(
+                        event.getItem().getMemberName(),
+                        String.valueOf(event.getItem().getOrderNumber())
+                ),
+                event.getReceiver().value(),
+                event.getSender().value(),
+                event.getNotificationType(),
+                event.getNotificationTargetType()
+        );
+
+        // 지점에게 주문 발생 알림 전송
         notificationService.sendNotificationWithOrder(
                 event.getItem(),
                 event.getTitle(),
