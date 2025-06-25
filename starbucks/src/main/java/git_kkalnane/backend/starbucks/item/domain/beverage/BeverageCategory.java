@@ -19,6 +19,9 @@ public class BeverageCategory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String categoryName;
+
     @OneToMany(mappedBy = "beverageCategory", cascade = CascadeType.REMOVE)
     private List<BeverageItemCategory> beverageItemCategory = new ArrayList<>();
 }
