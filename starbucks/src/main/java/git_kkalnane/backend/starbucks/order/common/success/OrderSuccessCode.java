@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum OrderSuccessCode implements SuccessCode {
-    ORDER_SUCCESS_CREATED(HttpStatus.CREATED, "주문이 성공적으로 생성되었습니다.");
+    ORDER_SUCCESS_CREATED(HttpStatus.CREATED, "주문이 성공적으로 생성되었습니다."),
+    ORDER_DETAIL_VIEWED(HttpStatus.OK, "주문 상세 정보 조회가 성공했습니다.");
 
     private final HttpStatus status;
     private final String message;
@@ -14,5 +15,15 @@ public enum OrderSuccessCode implements SuccessCode {
     OrderSuccessCode(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
+    }
+
+    @Override
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 }

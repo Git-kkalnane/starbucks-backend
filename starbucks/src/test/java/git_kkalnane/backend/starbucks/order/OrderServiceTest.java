@@ -9,11 +9,14 @@ import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
 import git_kkalnane.backend.starbucks.item.repository.DessertItemRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderErrorCode;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
 import git_kkalnane.backend.starbucks.order.domain.*;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
@@ -25,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,7 +39,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OrderCreateTest {
+class OrderServiceTest {
 
     @Mock private OrderDailyCounterRepository orderDailyCounterRepository;
     @Mock private StoreRepository storeRepository;
@@ -276,5 +278,87 @@ class OrderCreateTest {
 
         verify(memberRepository, times(1)).findById(999L);
         verify(orderRepository, never()).save(any(Order.class));
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회 성공")
+    void getOrderDetail_Success() {
+        // Given
+        Long orderId = 1L; // 조회할 주문 ID
+
+        Order mockOrder = Order.builder()
+                .id(orderId)
+                .orderNumber("A-10")
+                .store(mockStore)
+                .member(mockMember)
+                .orderExpectedPickupTime(LocalDateTime.now().plusMinutes(10))
+                .orderStatus(OrderStatus.PLACED)
+                .pickupType(PickupType.STORE_PICKUP)
+                .orderTotalPrice(15000)
+                .orderRequestMemo("부탁드립니다.")
+                .orderItems(new ArrayList<>())
+                .build();
+
+        OrderItem mockOrderItem1 = OrderItem.builder()
+                .id(10L)
+                .itemName("아이스 아메리카노")
+                .orderItemQuantity(1)
+                .unitPrice(4500)
+                .beverageItem(mockBeverage)
+                .build();
+        mockOrderItem1.setOrder(mockOrder);
+
+        OrderItem mockOrderItem2 = OrderItem.builder()
+                .id(11L)
+                .itemName("치즈케이크")
+                .orderItemQuantity(1)
+                .unitPrice(5500)
+                .dessertItem(mockDessert)
+                .build();
+        mockOrderItem2.setOrder(mockOrder);
+
+        mockOrder.getOrderItems().add(mockOrderItem1);
+        mockOrder.getOrderItems().add(mockOrderItem2);
+
+
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
+
+
+        // When
+        OrderDetailResponse response = orderService.getOrderDetail(orderId);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.orderId()).isEqualTo(orderId);
+        assertThat(response.orderNumber()).isEqualTo("A-10");
+        assertThat(response.storeName()).isEqualTo(mockStore.getName());
+        assertThat(response.memberName()).isEqualTo(mockMember.getName());
+        assertThat(response.orderTotalPrice()).isEqualTo(mockOrder.getOrderTotalPrice());
+        assertThat(response.orderStatus()).isEqualTo(OrderStatus.PLACED);
+        assertThat(response.orderItems()).hasSize(2);
+        assertThat(response.orderItems().get(0).orderItemId()).isEqualTo(mockOrderItem1.getId());
+        assertThat(response.orderItems().get(0).itemName()).isEqualTo(mockOrderItem1.getItemName());
+        assertThat(response.orderItems().get(0).itemType()).isEqualTo(ItemType.DRINK);
+        assertThat(response.orderItems().get(1).orderItemId()).isEqualTo(mockOrderItem2.getId());
+        assertThat(response.orderItems().get(1).itemName()).isEqualTo(mockOrderItem2.getItemName());
+        assertThat(response.orderItems().get(1).itemType()).isEqualTo(ItemType.DESSERT);
+
+        // Repository 호출 검증
+        verify(orderRepository, times(1)).findById(orderId);
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회 실패 - 주문 찾을 수 없음")
+    void getOrderDetail_OrderNotFound_ThrowsException() {
+        // Given
+        Long nonExistentOrderId = 999L;
+        given(orderRepository.findById(nonExistentOrderId)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> orderService.getOrderDetail(nonExistentOrderId))
+                .isInstanceOf(OrderException.class)
+                .hasMessage(OrderErrorCode.ORDER_NOT_FOUND.getMessage());
+
+        verify(orderRepository, times(1)).findById(nonExistentOrderId);
     }
 }

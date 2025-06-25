@@ -7,12 +7,16 @@ import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
 import git_kkalnane.backend.starbucks.item.repository.DessertItemRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderErrorCode;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
+
 import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
@@ -139,5 +143,22 @@ public class OrderService {
 
         return "A - " + counter.getCount();
     }
+
+    /**
+     * 주문 상세 내용을 조회하는 로직.
+     * 특정 주문 ID로 Order 엔티티를 조회하고, OrderDetailResponse DTO로 변환하여 반환합니다.
+     *
+     * @param orderId 조회할 주문의 고유 ID
+     * @return 주문 상세 정보를 담은 OrderDetailResponse DTO
+     * @throws IllegalArgumentException 주어진 orderId로 주문을 찾을 수 없을 경우
+     */
+
+    public OrderDetailResponse getOrderDetail(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        return OrderDetailResponse.from(order);
+    }
+
 
 }
