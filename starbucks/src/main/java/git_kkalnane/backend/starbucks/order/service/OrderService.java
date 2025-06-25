@@ -13,6 +13,7 @@ import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
 
+import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
@@ -178,7 +179,9 @@ public class OrderService {
     public OrderListResponse getOrderHistory(Long memberId, Pageable pageable){
     Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new OrderException(OrderErrorCode.MEMBER_NOT_FOUND));
-        Page<Order> orderPage = orderRepository.findByMemberId(memberId, pageable);
+
+        List<OrderStatus> pastOrderStatuses = List.of(OrderStatus.COMPLETED);
+        Page<Order> orderPage = orderRepository.findByMemberIdAndOrderStatusIn(memberId, pastOrderStatuses, pageable);
         Page<OrderSummaryResponse> summaryPage = orderPage.map(OrderSummaryResponse::from);
 
         return OrderListResponse.from(summaryPage);
