@@ -9,6 +9,6 @@ public record LoginDto(String accessToken, String refreshToken, String name, Str
     }
 
     public LoginResponse toLoginResponse() {
-        return new LoginResponse(accessToken, name, nickname, email);
+        return new LoginResponse(name, nickname, email);
     }
 }
