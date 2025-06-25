@@ -2,11 +2,9 @@ package git_kkalnane.backend.starbucks.order.dto.response;
 
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
-import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder
 public record OrderSummaryResponse(
         Long orderId,
         String orderNumber,
@@ -21,13 +19,14 @@ public record OrderSummaryResponse(
      * @return OrderSummaryResponse DTO 객체
      */
     public static OrderSummaryResponse from(Order order) {
-        return OrderSummaryResponse.builder()
-                .orderId(order.getId())
-                .orderNumber(order.getOrderNumber())
-                .storeName(order.getStore().getName())
-                .orderTotalPrice(order.getOrderTotalPrice())
-                .orderStatus(order.getOrderStatus())
-                .orderCreatedAt(order.getCreatedAt())
-                .build();
+        return new OrderSummaryResponse(
+                order.getId(),
+                order.getOrderNumber(),
+                order.getStore().getName(),
+                order.getOrderTotalPrice(),
+                order.getOrderStatus(),
+                order.getCreatedAt()
+        );
+
     }
 }
