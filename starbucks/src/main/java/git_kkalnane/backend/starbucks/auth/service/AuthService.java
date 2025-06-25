@@ -9,7 +9,6 @@ import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
 import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
 import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
-import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
 import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
@@ -56,9 +55,10 @@ public class AuthService {
         saveAccessTokenToRepository(member.getId(), tokens.getAccessTokenInfo());
         saveRefreshTokenToRepository(member.getId(), tokens.getRefreshTokenInfo());
 
-        UserInfo userInfo = UserInfo.of(member.getEmail(), member.getNickname());
+        String accessToken = tokens.getAccessTokenInfo().getToken();
+        String refreshToken = tokens.getRefreshTokenInfo().getToken();
 
-        return LoginDto.of(tokens, userInfo);
+        return LoginDto.of(accessToken, refreshToken, member.getName(), member.getNickname(), member.getEmail());
     }
 
     /**
