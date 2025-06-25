@@ -31,7 +31,7 @@ public class OrderNotificationSendEvent extends ApplicationEvent {
                                       NotificationReceiver receiver,
                                       NotificationType notificationType, NotificationTargetType notificationTargetType) {
         super(object);
-        init(sender.value(), order);
+        init(order);
         this.title = notificationType.getTitle();
         this.message = notificationType.getMessage();
         this.sender = sender;
@@ -44,10 +44,9 @@ public class OrderNotificationSendEvent extends ApplicationEvent {
     /**
      * Merchant 에게 보낼 응답 구성을 위한 init 메서드
      *
-     * @param memberId  주문을 생성한 멤버의 ID
      * @param order  주문 생성 후 반환된 주문 엔티티
      */
-    private void init(Long memberId, Order order) {
+    private void init(Order order) {
         List<OrderNotificationSendBeverageItemResponse> beverageItems = new ArrayList<>();
         List<OrderNotificationSendDessertItemResponse> dessertItems = new ArrayList<>();
 
@@ -67,7 +66,8 @@ public class OrderNotificationSendEvent extends ApplicationEvent {
                 .orderRequestMemo(order.getOrderRequestMemo())
                 .pickupType(order.getPickupType())
                 .storeId(order.getStore().getId())
-                .memberId(memberId)
+                .memberId(order.getMember().getId())
+                .memberName(order.getMember().getName())
                 .beverageItems(beverageItems)
                 .dessertItems(dessertItems)
                 .build();
