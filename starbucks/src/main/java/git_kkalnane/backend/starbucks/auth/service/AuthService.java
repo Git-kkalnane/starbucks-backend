@@ -124,7 +124,7 @@ public class AuthService {
         // 액세스 토큰에 대한 검증은 인터셉터에서 이루어진다.
         AccessToken accessToken = accessTokenRepository.findByMemberId(memberId).orElseThrow();
         RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_DOESNT_EXIST_IN_DB));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
 
         // accessToken, refreshToken 엔티티의 토큰 값, 만료일시 초기화
         accessToken.modifyToken("");
@@ -146,7 +146,7 @@ public class AuthService {
 
         // DB에 액세스 토큰이 존재하지 않으면 예외 발생
         AccessToken accessTokenObj = accessTokenRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_DOESNT_EXIST_IN_DB));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
 
         // DB에 저장된 액세스 토큰값과 HTTP 요청에 포함된 토큰값이 일치하지 않으면 예외 발생
         if (!Objects.equals(accessTokenObj.getToken(), accessToken)) {

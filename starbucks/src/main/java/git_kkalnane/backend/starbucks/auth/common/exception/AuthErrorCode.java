@@ -12,7 +12,7 @@ public enum AuthErrorCode implements ErrorCode {
     EMAIL_INVALID_EXCEPTION(HttpStatus.BAD_REQUEST, "존재하지 않는 이메일입니다."),
     PASSWORD_INVALID_EXCEPTION(HttpStatus.BAD_REQUEST, "패스워드가 올바르지 않습니다."),
     // 로그아웃 요청 또는 액세스 토큰 재발급 요청을 처리할 때 사용
-    TOKEN_DOESNT_EXIST_IN_DB(HttpStatus.NOT_FOUND, "토큰이 존재하지 않습니다."),
+    TOKEN_NOT_FOUND_IN_DB(HttpStatus.NOT_FOUND, "토큰이 존재하지 않습니다."),
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "접근 권한이 없습니다."),
     REFRESH_TOKEN_IS_NOT_NULL(HttpStatus.BAD_REQUEST,"refreshToken은 null이 될 수 없습니다."),
     // 요청에 포함된 토큰을 검증할 때 사용
