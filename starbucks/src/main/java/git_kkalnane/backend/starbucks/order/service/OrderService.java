@@ -101,7 +101,7 @@ public class OrderService {
     private OrderItem validateAndCreateOrderItems(OrderItemRequest request) {
         int orderQuantity = request.quantity();
 
-        if (request.itemType() == ItemType.DRINK) {
+        if (request.itemType() == ItemType.COFFEE) {
             BeverageItem item = beverageItemRepository.findById(request.itemId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
 

@@ -9,6 +9,8 @@ import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * 아이템 목록 조회 시 각 아이템의 요약 정보를 담는 DTO입니다.
  * 음료(BeverageItem)와 디저트(DessertItem) 공통으로 사용될 수 있도록 설계되었습니다.
@@ -29,8 +31,8 @@ public class ItemSummaryResponse {
     private final String dessertImageUrl;
     private final ItemStatus status;
     private final ItemType type;
-    private final BeverageSizeOption sizeOption;
-    private final BeverageTemperatureOption temperatureOption;
+    private final List<String> sizeOption;
+    private final List<String> temperatureOption;
     private final BeverageShotOption shotOption;
 
     /**
@@ -49,8 +51,10 @@ public class ItemSummaryResponse {
                 .iceImageUrl(beverageItem.getIceImageUrl())
                 .status(beverageItem.getStatus())
                 .type(beverageItem.getCategory())
-                .sizeOption(beverageItem.getSizeOption())
-                .temperatureOption(beverageItem.getTemperatureOption())
+                .sizeOption(beverageItem.getSupportedSizes().stream()
+                        .map(Enum::name).toList())
+                .temperatureOption(beverageItem.getSupportedTemperatures().stream()
+                        .map(Enum::name).toList())
                 .shotOption(beverageItem.getShotOption())
                 .build();
     }

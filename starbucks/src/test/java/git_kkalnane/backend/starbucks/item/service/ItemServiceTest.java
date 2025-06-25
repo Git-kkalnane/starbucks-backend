@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.item.service;
 
-import git_kkalnane.backend.starbucks.item.domain.BeverageItem;
-import git_kkalnane.backend.starbucks.item.domain.DessertItem;
+import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
+import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.dto.response.ItemListResponse;
 import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
