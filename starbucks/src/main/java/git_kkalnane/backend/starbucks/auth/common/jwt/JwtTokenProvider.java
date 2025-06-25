@@ -96,7 +96,7 @@ public class JwtTokenProvider {
      * @param token String 타입의 토큰
      * @return memberId - 회원 테이블에 저장된 엔티티의 인덱스
      */
-    private String getMemberId(String token) {
+    public String getMemberId(String token) {
         try {
             Jws<Claims> claims = Jwts.parser()
                     .verifyWith(signingKey)
@@ -104,9 +104,19 @@ public class JwtTokenProvider {
                     .parseSignedClaims(token);
 
             return String.valueOf(claims.getPayload().get("memberId"));
-        } catch (MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+        } catch (MalformedJwtException e) {
+            // JWT 토큰 형식이 잘못된 경우
             GlobalLogger.error(e.getMessage());
-            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+            throw new AuthException(AuthErrorCode.MALFORMED_TOKEN);
+        } catch (ExpiredJwtException e) {
+            // JWT 토큰이 만료된 경우
+            throw new AuthException(AuthErrorCode.EXPIRED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            // 지원되지 않는 JWT 형식인 경우
+            throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            // 잘못된 파라미터가 전달된 경우
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN_PARAMETER);
         }
     }
 }
