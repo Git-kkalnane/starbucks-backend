@@ -2,10 +2,7 @@ package git_kkalnane.backend.starbucks.notification.service;
 
 
 import git_kkalnane.backend.starbucks.notification.common.success.NotificationSuccessCode;
-import git_kkalnane.backend.starbucks.notification.domain.Notification;
-import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
-import git_kkalnane.backend.starbucks.notification.domain.NotificationType;
-import git_kkalnane.backend.starbucks.notification.domain.SseEmitterId;
+import git_kkalnane.backend.starbucks.notification.domain.*;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
@@ -13,8 +10,10 @@ import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendR
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationItemResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationsResponse;
+import git_kkalnane.backend.starbucks.notification.dto.response.OrderNotificationSendResponse;
 import git_kkalnane.backend.starbucks.notification.repository.EmitterRepository;
 import git_kkalnane.backend.starbucks.notification.repository.NotificationRepository;
+import git_kkalnane.backend.starbucks.notification.repository.OrderNotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +32,7 @@ public class NotificationService {
 
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
+    private final OrderNotificationRepository orderNotificationRepository;
 
     /**
      * SSE 연결을 구독하는 메서드
@@ -85,6 +85,23 @@ public class NotificationService {
                 .page(notifications.getNumber())
                 .pageSize(notifications.getSize())
                 .totalPages(notifications.getTotalPages()).build();
+    }
+
+    @Transactional
+    public void sendNotificationWithOrder(OrderNotificationSendResponse responseDto,
+                                          String title, String message,
+                                          Long senderId, Long receiverId,
+                                          NotificationType notificationType,
+                                          NotificationTargetType notificationTargetType) {
+        Notification notification =
+                sendNotification(responseDto, title, message, senderId, receiverId, notificationType, notificationTargetType);
+
+        OrderNotification orderNotification = OrderNotification.builder()
+                .notificationId(notification.getId())
+                .orderId(responseDto.getOrderId())
+                .build();
+
+        orderNotificationRepository.save(orderNotification);
     }
 
     /**
