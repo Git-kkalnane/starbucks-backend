@@ -5,12 +5,10 @@ import git_kkalnane.backend.starbucks.notification.common.exception.Notification
 import git_kkalnane.backend.starbucks.notification.domain.Notification;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationType;
-import git_kkalnane.backend.starbucks.notification.domain.SseEmitterId;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
-import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
-import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
+import git_kkalnane.backend.starbucks.notification.dto.request.OrderNotificationSendRequest;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationsResponse;
 import git_kkalnane.backend.starbucks.notification.repository.EmitterRepository;
 import git_kkalnane.backend.starbucks.notification.repository.NotificationRepository;
@@ -34,9 +32,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class NotificationServiceTest {
     @Mock
@@ -174,8 +174,8 @@ class NotificationServiceTest {
         @DisplayName("성공: 정상 알림 전송")
         void sendNotification_success() {
             // given
-            NotificationSendRequest request = new NotificationSendRequest(
-                    "title", "message", 1L, 2L, "SUBSCRIBE", "CUSTOMER"
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    1L, 1L, 2L, "SUBSCRIBE", "CUSTOMER"
             );
             given(emitterRepository.findAllEmitterStartWithByReceiverIdAndNotificationTargetType(anyLong(), any())).willReturn(Collections.emptyMap());
 
@@ -190,8 +190,8 @@ class NotificationServiceTest {
         @DisplayName("실패: 잘못된 notificationType")
         void sendNotification_invalidType() {
             // given
-            NotificationSendRequest request = new NotificationSendRequest(
-                    "title", "message", 1L, 2L, "INVALID", "CUSTOMER"
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    1L, 1L, 2L, "INVALID", "CUSTOMER"
             );
 
             // when & then
@@ -205,8 +205,8 @@ class NotificationServiceTest {
         @DisplayName("실패: 잘못된 notificationTargetType")
         void sendNotification_invalidTargetType() {
             // given
-            NotificationSendRequest request = new NotificationSendRequest(
-                    "title", "message", 1L, 2L, "SUBSCRIBE", "INVALID"
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    1L, 1L, 2L, "SUBSCRIBE", "INVALID"
             );
 
             // when & then
