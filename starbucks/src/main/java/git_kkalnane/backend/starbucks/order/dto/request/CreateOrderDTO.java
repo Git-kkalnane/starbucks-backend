@@ -16,7 +16,7 @@ import java.util.List;
  * @param orderExpectedPickupTime : 픽업 걸리는 시간
  * @param orderItems :주문 상품들
  */
-public record CreateRequest(
+public record CreateOrderDTO(
         Long storeId,
         PickupType pickupType,
         int orderTotalPrice,
