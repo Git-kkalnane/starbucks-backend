@@ -1,6 +1,11 @@
 package git_kkalnane.backend.starbucks.item.dto.response;
 
 import git_kkalnane.backend.starbucks.item.domain.*;
+import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageShotOption;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageSizeOption;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
+import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import lombok.Builder;
 import lombok.Getter;
 
