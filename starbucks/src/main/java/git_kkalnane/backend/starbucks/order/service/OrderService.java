@@ -17,11 +17,17 @@ import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -150,7 +156,7 @@ public class OrderService {
      *
      * @param orderId 조회할 주문의 고유 ID
      * @return 주문 상세 정보를 담은 OrderDetailResponse DTO
-     * @throws IllegalArgumentException 주어진 orderId로 주문을 찾을 수 없을 경우
+     * @throws OrderException 주어진 orderId로 주문을 찾을 수 없을 경우
      */
 
     public OrderDetailResponse getOrderDetail(Long orderId) {
@@ -160,5 +166,22 @@ public class OrderService {
         return OrderDetailResponse.from(order);
     }
 
+    /**
+     * 과거 주문 내역 목록을 조회하는 로직.
+     * 특정 회원의 주문 목록을 페이지네이션과 함께 조회합니다.
+     *
+     * @param memberId 조회할 회원의 고유 ID
+     * @param pageable 페이징 및 정렬 정보
+     * @return 페이지네이션된 주문 요약 정보 목록
+     * @throws OrderException memberId로 회원을 찾을 수 없을 경우
+     */
+    public OrderListResponse getOrderHistory(Long memberId, Pageable pageable){
+    Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new OrderException(OrderErrorCode.MEMBER_NOT_FOUND));
+        Page<Order> orderPage = orderRepository.findByMemberId(memberId, pageable);
+        Page<OrderSummaryResponse> summaryPage = orderPage.map(OrderSummaryResponse::from);
 
+        return OrderListResponse.from(summaryPage);
+
+    }
 }
