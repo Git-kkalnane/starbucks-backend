@@ -51,8 +51,8 @@ public class OrderNotificationSendEvent extends ApplicationEvent {
         List<OrderNotificationSendDessertItemResponse> dessertItems = new ArrayList<>();
 
         order.getOrderItems().forEach(orderItem -> {
-                    if (orderItem.getBergiveItem() != null) {
-                        beverageItems.add(OrderNotificationSendBeverageItemResponse.of(orderItem.getBergiveItem()));
+                    if (orderItem.getBeverageItem() != null) {
+                        beverageItems.add(OrderNotificationSendBeverageItemResponse.of(orderItem.getBeverageItem()));
                     } else {
                         dessertItems.add(OrderNotificationSendDessertItemResponse.of(orderItem.getDessertItem()));
                     }

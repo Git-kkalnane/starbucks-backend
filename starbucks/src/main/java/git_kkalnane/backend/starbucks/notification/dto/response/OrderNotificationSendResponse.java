@@ -5,6 +5,7 @@ import git_kkalnane.backend.starbucks.order.domain.PickupType;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -13,10 +14,10 @@ public class OrderNotificationSendResponse {
     private List<OrderNotificationSendBeverageItemResponse> beverageItems;
     private List<OrderNotificationSendDessertItemResponse> dessertItems;
     private Long orderId;
-    private Long orderNumber;
+    private String orderNumber;
     private PickupType pickupType;
     private String orderRequestMemo;
-    private Long orderExpectedPickupTime;
+    private LocalDateTime orderExpectedPickupTime;
     private String memberName;
     private Long memberId;
     private Long storeId;
