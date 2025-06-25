@@ -17,6 +17,7 @@ public class OrderNotificationSendResponse {
     private PickupType pickupType;
     private String orderRequestMemo;
     private Long orderExpectedPickupTime;
+    private String memberName;
     private Long memberId;
     private Long storeId;
 }
