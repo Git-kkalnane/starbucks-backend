@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.notification.domain;
 
 
-import git_kkalnane.backend.starbucks.global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
@@ -53,9 +53,8 @@ public class Notification extends BaseTimeEntity {
     private NotificationType notificationType;
 
 
-    public NotificationResponse toDto(String emitterId) {
+    public NotificationResponse toDto() {
         return NotificationResponse.builder()
-                .emitterId(emitterId)
                 .eventId(event.value())
                 .message(message)
                 .title(title)

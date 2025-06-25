@@ -11,9 +11,12 @@ import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceive
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
 import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
+import git_kkalnane.backend.starbucks.notification.dto.response.NotificationsResponse;
 import git_kkalnane.backend.starbucks.notification.repository.EmitterRepository;
 import git_kkalnane.backend.starbucks.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -54,6 +57,21 @@ public class NotificationService {
         return emitter;
     }
 
+    public NotificationsResponse fetchNotificationsByMemberId(Long memberId, Pageable pageable){
+        Page<Notification> notifications = notificationRepository.findAllByReceiverId(memberId, pageable);
+
+        return NotificationsResponse.builder()
+                .notifications(
+                        notifications.stream()
+                                .map(Notification::toDto)
+                                .toList()
+                )
+                .total(notifications.getTotalElements())
+                .page(notifications.getNumber())
+                .pageSize(notifications.getSize())
+                .totalPages(notifications.getTotalPages()).build();
+    }
+
     @Transactional
     public void sendNotification(String title, String message,
                                  Long senderId, Long receiverId,
@@ -80,7 +98,7 @@ public class NotificationService {
         // TODO: 트랜잭션 실패로 인한 롤백 처리 등의 안정성 고려하기
         emitters.forEach(
                 (key, emitter) -> {
-                    NotificationResponse responseDto = notification.toDto(key);
+                    NotificationResponse responseDto = notification.toDto();
 
                     emitterRepository.saveEventCache(key, notification);
                     send(emitter, event, key, responseDto);
