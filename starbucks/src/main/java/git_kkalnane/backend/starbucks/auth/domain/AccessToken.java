@@ -37,4 +37,12 @@ public class AccessToken {
         this.token = token;
         this.expiration = expiration;
     }
+
+    public void modifyToken(String token) {
+        this.token = token;
+    }
+
+    public void modifyExpiration(Date expiration) {
+        this.expiration = expiration;
+    }
 }
