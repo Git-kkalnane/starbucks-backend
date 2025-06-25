@@ -33,9 +33,6 @@ public class Notification extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isRead;
 
-    @Column(nullable = false)
-
-
     @Embedded
     @AttributeOverride(name = "id", column = @Column(name = "event_id", nullable = false, unique = true))
     private NotificationEvent event;
