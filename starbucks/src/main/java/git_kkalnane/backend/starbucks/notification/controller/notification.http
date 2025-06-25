@@ -1,0 +1,40 @@
+
+### 알림 전송 (Notification Send)
+< {%
+    request.variables.set("accessToken", "")
+%}
+POST http://localhost:8080/api/v1/notifications
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "주문 완료",
+  "message": "주문이 완료 되었습니다.",
+  "senderId": 1,
+  "receiverId": 1,
+  "notificationTargetType": "CUSTOMER",
+  "notificationType": "ORDER_SET"
+}
+
+### 알림 구독 (SSE Subscribe)
+< {%
+    request.variables.set("accessToken", "")
+%}
+GET http://localhost:8080/api/v1/notifications/subscribe?receiverId=1&notificationTargetType=CUSTOMER
+Accept: text/event-stream
+Authorization: Bearer {{accessToken}}
+
+
+### 알림 구독 현황 목록 조회 (SseEmitter 상태 조회)
+< {%
+    request.variables.set("accessToken", "")
+%}
+GET http://localhost:8080/api/v1/notifications/subscribe/status
+Authorization: Bearer {{accessToken}}
+
+### 알림 구독 현황 목록 조회 (SseEmitter 상태 조회)
+< {%
+    request.variables.set("accessToken", "")
+%}
+GET http://localhost:8080/api/v1/notifications
+Authorization: Bearer {{accessToken}}
