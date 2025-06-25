@@ -49,8 +49,10 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
         }
 
-        JwtToken token = jwtTokenProvider.createJwtToken(member.getId());
         JwtToken tokens = jwtTokenProvider.createJwtToken(member.getId());
+        saveAccessTokenToRepository(member.getId(), tokens.getAccessTokenInfo());
+        saveRefreshTokenToRepository(member.getId(), tokens.getRefreshTokenInfo());
+
         UserInfo userInfo = UserInfo.of(member.getEmail(), member.getNickname());
 
         return LoginDto.of(tokens, userInfo);
@@ -61,4 +63,55 @@ public class AuthService {
 //
 //        return accessTokenRepository.findByMemberId(Long.parseLong(memberId));
 //    }
+    /**
+     * 생성된 accessToken을 accessTokenRepository에 저장하는 메서드
+     *
+     * @param memberId  사용자 ID (식별자)
+     * @param tokenInfo TokenInfo DTO 인스턴스
+     */
+    @Transactional
+    public void saveAccessTokenToRepository(Long memberId, TokenInfo tokenInfo) {
+        Optional<AccessToken> maybeAccessToken = accessTokenRepository.findByMemberId(memberId);
+
+        // maybeAccessToken의 값이 null일 경우 (DB에 해당 멤버의 토큰 존재 X) 새로 저장
+        if (maybeAccessToken.isEmpty()) {
+            accessTokenRepository.save(AccessToken.builder()
+                    .memberId(memberId)
+                    .token(tokenInfo.getToken())
+                    .expiration(tokenInfo.getExpiration())
+                    .build());
+            return;
+        }
+
+        // maybeAccessToken의 값이 null이 아닐 경우 (DB에 해당 멤버의 토큰 존재) 업데이트
+        AccessToken accessToken = maybeAccessToken.get();
+        accessToken.modifyToken(tokenInfo.getToken());
+        accessToken.modifyExpiration(tokenInfo.getExpiration());
+    }
+
+    /**
+     * 생성된 refreshToken을 refreshTokenRepository에 저장하는 메서드
+     *
+     * @param memberId  사용자 ID (식별자)
+     * @param tokenInfo TokenInfo DTO 인스턴스
+     */
+    @Transactional
+    public void saveRefreshTokenToRepository(Long memberId, TokenInfo tokenInfo) {
+        Optional<RefreshToken> maybeRefreshToken = refreshTokenRepository.findByMemberId(memberId);
+
+        // maybeRefreshToken의 값이 null일 경우 (DB에 해당 멤버의 토큰 존재 X) 새로 저장
+        if (maybeRefreshToken.isEmpty()) {
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .memberId(memberId)
+                    .token(tokenInfo.getToken())
+                    .expiration(tokenInfo.getExpiration())
+                    .build());
+            return;
+        }
+
+        // maybeRefreshToken의 값이 null이 아닐 경우 (DB에 해당 멤버의 토큰 존재) 업데이트
+        RefreshToken refreshToken = maybeRefreshToken.get();
+        refreshToken.modifyToken(tokenInfo.getToken());
+        refreshToken.modifyExpiration(tokenInfo.getExpiration());
+    }
 }
