@@ -25,6 +25,14 @@ public enum NotificationType {
         return message.formatted(args);
     }
 
+    public static String getAppropriateMessage(NotificationType notificationType, Object ... args) {
+        return switch (notificationType) {
+            case ORDER_SET -> notificationType.getMessage(args[0]);
+            case ORDER_ACCEPTED -> notificationType.getMessage(args[0], args[1], args[2]);
+            default -> notificationType.getMessage();
+        };
+    }
+
     public static NotificationType findByName(String givenName){
         try{
             return NotificationType.valueOf(givenName.toUpperCase());
