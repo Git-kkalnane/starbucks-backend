@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
  * @author Seongjun In
  * @version 1.0
  */
+
 @Repository
 public interface DessertItemRepository extends JpaRepository<DessertItem, Long> {
 }

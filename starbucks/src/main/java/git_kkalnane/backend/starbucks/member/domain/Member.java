@@ -1,6 +1,9 @@
 package git_kkalnane.backend.starbucks.member.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
+import git_kkalnane.backend.starbucks.member.dto.request.SignUpRequest;
+import jakarta.persistence.*;
+import lombok.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +19,8 @@ import lombok.ToString;
 @Entity
 @Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 @Getter
 @ToString
 public class Member extends BaseTimeEntity {
