@@ -6,7 +6,7 @@ import git_kkalnane.backend.starbucks.notification.domain.*;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
-import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
+import git_kkalnane.backend.starbucks.notification.dto.request.OrderNotificationSendRequest;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationItemResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationsResponse;
@@ -14,6 +14,10 @@ import git_kkalnane.backend.starbucks.notification.dto.response.OrderNotificatio
 import git_kkalnane.backend.starbucks.notification.repository.EmitterRepository;
 import git_kkalnane.backend.starbucks.notification.repository.NotificationRepository;
 import git_kkalnane.backend.starbucks.notification.repository.OrderNotificationRepository;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderErrorCode;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
+import git_kkalnane.backend.starbucks.order.domain.Order;
+import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +37,7 @@ public class NotificationService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
     private final OrderNotificationRepository orderNotificationRepository;
+    private final OrderRepository orderRepository;
 
     /**
      * SSE 연결을 구독하는 메서드
@@ -120,9 +125,9 @@ public class NotificationService {
     // TODO: 매장에 전달하는 알림은 데이터 전송 용도로 활용할 것
     @Transactional
     public <T> Notification sendNotification(T item, String title, String message,
-                                     Long senderId, Long receiverId,
-                                     NotificationType notificationType,
-                                     NotificationTargetType notificationTargetType) {
+                                             Long senderId, Long receiverId,
+                                             NotificationType notificationType,
+                                             NotificationTargetType notificationTargetType) {
         NotificationEvent event =
                 NotificationEvent.of(receiverId, notificationTargetType, notificationType);
 
@@ -166,9 +171,9 @@ public class NotificationService {
      */
     @Transactional
     public Notification sendNotification(String title, String message,
-                                 Long senderId, Long receiverId,
-                                 NotificationType notificationType,
-                                 NotificationTargetType notificationTargetType) {
+                                         Long senderId, Long receiverId,
+                                         NotificationType notificationType,
+                                         NotificationTargetType notificationTargetType) {
         NotificationEvent event =
                 NotificationEvent.of(receiverId, notificationTargetType, notificationType);
 
@@ -207,15 +212,19 @@ public class NotificationService {
      * @return 생성된 알림 엔티티
      */
     @Transactional
-    public Notification sendNotification(NotificationSendRequest requestDto) {
+    public Notification sendNotification(OrderNotificationSendRequest requestDto) {
         NotificationType notificationType =
                 NotificationType.findByName(requestDto.getNotificationType());
         NotificationTargetType notificationTargetType =
                 NotificationTargetType.findByName(requestDto.getNotificationTargetType());
 
+        Order order = orderRepository.findById(requestDto.getOrderId())
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
         return sendNotification(
-                requestDto.getTitle(),
-                requestDto.getMessage(),
+                notificationType.getTitle(),
+                NotificationType.getAppropriateMessage(notificationType, order.getOrderNumber()),
+                // TODO: 현재는 주문 완료 메시지만 반환할 수 있음. 추후 리팩토링을 통해 코드를 분리할 수 있도록 수정
                 requestDto.getSenderId(),
                 requestDto.getReceiverId(),
                 notificationType,
