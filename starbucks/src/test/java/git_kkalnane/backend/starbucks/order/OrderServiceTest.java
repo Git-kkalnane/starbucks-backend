@@ -17,6 +17,7 @@ import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
@@ -28,6 +29,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,7 +62,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void 정보_세팅() {
-        mockStore = Store.builder().id(1L).build();
+        mockStore = Store.builder().id(1L).name("스타벅스 강남점").build();
         mockMember = Member.builder().id(1L).build();
         mockBeverage = BeverageItem.builder().id(101L).beverageItemNameKo("아이스 아메리카노").price(4500).build();
         mockDessert = DessertItem.builder().id(201L).dessertItemNameKo("치즈케이크").price(5500).build();
@@ -360,5 +365,62 @@ class OrderServiceTest {
                 .hasMessage(OrderErrorCode.ORDER_NOT_FOUND.getMessage());
 
         verify(orderRepository, times(1)).findById(nonExistentOrderId);
+    }
+
+    @Test
+    @DisplayName("과거 주문 내역 조회 성공")
+    void getOrderHistory_Success() {
+        // Given
+        Long memberId = 1L;
+        Pageable pageable = PageRequest.of(0, 5); // 0번째 페이지, 5개씩
+
+        Order order1 = Order.builder().id(10L).orderNumber("A-1").store(mockStore).build();
+        Order order2 = Order.builder().id(11L).orderNumber("A-2").store(mockStore).build();
+        List<Order> orderList = List.of(order1, order2);
+
+        Page<Order> mockOrderPage = new PageImpl<>(orderList, pageable, orderList.size());
+
+        // Mocking 설정
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(mockMember));
+        given(orderRepository.findByMemberId(memberId, pageable)).willReturn(mockOrderPage);
+
+        // When
+        OrderListResponse response = orderService.getOrderHistory(memberId, pageable);
+
+        // Then
+        // 1. 응답의 페이지 정보 검증
+        assertThat(response).isNotNull();
+        assertThat(response.currentPage()).isEqualTo(0);
+        assertThat(response.totalPages()).isEqualTo(1);
+        assertThat(response.totalElements()).isEqualTo(2);
+
+        // 2. 응답의 주문 목록 내용 검증
+        assertThat(response.orders()).hasSize(2);
+        assertThat(response.orders().get(0).orderNumber()).isEqualTo("A-1");
+        assertThat(response.orders().get(0).storeName()).isEqualTo("스타벅스 강남점");
+
+        // 3. Repository 메서드 호출 검증
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(orderRepository, times(1)).findByMemberId(memberId, pageable);
+    }
+
+    @Test
+    @DisplayName("과거 주문 내역 조회 실패 - 존재하지 않는 회원")
+    void getOrderHistory_MemberNotFound_ThrowsException() {
+        // Given
+        Long nonExistentMemberId = 999L;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        given(memberRepository.findById(nonExistentMemberId)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> orderService.getOrderHistory(nonExistentMemberId, pageable))
+                .isInstanceOf(OrderException.class)
+                .hasMessage(OrderErrorCode.MEMBER_NOT_FOUND.getMessage());
+
+        // 1. 회원 조회는 시도했는지 검증
+        verify(memberRepository, times(1)).findById(nonExistentMemberId);
+        // 2. 회원을 찾지 못했으므로 주문 내역 조회는 시도조차 하지 않았는지 검증
+        verify(orderRepository, never()).findByMemberId(anyLong(), any(Pageable.class));
     }
 }
