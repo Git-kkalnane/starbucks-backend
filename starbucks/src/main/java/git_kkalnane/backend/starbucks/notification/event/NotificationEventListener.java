@@ -21,7 +21,7 @@ public class NotificationEventListener {
     @Async // 이벤트 발생 -> 알림 전송 로직을 비동기로 실행, TODO: 비동기 설정 시 쓰레드 풀 컨트롤
     public void handle(OrderNotificationSendEvent event) {
         notificationService.sendNotificationWithOrder(
-                event.getOrder(),
+                event.getItem(),
                 event.getTitle(),
                 event.getMessage(),
                 event.getSender().value(),
