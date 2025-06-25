@@ -10,18 +10,23 @@ import org.springframework.util.StringUtils;
 @Getter
 @ToString
 public class JwtToken {
+
     private final String tokenType;
     private final String accessToken;
     private String refreshToken;
 
-    public JwtToken(String accessToken, String refreshToken) {
+    private JwtToken(String accessToken, String refreshToken) {
         this.tokenType = "Bearer";
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 
+    public static JwtToken of(String accessToken, String refreshToken){
+        return new JwtToken(accessToken, refreshToken);
+    }
+
     public static String extractToken(String bearerToken) {
-        GlobalLogger.info("Extract: ",bearerToken);
+        GlobalLogger.info("Extract: ", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
@@ -29,12 +34,11 @@ public class JwtToken {
         throw new AuthException(AuthErrorCode.INVALID_TOKEN);
     }
 
-    public static JwtToken of(String accessToken, String refreshToken){
-        return new JwtToken(accessToken,refreshToken);
+    public void setRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
 
-    public void setRefreshToken(String refreshToken){
-        this.refreshToken=refreshToken;
+    public boolean refreshTokenIsExists() {
+        return this.refreshToken != null;
     }
-    public boolean refreshTokenIsExists(){return this.refreshToken != null;}
 }
