@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
+    public static final String ACCESS_PREFIX_STRING = "Bearer ";
+
     private final AuthService authService;
 
     /**
@@ -63,7 +65,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .header(HttpHeaders.AUTHORIZATION, loginDto.accessToken())
+                .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + loginDto.accessToken())
                 .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED, loginDto.toLoginResponse()));
     }
 

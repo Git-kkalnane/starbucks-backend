@@ -3,12 +3,12 @@ package git_kkalnane.backend.starbucks._global.config;
 import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
-import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import git_kkalnane.backend.starbucks.auth.common.jwt.utils.TokenParser;
 import git_kkalnane.backend.starbucks.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -27,7 +27,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         GlobalLogger.info(REQUEST_URI_LOG_PREFIX, request.getMethod(), request.getRequestURI());
 
         // HTTP 요청의 Authorization 헤더의 값을 가져온다.
-        String bearerToken = request.getHeader(JwtTokenProvider.ACCESS_HEADER_STRING);
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         validateBearerToken(bearerToken);
 
         // Authorization 헤더의 값에서 접두사(Bearer)를 제거한다.
