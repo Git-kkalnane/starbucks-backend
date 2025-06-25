@@ -12,10 +12,9 @@ import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
 import git_kkalnane.backend.starbucks.order.common.exception.OrderErrorCode;
 import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
 import git_kkalnane.backend.starbucks.order.domain.*;
-import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
+import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
@@ -75,7 +74,7 @@ class OrderServiceTest {
         List<OrderItemRequest> orderItems = List.of(
                 new OrderItemRequest(
                         mockBeverage.getId(),
-                        ItemType.DRINK,
+                        ItemType.COFFEE,
                         BeverageSizeOption.TALL,
                         BeverageTemperatureOption.HOT,
                         options,
@@ -84,7 +83,7 @@ class OrderServiceTest {
                         requestedQuantity
                 )
         );
-        CreateRequest request = new CreateRequest(
+        CreateOrderDTO request = new CreateOrderDTO(
                 mockStore.getId(),
                 PickupType.STORE_PICKUP,
                 orderItems.get(0).totalPrice(),
@@ -96,8 +95,10 @@ class OrderServiceTest {
         given(storeRepository.findById(mockStore.getId())).willReturn(Optional.of(mockStore));
         given(memberRepository.findById(mockMember.getId())).willReturn(Optional.of(mockMember));
         given(beverageItemRepository.findById(mockBeverage.getId())).willReturn(Optional.of(mockBeverage));
-        given(orderDailyCounterRepository.findById(any(LocalDate.class)))
-                .willReturn(Optional.of(new OrderDailyCounter(LocalDate.now(), 0))); // 처음에는 0, increment 후 1
+        OrderDailyCounterId counterId = new OrderDailyCounterId(LocalDate.now(), mockStore.getId());
+
+        given(orderDailyCounterRepository.findById(any(OrderDailyCounterId.class)))
+                .willReturn(Optional.of(new OrderDailyCounter(counterId, 0))); // 처음에는 0, increment 후 1
         given(orderDailyCounterRepository.save(any(OrderDailyCounter.class)))
                 .willAnswer(invocation -> {
                     OrderDailyCounter counter = invocation.getArgument(0);
@@ -126,13 +127,14 @@ class OrderServiceTest {
             return order;
         });
         // When
-        CreateResponse response = orderService.createOrder(request, mockMember.getId());
+        Order order = orderService.createOrder(request, mockMember.getId());
 
-        // Then
-        assertThat(response.httpStatus()).isEqualTo(200);
-        assertThat(response.message()).contains("성공");
-        assertThat(response.orderId()).isNotNull();
-        assertThat(response.orderId()).isEqualTo(1L);
+        assertThat(order).isNotNull();
+        assertThat(order.getId()).isNotNull();
+        //Then
+        assertThat(order.getMember().getId()).isEqualTo(mockMember.getId());
+        assertThat(order.getId()).isNotNull();
+        assertThat(order.getId()).isEqualTo(1L);
 
         verify(storeRepository, times(1)).findById(mockStore.getId());
         verify(memberRepository, times(1)).findById(mockMember.getId());
@@ -162,7 +164,7 @@ class OrderServiceTest {
                         requestedQuantity
                 )
         );
-        CreateRequest request = new CreateRequest(
+        CreateOrderDTO request = new CreateOrderDTO(
                 mockStore.getId(),
                 PickupType.STORE_PICKUP,
                 orderItems.get(0).totalPrice(),
@@ -174,7 +176,11 @@ class OrderServiceTest {
         given(storeRepository.findById(mockStore.getId())).willReturn(Optional.of(mockStore));
         given(memberRepository.findById(mockMember.getId())).willReturn(Optional.of(mockMember));
         given(dessertItemRepository.findById(mockDessert.getId())).willReturn(Optional.of(mockDessert));
-        given(orderDailyCounterRepository.findById(any(LocalDate.class))).willReturn(Optional.of(new OrderDailyCounter(LocalDate.now(), 5))); // Mocking 값은 원하는 대로 유지 (예시에서는 5)
+        OrderDailyCounterId counterId = new OrderDailyCounterId(LocalDate.now(), mockStore.getId());
+
+        given(orderDailyCounterRepository.findById(any(OrderDailyCounterId.class)))
+                .willReturn(Optional.of(new OrderDailyCounter(counterId, 0)));
+        // Mocking 값은 원하는 대로 유지 (예시에서는 5)
 
         given(orderDailyCounterRepository.save(any(OrderDailyCounter.class))).willAnswer(invocation -> {
                     OrderDailyCounter counter = invocation.getArgument(0);
@@ -204,13 +210,11 @@ class OrderServiceTest {
         });
 
         // When
-        CreateResponse response = orderService.createOrder(request, mockMember.getId());
+        Order order = orderService.createOrder(request, mockMember.getId());
 
         // Then
-        assertThat(response.httpStatus()).isEqualTo(200);
-        assertThat(response.message()).contains("성공");
-        assertThat(response.orderId()).isNotNull();
-        assertThat(response.orderId()).isEqualTo(2L);
+        assertThat(order.getId()).isNotNull();
+        assertThat(order.getId()).isEqualTo(2L);
 
         verify(dessertItemRepository, times(1)).findById(mockDessert.getId());
         verify(orderRepository, times(1)).save(any(Order.class));
@@ -227,7 +231,7 @@ class OrderServiceTest {
 
         List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(
                 mockBeverage.getId(),
-                ItemType.DRINK,
+                ItemType.COFFEE,
                 BeverageSizeOption.TALL,
                 BeverageTemperatureOption.HOT,
                 options,
@@ -235,7 +239,7 @@ class OrderServiceTest {
                 5000,
                 requestedQuantity
         ));
-        CreateRequest request = new CreateRequest(999L, PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
+        CreateOrderDTO request = new CreateOrderDTO(999L, PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
 
         given(storeRepository.findById(999L)).willReturn(Optional.empty());
 
@@ -261,7 +265,7 @@ class OrderServiceTest {
 
         List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(
                 mockBeverage.getId(),
-                ItemType.DRINK,
+                ItemType.COFFEE,
                 BeverageSizeOption.TALL,
                 BeverageTemperatureOption.HOT,
                 options,
@@ -269,7 +273,7 @@ class OrderServiceTest {
                 5000,
                 requestedQuantity
         ));
-        CreateRequest request = new CreateRequest(mockStore.getId(), PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
+        CreateOrderDTO request = new CreateOrderDTO(mockStore.getId(), PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
 
         // When & Then
         assertThatThrownBy(() -> orderService.createOrder(request, 999L))
@@ -338,7 +342,7 @@ class OrderServiceTest {
         assertThat(response.orderItems()).hasSize(2);
         assertThat(response.orderItems().get(0).orderItemId()).isEqualTo(mockOrderItem1.getId());
         assertThat(response.orderItems().get(0).itemName()).isEqualTo(mockOrderItem1.getItemName());
-        assertThat(response.orderItems().get(0).itemType()).isEqualTo(ItemType.DRINK);
+        assertThat(response.orderItems().get(0).itemType()).isEqualTo(ItemType.COFFEE);
         assertThat(response.orderItems().get(1).orderItemId()).isEqualTo(mockOrderItem2.getId());
         assertThat(response.orderItems().get(1).itemName()).isEqualTo(mockOrderItem2.getItemName());
         assertThat(response.orderItems().get(1).itemType()).isEqualTo(ItemType.DESSERT);

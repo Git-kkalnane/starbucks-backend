@@ -25,7 +25,7 @@ public record OrderItemDetailResponse (
         Long originalId;
 
         if (orderItem.getBeverageItem() !=null) {
-            type = ItemType.DRINK;
+            type = ItemType.COFFEE;
             originalId = orderItem.getBeverageItem().getId();
         } else if (orderItem.getDessertItem() != null) {
             type = ItemType.DESSERT;

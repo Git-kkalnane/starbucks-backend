@@ -68,7 +68,7 @@ class OrderCreateTest {
                 new ItemOptionRequest(1L, "WHIPPED_CREAM", false, 1, 500, 1)
         );
 
-        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.DRINK, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000, 2 ));
+        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.COFFEE, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000, 2 ));
         CreateOrderDTO request = new CreateOrderDTO(mockStore.getId(), PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
 
         given(storeRepository.findById(mockStore.getId())).willReturn(Optional.of(mockStore));
@@ -96,7 +96,7 @@ class OrderCreateTest {
                 new ItemOptionRequest(1L, "WHIPPED_CREAM", false, 1, 500, 1)
         );
 
-        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.DRINK, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000 , 2));
+        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.COFFEE, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000 , 2));
         CreateOrderDTO request = new CreateOrderDTO(999L, PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
 
 
@@ -114,7 +114,7 @@ class OrderCreateTest {
                 new ItemOptionRequest(1L, "WHIPPED_CREAM", false, 1, 500, 1)
         );
 
-        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.DRINK, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000 ,2));
+        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.COFFEE, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000 ,2));
         CreateOrderDTO request = new CreateOrderDTO(mockStore.getId(), PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
 
         // When & Then
@@ -131,7 +131,7 @@ class OrderCreateTest {
                 new ItemOptionRequest(1L, "WHIPPED_CREAM", false, 1, 500, 1)
         );
 
-        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.DRINK, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000 ,2));
+        List<OrderItemRequest> orderItems = List.of(new OrderItemRequest(mockBeverage.getId(), ItemType.COFFEE, BeverageSizeOption.TALL, BeverageTemperatureOption.HOT, options, 4100, 5000 ,2));
         CreateOrderDTO request = new CreateOrderDTO(mockStore.getId(), PickupType.STORE_PICKUP, 5000, OrderStatus.PLACED, LocalDateTime.now().plusMinutes(10), orderItems );
 
         given(storeRepository.findById(mockStore.getId())).willReturn(Optional.of(mockStore));
