@@ -33,7 +33,7 @@ public class NotificationAspect {
      */
     @Pointcut("execution(* git_kkalnane.backend.starbucks.notification.service" +
             ".NotificationService" +
-            ".sendNotification(git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest))")
+            ".sendNotification(git_kkalnane.backend.starbucks.notification.dto.request.OrderNotificationSendRequest))")
     public void notificationServiceMethods() {}
 
     /**

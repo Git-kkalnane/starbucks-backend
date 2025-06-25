@@ -4,7 +4,7 @@ package git_kkalnane.backend.starbucks.notification.controller;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.notification.common.success.NotificationSuccessCode;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
-import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
+import git_kkalnane.backend.starbucks.notification.dto.request.OrderNotificationSendRequest;
 import git_kkalnane.backend.starbucks.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +44,7 @@ public class NotificationController {
             responseCode = "200",
             description = "알림 전송 성공"
     )
-    public ResponseEntity<SuccessResponse<?>> notificationRequest(@RequestBody NotificationSendRequest request) {
+    public ResponseEntity<SuccessResponse<?>> notificationRequest(@RequestBody OrderNotificationSendRequest request) {
         notificationService.sendNotification(request);
         return ResponseEntity.ok(SuccessResponse.of(
                 NotificationSuccessCode.NOTIFICATION_DELIVERED));
