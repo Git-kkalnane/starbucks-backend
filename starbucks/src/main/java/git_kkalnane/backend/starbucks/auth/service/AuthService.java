@@ -3,8 +3,11 @@ package git_kkalnane.backend.starbucks.auth.service;
 import git_kkalnane.backend.starbucks._global.utils.Encryptor;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
-import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
+import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
+import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
+import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
+import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
@@ -47,9 +50,10 @@ public class AuthService {
         }
 
         JwtToken token = jwtTokenProvider.createJwtToken(member.getId());
+        JwtToken tokens = jwtTokenProvider.createJwtToken(member.getId());
         UserInfo userInfo = UserInfo.of(member.getEmail(), member.getNickname());
 
-        return LoginDto.of(token, userInfo);
+        return LoginDto.of(tokens, userInfo);
     }
 
 //    public AccessToken verifyToken(String accessToken) {

@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.auth.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
-import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
+import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
@@ -62,11 +62,11 @@ public class AuthController {
         JwtToken token = loginDto.token();
         UserInfo userInfo = loginDto.userInfo();
 
-        ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(token.getRefreshToken());
+        ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(token.getRefreshTokenInfo().getToken());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED,
-                        LoginResponse.of(token.getAccessToken(), userInfo)));
+                        LoginResponse.of(token.getAccessTokenInfo().getToken(), userInfo)));
     }
 }
