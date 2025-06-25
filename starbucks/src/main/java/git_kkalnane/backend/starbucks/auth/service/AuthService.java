@@ -15,6 +15,7 @@ import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -110,6 +111,27 @@ public class AuthService {
         RefreshToken refreshToken = maybeRefreshToken.get();
         refreshToken.modifyToken(tokenInfo.getToken());
         refreshToken.modifyExpiration(tokenInfo.getExpiration());
+    }
+
+    /**
+     * Request Header에 포함된 accessToken을 바탕으로 로그아웃을 수행하는 메서드
+     *
+     * @param memberId 로그아웃 사용자 ID (식별자)
+     */
+    @Transactional
+    public void logout(Long memberId) {
+
+        // 액세스 토큰에 대한 검증은 인터셉터에서 이루어진다.
+        AccessToken accessToken = accessTokenRepository.findByMemberId(memberId).orElseThrow();
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_DOESNT_EXIST_IN_DB));
+
+        // accessToken, refreshToken 엔티티의 토큰 값, 만료일시 초기화
+        accessToken.modifyToken("");
+        accessToken.modifyExpiration(new Date());
+
+        refreshToken.modifyToken("");
+        refreshToken.modifyExpiration(new Date());
     }
 
     /**

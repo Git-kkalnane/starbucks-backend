@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,5 +69,38 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED,
                         LoginResponse.of(token.getAccessTokenInfo().getToken(), userInfo)));
+    }
+
+    /**
+     * HTTP Request Header에 전송된 accessToken을 이용해 로그아웃 요청을 처리하는 컨트롤러 메서드이다.
+     * @param memberId 멤버 엔티티의 식별자
+     * @return 결과 메시지
+     */
+    @Operation(
+            summary = "로그아웃",
+            description = "로그아웃 시 사용하는 API"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "로그아웃 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "JWT 토큰과 관련된 오류"
+            )
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponse<String>> logout(@RequestAttribute Long memberId) {
+
+        // 서비스 레이어 호출
+        authService.logout(memberId);
+
+        // 쿠키 무력화
+        ResponseCookie responseCookie = CookieGenerator.destroyRefreshTokenCookie();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body(SuccessResponse.of(AuthSuccessCode.LOGOUT_COMPLETED, "로그아웃 되었습니다."));
     }
 }
