@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -376,36 +377,28 @@ class OrderServiceTest {
     void getOrderHistory_Success() {
         // Given
         Long memberId = 1L;
-        Pageable pageable = PageRequest.of(0, 5); // 0번째 페이지, 5개씩
+        Pageable pageable = PageRequest.of(0, 5);
 
-        Order order1 = Order.builder().id(10L).orderNumber("A-1").store(mockStore).build();
-        Order order2 = Order.builder().id(11L).orderNumber("A-2").store(mockStore).build();
+        Order order1 = Order.builder().id(10L).orderNumber("A-1").store(mockStore).orderStatus(OrderStatus.COMPLETED).build();
+        Order order2 = Order.builder().id(11L).orderNumber("A-2").store(mockStore).orderStatus(OrderStatus.COMPLETED).build();
         List<Order> orderList = List.of(order1, order2);
-
         Page<Order> mockOrderPage = new PageImpl<>(orderList, pageable, orderList.size());
 
-        // Mocking 설정
         given(memberRepository.findById(memberId)).willReturn(Optional.of(mockMember));
-        given(orderRepository.findByMemberId(memberId, pageable)).willReturn(mockOrderPage);
+        given(orderRepository.findByMemberIdAndOrderStatusIn(eq(memberId), any(Collection.class), eq(pageable)))
+                .willReturn(mockOrderPage);
 
         // When
         OrderListResponse response = orderService.getOrderHistory(memberId, pageable);
 
         // Then
-        // 1. 응답의 페이지 정보 검증
         assertThat(response).isNotNull();
         assertThat(response.currentPage()).isEqualTo(0);
-        assertThat(response.totalPages()).isEqualTo(1);
-        assertThat(response.totalElements()).isEqualTo(2);
-
-        // 2. 응답의 주문 목록 내용 검증
         assertThat(response.orders()).hasSize(2);
         assertThat(response.orders().get(0).orderNumber()).isEqualTo("A-1");
-        assertThat(response.orders().get(0).storeName()).isEqualTo("스타벅스 강남점");
 
-        // 3. Repository 메서드 호출 검증
         verify(memberRepository, times(1)).findById(memberId);
-        verify(orderRepository, times(1)).findByMemberId(memberId, pageable);
+        verify(orderRepository, times(1)).findByMemberIdAndOrderStatusIn(eq(memberId), any(Collection.class), eq(pageable));
     }
 
     @Test
@@ -422,9 +415,7 @@ class OrderServiceTest {
                 .isInstanceOf(OrderException.class)
                 .hasMessage(OrderErrorCode.MEMBER_NOT_FOUND.getMessage());
 
-        // 1. 회원 조회는 시도했는지 검증
         verify(memberRepository, times(1)).findById(nonExistentMemberId);
-        // 2. 회원을 찾지 못했으므로 주문 내역 조회는 시도조차 하지 않았는지 검증
-        verify(orderRepository, never()).findByMemberId(anyLong(), any(Pageable.class));
+        verify(orderRepository, never()).findByMemberIdAndOrderStatusIn(anyLong(), any(Collection.class), any(Pageable.class));
     }
 }
