@@ -73,7 +73,5 @@ public class BeverageItem extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Set<BeverageTemperatureOption> supportedTemperatures = new HashSet<>();
 
-    @OneToMany(mappedBy = "beverageItem", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BeverageItemSyrup> beverageItemSyrup = new ArrayList<>();
 
 }

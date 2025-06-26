@@ -1,0 +1,16 @@
+@host = localhost
+@port = 8080
+@baseUrl = http://{{host}}:{{port}}/api/v1
+
+### ========================================
+### 카트 Item 삭제 테스트
+### ========================================
+
+### 1. 카트 Item 삭제
+DELETE {{baseUrl}}/carts?cartItemId=2
+Content-Type: application/json
+
+{
+  "cartItemId": 1,
+  "memberId": 1
+}

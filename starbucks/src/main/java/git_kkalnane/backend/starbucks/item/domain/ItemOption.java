@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.item.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
-import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItemSyrup;
+import git_kkalnane.backend.starbucks.item.domain.beverage.CartItemOption;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +36,6 @@ public class ItemOption extends BaseTimeEntity {
     private int quantity = 1;
 
     @OneToMany(mappedBy = "itemOption", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BeverageItemSyrup> beverageItemSyrup = new ArrayList<>();
+    private List<CartItemOption> cartItemOption = new ArrayList<>();
 
 }
