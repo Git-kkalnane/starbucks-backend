@@ -9,8 +9,11 @@ import git_kkalnane.backend.starbucks.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +55,7 @@ public class MemberController {
             @Parameter(name = "password", description = "비밀번호", example = "password0123")
     })
     @PostMapping("/signup")
-    public ResponseEntity<SuccessResponse<SignUpResponse>> signup(@RequestBody SignUpRequest request) {
+    public ResponseEntity<SuccessResponse<SignUpResponse>> signup(@RequestBody @Valid SignUpRequest request) {
 
         return ResponseEntity.ok(
                 (SuccessResponse.of(MemberSuccessCode.SIGN_UP_COMPLETED, memberService.createMember(request))));
