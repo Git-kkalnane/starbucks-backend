@@ -2,6 +2,8 @@ package git_kkalnane.backend.starbucks.paycard.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.member.domain.Member;
+import git_kkalnane.backend.starbucks.paycard.common.exception.PayCardErrorCode;
+import git_kkalnane.backend.starbucks.paycard.common.exception.PayCardException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +23,17 @@ public class PayCard extends BaseTimeEntity {
     private String cardNumber;
 
     @Column(name = "card_amount", nullable = false)
-    private double cardAmount = 0;
+    private Integer cardAmount = 0;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public void decreaseCardAmount(Integer amount) {
+        if (cardAmount < amount) {
+            throw new PayCardException(PayCardErrorCode.NOT_ENOUGH_PAY_CARD_AMOUNT, amount, cardAmount);
+        }
+
+        this.cardAmount -= amount;
+    }
 }
