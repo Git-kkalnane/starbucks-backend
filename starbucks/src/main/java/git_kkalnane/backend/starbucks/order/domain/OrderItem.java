@@ -4,14 +4,14 @@ import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Getter
 @Entity
 @Table(name = "order_items")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem extends BaseTimeEntity {
 
@@ -34,9 +34,14 @@ public class OrderItem extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beverage_item_id")
-    private BeverageItem bergiveItem;
+    private BeverageItem beverageItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dessert_item_id")
     private DessertItem dessertItem;
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
 }

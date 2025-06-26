@@ -1,10 +1,8 @@
 package git_kkalnane.backend.starbucks.auth.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
-import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
-import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
 import git_kkalnane.backend.starbucks.auth.dto.response.LoginResponse;
 import git_kkalnane.backend.starbucks.auth.service.AuthService;
@@ -30,10 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
+    public static final String ACCESS_PREFIX_STRING = "Bearer ";
+
     private final AuthService authService;
 
     /**
      * HTTP Request Body에 전송된 정보를 이용해 로그인 요청을 처리하는 컨트롤러 메서드이다.
+     *
      * @param request - LoginRequest 객체
      * @return - accessToken과 사용자 정보를 담고있는 LoginResponse를 담고 있는 ResponseEntity 객체
      */
@@ -60,19 +61,17 @@ public class AuthController {
 
         LoginDto loginDto = authService.login(request);
 
-        JwtToken token = loginDto.token();
-        UserInfo userInfo = loginDto.userInfo();
-
-        ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(token.getRefreshTokenInfo().getToken());
+        ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(loginDto.refreshToken());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED,
-                        LoginResponse.of(token.getAccessTokenInfo().getToken(), userInfo)));
+                .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + loginDto.accessToken())
+                .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED, loginDto.toLoginResponse()));
     }
 
     /**
      * HTTP Request Header에 전송된 accessToken을 이용해 로그아웃 요청을 처리하는 컨트롤러 메서드이다.
+     *
      * @param memberId 멤버 엔티티의 식별자
      * @return 결과 메시지
      */

@@ -17,7 +17,6 @@ import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
 import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
 import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
-import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
 import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;

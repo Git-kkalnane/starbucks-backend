@@ -26,12 +26,12 @@ public class MemberService {
     @Transactional
     public SignUpResponse createMember(SignUpRequest request) {
 
-        String encryptedPassword = encryptor.encrypt(request.getPassword());
+        String encryptedPassword = encryptor.encrypt(request.password());
 
         Member member = Member.builder()
-                .name(request.getName())
-                .nickname(request.getNickname())
-                .email(request.getEmail())
+                .name(request.name())
+                .nickname(request.nickname())
+                .email(request.email())
                 .password(encryptedPassword)
                 .build();
 
