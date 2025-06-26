@@ -22,6 +22,7 @@ import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
+import git_kkalnane.backend.starbucks.payment.service.PaymentService;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class OrderService {
     private final BeverageItemRepository beverageItemRepository;
     private final DessertItemRepository dessertItemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final PaymentService paymentService;
 
     /**
      * 주문생성 로직
@@ -91,8 +93,9 @@ public class OrderService {
         orderRepository.save(order);
         orderItemRepository.saveAll(orderItems);
 
-        return order;
+        paymentService.processPayment(order);
 
+        return order;
     }
 
     /**
