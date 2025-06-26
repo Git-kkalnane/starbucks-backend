@@ -12,7 +12,6 @@ import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
-
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
