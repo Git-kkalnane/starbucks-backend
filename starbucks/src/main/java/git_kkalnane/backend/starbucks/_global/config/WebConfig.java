@@ -39,15 +39,15 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/auth/login", "/members/signup");      // 회원가입, 로그인 엔드포인트 제외
     }
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**") // CORS 적용 범위 지정
-//                .allowedOrigins(allowedOrigins)                   // 허용할 Origin(출처, 도메인)을 지정하는 메서드 (와일드카드 사용 불가능)
-////                .allowedOriginPatterns(allowedOrigins)          // 허용할 Origin(출처, 도메인) 패턴을 지정하는 메서드
-//                .allowedMethods(allowedMethods.split(","))  // 클라이언트가 서버로 요청을 보낼 시 허용할 HTTP 메서드를 지정하는 메서드
-//                .allowedHeaders(allowedHeaders)                   // 클라이언트가 서버로 요청을 보낼 시 허용할 헤더를 지정하는 메서드
-//                .exposedHeaders("Authorization", "Set-Cookie")    // 서버가 프론트엔드로 응답을 보낼 시 노출할 헤더를 지정하는 메서드
-//                .allowCredentials(true)                           // 클라이언트가 서버로 요청을 보낼 시 허용할 자격 증명 허용 여부를 지정하는 메서드
-//                .maxAge(maxAge);                                  // preflight 요청의 캐시 시간을 지정하는 메서드
-//    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**") // CORS 적용 범위 지정
+                .allowedOrigins(allowedOrigins)                   // 허용할 Origin(출처, 도메인)을 지정하는 메서드 (와일드카드 사용 불가능)
+                .allowedOriginPatterns(allowedOrigins)          // 허용할 Origin(출처, 도메인) 패턴을 지정하는 메서드
+                .allowedMethods(allowedMethods.split(","))  // 클라이언트가 서버로 요청을 보낼 시 허용할 HTTP 메서드를 지정하는 메서드
+                .allowedHeaders(allowedHeaders)                   // 클라이언트가 서버로 요청을 보낼 시 허용할 헤더를 지정하는 메서드
+                .exposedHeaders("Authorization", "Set-Cookie")    // 서버가 프론트엔드로 응답을 보낼 시 노출할 헤더를 지정하는 메서드
+                .allowCredentials(true)                           // 클라이언트가 서버로 요청을 보낼 시 허용할 자격 증명 허용 여부를 지정하는 메서드
+                .maxAge(maxAge);                                  // preflight 요청의 캐시 시간을 지정하는 메서드
+    }
 }
