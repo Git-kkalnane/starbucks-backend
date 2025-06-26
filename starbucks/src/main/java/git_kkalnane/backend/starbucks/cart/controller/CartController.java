@@ -61,4 +61,19 @@ public class CartController {
                 .status(HttpStatus.OK)
                 .body(SuccessResponse.of(CartSuccessCode.CART_SUCCESS_MODIFIED, modifyCartItemResponse));
     }
+
+    @Operation(summary = "카트 Item 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카트 Item 삭제")
+    })
+    @DeleteMapping
+    public ResponseEntity<SuccessResponse> deleteItem(@RequestParam Long cartItemId) {
+
+        Long memberId = 1L;
+        cartService.deleteCartItem(cartItemId, memberId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SuccessResponse.of(CartSuccessCode.CART_SUCCESS_DELETED));
+    }
 }

@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -43,11 +45,22 @@ public class BeverageItem extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BeverageShotOption shotOption = BeverageShotOption.SHOT;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "beverage_supported_sizes",
+            joinColumns = @JoinColumn(name = "beverage_item_id")
+    )
+    @Column(name = "size_option")
     @Enumerated(EnumType.STRING)
-    private BeverageSizeOption sizeOption;
+    private Set<BeverageSizeOption> supportedSizes= new HashSet<>();
 
+    @ElementCollection
+    @CollectionTable(
+            name = "beverage_supported_temperatureoptions",
+            joinColumns = @JoinColumn(name = "beverage_item_id")
+    )
     @Enumerated(EnumType.STRING)
-    private BeverageTemperatureOption temperatureOption;
+    private Set<BeverageTemperatureOption> supportedTemperatures = new HashSet<>();
 
 
 }

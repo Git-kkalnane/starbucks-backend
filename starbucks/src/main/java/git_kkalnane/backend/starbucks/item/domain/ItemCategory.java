@@ -27,13 +27,6 @@
         @Column(name = "category_name_en", nullable = false, unique = true)
         private String categoryNameEn;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "parent_category_id")
-        private ItemCategory parent;
-
-        @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
-        private List<ItemCategory> children= new ArrayList<>();
-
         @OneToMany(mappedBy = "itemCategory", cascade = CascadeType.REMOVE)
         private List<BeverageItemCategory> beverageItemCategory = new ArrayList<>();
 

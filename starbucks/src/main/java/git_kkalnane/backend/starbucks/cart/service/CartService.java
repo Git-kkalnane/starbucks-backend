@@ -215,6 +215,27 @@ public class CartService {
                 totalPrice
         );
     }
+
+    /**
+     *
+     * @param cartItemId : cartItemId 전달받아 cartItemRepository에서 삭제
+     * @param memberId : Vaild용
+     * @return : 삭제한 cartItemId를 반환한다.
+     */
+    @Transactional
+    public Long deleteCartItem(Long cartItemId, Long memberId) {
+
+        Cart cart = cartRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CartException(CartErrorCode.CART_NOT_FOUND));
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
+                () -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
+        if (!cartItem.getCart().getId().equals(cart.getId())) {
+            throw new CartException(CartErrorCode.CART_INVALID);
+        }
+
+        cartItemRepository.deleteById(cartItemId);
+        return cartItemId;
+    }
 }
 
 
