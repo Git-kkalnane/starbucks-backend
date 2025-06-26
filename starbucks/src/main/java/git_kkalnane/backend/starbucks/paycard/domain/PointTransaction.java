@@ -19,7 +19,7 @@ public class PointTransaction extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "amount", nullable = false)
-    private double amount;
+    private Integer amount;
 
     @Column(name = "description", length = 254)
     private String description;
