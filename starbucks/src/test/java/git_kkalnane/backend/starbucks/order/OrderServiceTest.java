@@ -15,9 +15,11 @@ import git_kkalnane.backend.starbucks.order.domain.*;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
+import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
+import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
@@ -35,10 +37,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -52,6 +51,8 @@ class OrderServiceTest {
     @Mock private BeverageItemRepository beverageItemRepository;
     @Mock private DessertItemRepository dessertItemRepository;
     @Mock private OrderRepository orderRepository;
+    @Mock private OrderItemRepository orderItemRepository;
+
 
     @InjectMocks private OrderService orderService;
 
@@ -62,9 +63,9 @@ class OrderServiceTest {
 
     @BeforeEach
     void 정보_세팅() {
-        mockStore = Store.builder().id(1L).name("스타벅스 강남점").build();
-        mockMember = Member.builder().id(1L).build();
-        mockBeverage = BeverageItem.builder().id(101L).beverageItemNameKo("아이스 아메리카노").price(4500).build();
+        mockMember = Member.builder().id(1L).name("장원영").build();
+        mockStore = Store.builder().id(1L).name("스타벅스 강남점").address("서울시 강남구 강남대로 123").build();
+        mockBeverage = BeverageItem.builder().id(101L).beverageItemNameKo("아이스 아메리카노").price(4500).isCoffee(true).build();
         mockDessert = DessertItem.builder().id(201L).dessertItemNameKo("치즈케이크").price(5500).build();
     }
 
@@ -102,9 +103,8 @@ class OrderServiceTest {
         given(memberRepository.findById(mockMember.getId())).willReturn(Optional.of(mockMember));
         given(beverageItemRepository.findById(mockBeverage.getId())).willReturn(Optional.of(mockBeverage));
         OrderDailyCounterId counterId = new OrderDailyCounterId(LocalDate.now(), mockStore.getId());
-
         given(orderDailyCounterRepository.findById(any(OrderDailyCounterId.class)))
-                .willReturn(Optional.of(new OrderDailyCounter(counterId, 0))); // 처음에는 0, increment 후 1
+                .willReturn(Optional.of(new OrderDailyCounter(counterId, 0)));
         given(orderDailyCounterRepository.save(any(OrderDailyCounter.class)))
                 .willAnswer(invocation -> {
                     OrderDailyCounter counter = invocation.getArgument(0);
@@ -145,7 +145,7 @@ class OrderServiceTest {
         verify(storeRepository, times(1)).findById(mockStore.getId());
         verify(memberRepository, times(1)).findById(mockMember.getId());
         verify(beverageItemRepository, times(1)).findById(mockBeverage.getId());
-        verify(orderDailyCounterRepository, times(1)).findById(any(LocalDate.class));
+        verify(orderDailyCounterRepository, times(1)).findById(any(OrderDailyCounterId.class));
         verify(orderDailyCounterRepository, times(1)).save(any(OrderDailyCounter.class));
         verify(orderRepository, times(1)).save(any(Order.class));
     }
@@ -418,4 +418,49 @@ class OrderServiceTest {
         verify(memberRepository, times(1)).findById(nonExistentMemberId);
         verify(orderRepository, never()).findByMemberIdAndOrderStatusIn(anyLong(), any(Collection.class), any(Pageable.class));
     }
+
+    @Test
+    @DisplayName("나의 현재 주문 목록 조회 성공")
+    void getCurrentOrders_Success() {
+        // Given
+        Long memberId = 1L;
+
+        Order order1 = Order.builder().id(20L).orderNumber("B-1").member(mockMember).store(mockStore).orderStatus(OrderStatus.PREPARING).build();
+        Order order2 = Order.builder().id(21L).orderNumber("B-2").member(mockMember).store(mockStore).orderStatus(OrderStatus.READY_FOR_PICKUP).build();
+        List<Order> mockOrderList = List.of(order1, order2);
+
+        given(orderRepository.findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(eq(memberId), anyList()))
+                .willReturn(mockOrderList);
+
+        // When
+        List<CurrentOrderResponse> result = orderService.getCurrentOrders(memberId);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).orderIdUI()).isEqualTo("B-1");
+        assertThat(result.get(0).storeName()).isEqualTo("스타벅스 강남점");
+
+        verify(orderRepository, times(1)).findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(eq(memberId), anyList());
+    }
+
+    @Test
+    @DisplayName("나의 현재 주문 목록이 없을 경우 빈 리스트 반환")
+    void getCurrentOrders_ReturnsEmptyList_WhenNoOrders() {
+        // Given
+        Long memberId = 2L;
+
+        given(orderRepository.findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(eq(memberId), anyList()))
+                .willReturn(Collections.emptyList());
+
+        // When
+        List<CurrentOrderResponse> result = orderService.getCurrentOrders(memberId);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result).isEmpty();
+
+        verify(orderRepository, times(1)).findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(eq(memberId), anyList());
+    }
+
 }
