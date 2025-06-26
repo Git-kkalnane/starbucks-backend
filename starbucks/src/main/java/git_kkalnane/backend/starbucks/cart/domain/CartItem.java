@@ -58,7 +58,7 @@ public class CartItem extends BaseTimeEntity {
         }
 
         int optionPrice = this.cartItemOption.stream()
-                .mapToInt(opt -> opt.getItemOption().getAdditonalPrice())
+                .mapToInt(opt -> opt.getItemOption().getAdditionalPrice())
                 .sum();
 
         return (price + optionPrice) * this.cartItemQuantity;
