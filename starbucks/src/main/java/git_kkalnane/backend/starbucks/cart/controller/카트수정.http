@@ -1,0 +1,28 @@
+@host = localhost
+@port = 8080
+@baseUrl = http://{{host}}:{{port}}/api/v1
+
+
+### ========================================
+### 카트 Item 수량 수정 테스트
+### ========================================
+
+### 1. 카트 Item 수정
+PUT {{baseUrl}}/carts
+Content-Type: application/json
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}

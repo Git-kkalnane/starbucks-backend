@@ -6,13 +6,13 @@ import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTempera
 
 import java.util.List;
 
-public record ItemsRequest(
+public record AddItemsRequest(
         Long itemId,
         ItemType itemType,
         int quantity,
         String imageUrl,
         BeverageSizeOption beverageSizeOption,
         BeverageTemperatureOption beverageTemperatureOption,
-        List<CartItemOptionRequest> itemOptions
+        List<AddCartItemOptionRequest> itemOptions
 ) {
 }

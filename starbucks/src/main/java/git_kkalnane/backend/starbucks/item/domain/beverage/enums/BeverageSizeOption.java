@@ -2,7 +2,7 @@ package git_kkalnane.backend.starbucks.item.domain.beverage.enums;
 
 public enum BeverageSizeOption {
     TALL(0),
-    GRANDED(500),
+    GRANDE(500),
     VENTI(500),
     SHORT(0),
     SOLO(0),

@@ -48,6 +48,25 @@ public class CartItem extends BaseTimeEntity {
             option.setCartItem(this);
         }
     }
+    public int totalPrice() {
+        int price = 0;
+
+        if(this.beverageItem != null) {
+            price = this.beverageItem.getPrice();
+        } else if(this.dessertItem != null) {
+            price = this.dessertItem.getPrice();
+        }
+
+        int optionPrice = this.cartItemOption.stream()
+                .mapToInt(opt -> opt.getItemOption().getAdditonalPrice())
+                .sum();
+
+        return (price + optionPrice) * this.cartItemQuantity;
+    }
+
+    public void changeQuantity(int changeQuantity) {
+        this.cartItemQuantity = changeQuantity;
+    }
 
 
 }

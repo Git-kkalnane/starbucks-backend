@@ -2,9 +2,8 @@ package git_kkalnane.backend.starbucks.cart.dto.request;
 
 import java.util.List;
 
-public record CartAddItemRequest(
+public record ModifyCartItemRequest(
         Long id,
-        List<ItemsRequest> items,
-        int totalPrice
+        List<ModifyCartItemsRequest> cartItems
 ) {
 }
