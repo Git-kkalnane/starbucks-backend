@@ -2,7 +2,6 @@ package git_kkalnane.backend.starbucks.order.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 
 /**
  * 주문번호 생성을 위한 Entity파일을 작성하였습니다.
@@ -15,8 +14,8 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderDailyCounter {
 
-    @Id
-    private LocalDate date;
+    @EmbeddedId
+    private OrderDailyCounterId id;
 
     @Column(name = "count", nullable = false)
     private int count;
@@ -25,8 +24,8 @@ public class OrderDailyCounter {
         this.count++;
     }
 
-    public OrderDailyCounter(LocalDate date, int count) {
-        this.date = date;
+    public OrderDailyCounter(OrderDailyCounterId id, int count) {
+        this.id = id;
         this.count = count;
     }
 }

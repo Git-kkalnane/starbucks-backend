@@ -1,13 +1,10 @@
 package git_kkalnane.backend.starbucks.order.controller;
 
-import git_kkalnane.backend.starbucks._global.success.SuccessCode;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
-import git_kkalnane.backend.starbucks.order.domain.Order;
-import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
+import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,16 +35,16 @@ public class OrderController {
 
     @Operation(summary = "주문 생성")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "주문 생성 성공")
+            @ApiResponse(responseCode = "201", description = "주문 생성 성공")
     })
     @PostMapping
-    public ResponseEntity<SuccessResponse> createOrder(@Valid @RequestBody CreateRequest request) {
+    public ResponseEntity<SuccessResponse> createOrder(@Valid @RequestBody CreateOrderDTO request) {
 
         Long memberId = 1L;
-        CreateResponse createResponse = orderService.createOrder(request, memberId);
+        orderService.createOrder(request, memberId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(SuccessResponse.of(OrderSuccessCode.ORDER_SUCCESS_CREATED, createResponse));
+                .body(SuccessResponse.of(OrderSuccessCode.ORDER_SUCCESS_CREATED, request));
     }
 
     @Operation(summary = "주문 상세 조회", description = "특정 주문의 상세 정보를 조회합니다.")

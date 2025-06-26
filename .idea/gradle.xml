@@ -7,7 +7,7 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$/starbucks" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/starbucks" />
+            <option value="$PROJECT_DIR$/../../../../구름톤 백엔드/팀스터디/Git-kkalnane/starbucks-backend/starbucks" />
           </set>
         </option>
       </GradleProjectSettings>

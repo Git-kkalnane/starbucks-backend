@@ -12,14 +12,14 @@ import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
-
-import git_kkalnane.backend.starbucks.order.dto.request.CreateRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
+import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounterId;
+import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
+import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
@@ -49,6 +49,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final BeverageItemRepository beverageItemRepository;
     private final DessertItemRepository dessertItemRepository;
+    private final OrderItemRepository orderItemRepository;
 
     /**
      * 주문생성 로직
@@ -59,7 +60,7 @@ public class OrderService {
      * @return
      */
     @Transactional
-    public CreateResponse createOrder(CreateRequest request, Long memberId) {
+    public Order createOrder(CreateOrderDTO request, Long memberId) {
 
         Store store = storeRepository.findById(request.storeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장입니다."));
@@ -71,7 +72,7 @@ public class OrderService {
                 .map(this::validateAndCreateOrderItems)
                 .collect(Collectors.toList());
 
-        String orderNumber = generateOrderNumber();
+        String orderNumber = generateOrderNumber(request);
 
         Order order = Order.builder()
                 .orderNumber(orderNumber)
@@ -88,13 +89,11 @@ public class OrderService {
             order.addOrderItem(item);
         }
 
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
+        orderItemRepository.saveAll(orderItems);
 
-        return new CreateResponse(
-                200,
-                "주문이 성공적으로 생성되었습니다.",
-                savedOrder.getId()
-        );
+        return order;
+
     }
 
     /**
@@ -107,7 +106,7 @@ public class OrderService {
     private OrderItem validateAndCreateOrderItems(OrderItemRequest request) {
         int orderQuantity = request.quantity();
 
-        if (request.itemType() == ItemType.DRINK) {
+        if (request.itemType() == ItemType.COFFEE) {
             BeverageItem item = beverageItemRepository.findById(request.itemId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
 
@@ -138,16 +137,20 @@ public class OrderService {
      * @return : 날짜를 비교하여, 날짜가 지나면 0으로 초기화하고 1부터 다시 주문번호가 시작된다.
      */
     @Transactional
-    public String generateOrderNumber() {
+    public String generateOrderNumber(CreateOrderDTO request) {
+        Long storeId = request.storeId();
         LocalDate today = LocalDate.now();
 
-        OrderDailyCounter counter = orderDailyCounterRepository.findById(today)
-                .orElseGet(() -> new OrderDailyCounter(today, 0));
+        OrderDailyCounterId id = new OrderDailyCounterId(today, storeId);
+
+        OrderDailyCounter counter = orderDailyCounterRepository.findById(id)
+                .orElseGet(() -> new OrderDailyCounter(id, 0));
 
         counter.increment();
+
         orderDailyCounterRepository.save(counter);
 
-        return "A - " + counter.getCount();
+        return "A-" + counter.getCount();
     }
 
     /**

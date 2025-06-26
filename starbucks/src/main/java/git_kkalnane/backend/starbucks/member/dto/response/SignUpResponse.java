@@ -1,19 +1,8 @@
 package git_kkalnane.backend.starbucks.member.dto.response;
 
-
-import lombok.Getter;
-
-@Getter
-public class SignUpResponse {
-    String memberName;
-    String email;
-
-    private SignUpResponse(String memberName, String email) {
-        this.memberName = memberName;
-        this.email = email;
-    }
-
-    public static SignUpResponse of(String memberName, String email) {
-        return new SignUpResponse(memberName, email);
-    }
+/**
+ * 회원가입 응답 시 프론트엔드 측으로 넘겨줄 데이터를 담기위한 DTO
+ * @param name 가입자 이름
+ */
+public record SignUpResponse(String name) {
 }

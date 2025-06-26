@@ -5,9 +5,11 @@ import git_kkalnane.backend.starbucks.item.domain.ItemStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Getter
 @Entity
 @Table(name = "dessert_items")
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
