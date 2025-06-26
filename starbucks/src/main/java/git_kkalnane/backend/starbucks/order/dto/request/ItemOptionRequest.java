@@ -5,6 +5,6 @@ public record ItemOptionRequest(
         String syrupName,
         boolean isRequired,
         int displayOrder,
-        int additonalPrice,
+        int additionalPrice,
         int quantity
 ) {}

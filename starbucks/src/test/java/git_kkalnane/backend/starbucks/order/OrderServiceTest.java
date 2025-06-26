@@ -16,6 +16,7 @@ import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import git_kkalnane.backend.starbucks.store.domain.Store;
@@ -27,10 +28,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +62,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void 정보_세팅() {
-        mockStore = Store.builder().id(1L).build();
+        mockStore = Store.builder().id(1L).name("스타벅스 강남점").build();
         mockMember = Member.builder().id(1L).build();
         mockBeverage = BeverageItem.builder().id(101L).beverageItemNameKo("아이스 아메리카노").price(4500).build();
         mockDessert = DessertItem.builder().id(201L).dessertItemNameKo("치즈케이크").price(5500).build();
@@ -364,5 +370,52 @@ class OrderServiceTest {
                 .hasMessage(OrderErrorCode.ORDER_NOT_FOUND.getMessage());
 
         verify(orderRepository, times(1)).findById(nonExistentOrderId);
+    }
+
+    @Test
+    @DisplayName("과거 주문 내역 조회 성공")
+    void getOrderHistory_Success() {
+        // Given
+        Long memberId = 1L;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Order order1 = Order.builder().id(10L).orderNumber("A-1").store(mockStore).orderStatus(OrderStatus.COMPLETED).build();
+        Order order2 = Order.builder().id(11L).orderNumber("A-2").store(mockStore).orderStatus(OrderStatus.COMPLETED).build();
+        List<Order> orderList = List.of(order1, order2);
+        Page<Order> mockOrderPage = new PageImpl<>(orderList, pageable, orderList.size());
+
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(mockMember));
+        given(orderRepository.findByMemberIdAndOrderStatusIn(eq(memberId), any(Collection.class), eq(pageable)))
+                .willReturn(mockOrderPage);
+
+        // When
+        OrderListResponse response = orderService.getOrderHistory(memberId, pageable);
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.currentPage()).isEqualTo(0);
+        assertThat(response.orders()).hasSize(2);
+        assertThat(response.orders().get(0).orderNumber()).isEqualTo("A-1");
+
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(orderRepository, times(1)).findByMemberIdAndOrderStatusIn(eq(memberId), any(Collection.class), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("과거 주문 내역 조회 실패 - 존재하지 않는 회원")
+    void getOrderHistory_MemberNotFound_ThrowsException() {
+        // Given
+        Long nonExistentMemberId = 999L;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        given(memberRepository.findById(nonExistentMemberId)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> orderService.getOrderHistory(nonExistentMemberId, pageable))
+                .isInstanceOf(OrderException.class)
+                .hasMessage(OrderErrorCode.MEMBER_NOT_FOUND.getMessage());
+
+        verify(memberRepository, times(1)).findById(nonExistentMemberId);
+        verify(orderRepository, never()).findByMemberIdAndOrderStatusIn(anyLong(), any(Collection.class), any(Pageable.class));
     }
 }
