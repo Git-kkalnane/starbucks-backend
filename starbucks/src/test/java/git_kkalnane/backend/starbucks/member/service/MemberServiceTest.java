@@ -44,10 +44,10 @@ class MemberServiceTest {
 
         signUpRequest = new SignUpRequest("홍길동", "나는야홍길동", "test@example.com", "password123");
 
-        String encryptedPassword = encryptor.encrypt(signUpRequest.getPassword());
+        String encryptedPassword = encryptor.encrypt(signUpRequest.password());
         savedMember = Member.builder()
-                .name(signUpRequest.getName()).nickname(signUpRequest.getNickname())
-                .email(signUpRequest.getEmail()).password(encryptedPassword).build();
+                .name(signUpRequest.name()).nickname(signUpRequest.nickname())
+                .email(signUpRequest.email()).password(encryptedPassword).build();
     }
 
     @Test
@@ -61,7 +61,7 @@ class MemberServiceTest {
 
         // then
         assertThat(response).isNotNull();
-        assertThat(response.getName()).isEqualTo(signUpRequest.getName());
+        assertThat(response.name()).isEqualTo(signUpRequest.name());
         verify(memberRepository, times(1)).save(any(Member.class));
     }
 
@@ -76,7 +76,7 @@ class MemberServiceTest {
 
         // then
         verify(memberRepository, times(1)).save(
-                argThat(member -> encryptor.isMatch(signUpRequest.getPassword(), member.getPassword())));
+                argThat(member -> encryptor.isMatch(signUpRequest.password(), member.getPassword())));
     }
 
     @Test
@@ -90,10 +90,10 @@ class MemberServiceTest {
 
         // then
         verify(memberRepository, times(1))
-                .save(argThat(member -> member.getName().equals(signUpRequest.getName())
-                        && member.getNickname().equals(signUpRequest.getNickname())
-                        && member.getEmail().equals(signUpRequest.getEmail())
-                        && encryptor.isMatch(signUpRequest.getPassword(), member.getPassword())));
+                .save(argThat(member -> member.getName().equals(signUpRequest.name())
+                        && member.getNickname().equals(signUpRequest.nickname())
+                        && member.getEmail().equals(signUpRequest.email())
+                        && encryptor.isMatch(signUpRequest.password(), member.getPassword())));
     }
 
     @Test
@@ -115,16 +115,16 @@ class MemberServiceTest {
         SignUpRequest request1 = new SignUpRequest("김철수", "철수", "user1@example.com", "password1");
         SignUpRequest request2 = new SignUpRequest("김영희", "영희", "user2@example.com", "password2");
 
-        String encryptedPassword1 = encryptor.encrypt(request1.getPassword());
-        String encryptedPassword2 = encryptor.encrypt(request2.getPassword());
+        String encryptedPassword1 = encryptor.encrypt(request1.password());
+        String encryptedPassword2 = encryptor.encrypt(request2.password());
 
         Member member1 = Member.builder()
-                .name(request1.getName()).nickname(request1.getNickname())
-                .email(request1.getEmail()).password(encryptedPassword1).build();
+                .name(request1.name()).nickname(request1.nickname())
+                .email(request1.email()).password(encryptedPassword1).build();
 
         Member member2 = Member.builder()
-                .name(request2.getName()).nickname(request2.getNickname())
-                .email(request2.getEmail()).password(encryptedPassword2).build();
+                .name(request2.name()).nickname(request2.nickname())
+                .email(request2.email()).password(encryptedPassword2).build();
 
         when(memberRepository.save(any(Member.class))).thenReturn(member1).thenReturn(member2);
 
@@ -133,8 +133,8 @@ class MemberServiceTest {
         SignUpResponse response2 = memberService.createMember(request2);
 
         // then
-        assertThat(response1.getName()).isEqualTo("김철수");
-        assertThat(response2.getName()).isEqualTo("김영희");
+        assertThat(response1.name()).isEqualTo("김철수");
+        assertThat(response2.name()).isEqualTo("김영희");
         verify(memberRepository, times(2)).save(any(Member.class));
     }
 
@@ -158,9 +158,9 @@ class MemberServiceTest {
         List<Member> savedMembers = memberCaptor.getAllValues();
 
         // 각각의 비밀번호가 올바르게 암호화되었는지 확인
-        assertThat(encryptor.isMatch(request1.getPassword(), savedMembers.get(0).getPassword()))
+        assertThat(encryptor.isMatch(request1.password(), savedMembers.get(0).getPassword()))
                 .isTrue();
-        assertThat(encryptor.isMatch(request2.getPassword(), savedMembers.get(1).getPassword()))
+        assertThat(encryptor.isMatch(request2.password(), savedMembers.get(1).getPassword()))
                 .isTrue();
 
         // 두 해시값이 서로 다른지 확인
