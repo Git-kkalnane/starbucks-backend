@@ -5,9 +5,7 @@ import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.paycard.domain.PointTransaction;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "payments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class Payment extends BaseTimeEntity {
 
     @Id
@@ -23,7 +23,7 @@ public class Payment extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "amount_paid_by_point", nullable = false)
-    private double amountPaidByPoint;
+    private Integer amountPaidByPoint;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status")
