@@ -22,6 +22,7 @@ public class CartItem extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     @Column(name = "cart_item_quantity", nullable = false)
     private int cartItemQuantity = 1;
 
@@ -58,7 +59,7 @@ public class CartItem extends BaseTimeEntity {
         }
 
         int optionPrice = this.cartItemOption.stream()
-                .mapToInt(opt -> opt.getItemOption().getAdditonalPrice())
+                .mapToInt(opt -> opt.getItemOption().getAdditionalPrice())
                 .sum();
 
         return (price + optionPrice) * this.cartItemQuantity;

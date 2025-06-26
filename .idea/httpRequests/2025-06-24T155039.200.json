@@ -1,0 +1,45 @@
+{
+  "status": 200,
+  "message": "카트에 성공적으로 추가되었습니다.",
+  "result": {
+    "id": 1,
+    "items": [
+      {
+        "itemId": 101,
+        "itemType": "DRINK",
+        "quantity": 2,
+        "imageUrl": "https://example.com/images/latte.jpg",
+        "beverageSizeOption": "VENTI",
+        "beverageTemperatureOption": "HOT",
+        "itemOptions": [
+          {
+            "itemOptionId": 1,
+            "syrupName": "바닐라 시럽",
+            "isRequired": false,
+            "quantity": 1,
+            "additonalPrice": 500,
+            "itemType": "DRINK"
+          },
+          {
+            "itemOptionId": 2,
+            "syrupName": "헤이즐넛 시럽",
+            "isRequired": false,
+            "quantity": 1,
+            "additonalPrice": 500,
+            "itemType": "DRINK"
+          }
+        ]
+      },
+      {
+        "itemId": 202,
+        "itemType": "DESSERT",
+        "quantity": 1,
+        "imageUrl": "https://example.com/images/cake.jpg",
+        "beverageSizeOption": null,
+        "beverageTemperatureOption": null,
+        "itemOptions": []
+      }
+    ],
+    "totalPrice": 10500
+  }
+}

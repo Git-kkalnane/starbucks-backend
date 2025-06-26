@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8f57bbc4-3179-4547-998b-e729cf68f2bf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/domain/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/domain/Cart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/domain/CartItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/domain/CartItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/service/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/service/CartService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/inquiry/domain/Inquiry.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/inquiry/domain/Inquiry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/item/domain/ItemOption.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/item/domain/ItemOption.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/item/domain/beverage/BeverageItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/item/domain/beverage/BeverageItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/item/domain/dessert/DessertItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/item/domain/dessert/DessertItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/domain/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/domain/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/domain/OrderItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/domain/OrderItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/service/OrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/store/domain/Store.java" beforeDir="false" afterPath="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/store/domain/Store.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/starbucks">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Exception" />
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <branch-grouping />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="refactor/#136coderefactoring" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;dotae1&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Git-kkalnane/starbucks-backend.git&quot;,
+    &quot;accountId&quot;: &quot;9b0e103b-1052-40b0-9cd9-f4a2e7c15d53&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2yRCHgLwytWk3PUA34HGswMf5Qt" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+    <option name="showScratchesAndConsoles" value="false" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build starbucks.executor": "Run",
+    "Gradle.OrderCreateTest.executor": "Run",
+    "Gradle.test.executor": "Run",
+    "HTTP Request.All in 주문생성API.executor": "Run",
+    "HTTP Request.All in 카트 아이템 삭제.executor": "Run",
+    "HTTP Request.All in 카트메뉴담기.executor": "Run",
+    "HTTP Request.All in 카트수정.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.StarbucksApplication.executor": "Run",
+    "git-widget-placeholder": "refactor/#150coderefactoring",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/goorm/Desktop/starbucks-backend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/notification" />
+      <recent name="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks" />
+      <recent name="$PROJECT_DIR$/starbucks" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.StarbucksApplication">
+    <configuration name="OrderCreateTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/starbucks" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;git_kkalnane.backend.starbucks.order.service.OrderCreateTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/starbucks" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;git_kkalnane.backend.starbucks.order.test&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="All in 카트메뉴담기" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/controller/카트메뉴담기.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="All in 주문생성API" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/order/controller/주문생성API.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="All in 카트수정" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/controller/카트수정.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="All in 카트 아이템 삭제" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/starbucks/src/main/java/git_kkalnane/backend/starbucks/cart/controller/카트 아이템 삭제.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="StarbucksApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="starbucks.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="git_kkalnane.backend.starbucks.StarbucksApplication" />
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH="starbucks/dev.env" />
+        </ENTRIES>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.All in 카트 아이템 삭제" />
+        <item itemvalue="HTTP Request.All in 주문생성API" />
+        <item itemvalue="Gradle.test" />
+        <item itemvalue="Gradle.OrderCreateTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8f57bbc4-3179-4547-998b-e729cf68f2bf" name="Changes" comment="" />
+      <created>1749787912896</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749787912896</updated>
+      <workItem from="1749787914022" duration="153000" />
+      <workItem from="1749788705032" duration="891000" />
+      <workItem from="1749790691894" duration="36000" />
+      <workItem from="1749790755648" duration="162000" />
+      <workItem from="1749790944113" duration="28000" />
+      <workItem from="1749790983461" duration="96000" />
+      <workItem from="1749791100775" duration="35000" />
+      <workItem from="1749791149545" duration="119000" />
+      <workItem from="1749791287325" duration="18000" />
+      <workItem from="1749791312803" duration="70000" />
+      <workItem from="1749791435268" duration="6000" />
+      <workItem from="1749791454183" duration="41000" />
+      <workItem from="1749791506506" duration="36000" />
+      <workItem from="1749791879084" duration="5000" />
+      <workItem from="1749791917363" duration="52000" />
+      <workItem from="1749791983387" duration="4326000" />
+      <workItem from="1749796333471" duration="5583000" />
+      <workItem from="1749889133597" duration="2674000" />
+      <workItem from="1750047323218" duration="6863000" />
+      <workItem from="1750055230690" duration="7134000" />
+      <workItem from="1750063094892" duration="1191000" />
+      <workItem from="1750119346910" duration="34000" />
+      <workItem from="1750120302622" duration="1911000" />
+      <workItem from="1750159215283" duration="4046000" />
+      <workItem from="1750164514260" duration="2196000" />
+      <workItem from="1750230818408" duration="584000" />
+      <workItem from="1750231411930" duration="1533000" />
+      <workItem from="1750232974642" duration="2000" />
+      <workItem from="1750232983590" duration="171000" />
+      <workItem from="1750233165045" duration="162000" />
+      <workItem from="1750233338406" duration="10000" />
+      <workItem from="1750233361926" duration="103000" />
+      <workItem from="1750233471365" duration="1038000" />
+      <workItem from="1750234538328" duration="358000" />
+      <workItem from="1750234903268" duration="1546000" />
+      <workItem from="1750236517478" duration="171000" />
+      <workItem from="1750236744610" duration="1717000" />
+      <workItem from="1750332659221" duration="1930000" />
+      <workItem from="1750401213861" duration="313000" />
+      <workItem from="1750401852189" duration="1078000" />
+      <workItem from="1750414446391" duration="104000" />
+      <workItem from="1750414579964" duration="24000" />
+      <workItem from="1750414623571" duration="12000" />
+      <workItem from="1750414645100" duration="61000" />
+      <workItem from="1750414723190" duration="7320000" />
+      <workItem from="1750422068741" duration="1934000" />
+      <workItem from="1750427111011" duration="9799000" />
+      <workItem from="1750601729366" duration="33000" />
+      <workItem from="1750601785599" duration="39000" />
+      <workItem from="1750601836160" duration="50338000" />
+      <workItem from="1750733903875" duration="14120000" />
+      <workItem from="1750810760397" duration="19739000" />
+      <workItem from="1750898049905" duration="3957000" />
+      <workItem from="1750905094556" duration="2478000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

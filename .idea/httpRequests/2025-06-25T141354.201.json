@@ -1,0 +1,40 @@
+{
+  "status": 201,
+  "message": "주문이 성공적으로 생성되었습니다.",
+  "result": {
+    "storeId": 2,
+    "pickupType": "STORE_PICKUP",
+    "orderTotalPrice": 15000,
+    "orderStatus": "PLACED",
+    "orderExpectedPickupTime": null,
+    "orderItems": [
+      {
+        "itemId": 101,
+        "itemType": "DRINK",
+        "beverageSizeOption": "TALL",
+        "beverageTemperatureOption": "HOT",
+        "options": [
+          {
+            "id": 1,
+            "syrupName": "WHIPPED_CREAM",
+            "isRequired": false,
+            "displayOrder": 1,
+            "additonalPrice": 500,
+            "quantity": 1
+          }
+        ],
+        "itemPrice": 7500,
+        "totalPrice": 8000
+      },
+      {
+        "itemId": 201,
+        "itemType": "DESSERT",
+        "beverageSizeOption": null,
+        "beverageTemperatureOption": "ICE",
+        "options": [],
+        "itemPrice": 7000,
+        "totalPrice": 7000
+      }
+    ]
+  }
+}

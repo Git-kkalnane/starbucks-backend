@@ -1,0 +1,1816 @@
+DELETE http://localhost:8080/api/v1/carts?cartItemId=7
+Content-Type: application/json
+Content-Length: 38
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartItemId": 1,
+  "memberId": 1
+}
+
+<> 2025-06-25T174510.200.json
+
+###
+
+DELETE http://localhost:8080/api/v1/carts?cartItemId=2
+Content-Type: application/json
+Content-Length: 38
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartItemId": 1,
+  "memberId": 1
+}
+
+<> 2025-06-25T174038.200.json
+
+###
+
+DELETE http://localhost:8080/api/v1/carts?cartItemId=1
+Content-Type: application/json
+Content-Length: 38
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartItemId": 1,
+  "memberId": 1
+}
+
+<> 2025-06-25T173916.200.json
+
+###
+
+DELETE http://localhost:8080/api/v1/carts?cartitemId=1
+Content-Type: application/json
+Content-Length: 38
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartItemId": 1,
+  "memberId": 1
+}
+
+<> 2025-06-25T173900.500.json
+
+###
+
+DELETE http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 38
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartItemId": 1,
+  "memberId": 1
+}
+
+<> 2025-06-25T173559.500.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 3,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T141646.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T141639.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T141404.500.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T141354.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140821.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140819.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140811.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140810.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140732.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140723.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140317.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140248.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140207.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140141.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140106.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T140004.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T135955.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T135815.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T135806.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 2,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T135619.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T135608.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T135226.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T134539.201.json
+
+###
+
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Content-Length: 720
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "storeId": 1,
+  "pickupType": "STORE_PICKUP",
+  "orderTotalPrice": 15000,
+  "orderStatus": "PLACED",
+  "orderItems": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "beverageSizeOption": "TALL",
+      "beverageTemperatureOption": "HOT",
+      "options": [{
+        "id": 1,
+        "syrupName": "WHIPPED_CREAM",
+        "isRequired": false,
+        "displayOrder": 1,
+        "additonalPrice": 500,
+        "quantity": 1
+      }],
+      "totalPrice": 8000,
+      "itemPrice": 7500
+    },
+    {
+      "itemId": 201,
+      "itemType": "DESSERT",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": "ICE",
+      "options": [],
+      "totalPrice": 7000,
+      "itemPrice": 7000
+    }
+  ]
+}
+
+<> 2025-06-25T134329.500.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 3,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 3,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T165925.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T165825.200.json
+
+###
+
+POST http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 969
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "items": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "quantity": 2,
+      "imageUrl": "https://example.com/images/latte.jpg",
+      "beverageSizeOption": "VENTI",
+      "beverageTemperatureOption": "HOT",
+      "itemOptions": [
+        {
+          "itemOptionId": 1,
+          "syrupName": "바닐라 시럽",
+          "isRequired": false,
+          "quantity": 1,
+          "additonalPrice": 500,
+          "itemType": "DRINK"
+        },
+        {
+          "itemOptionId": 2,
+          "syrupName": "헤이즐넛 시럽",
+          "isRequired": false,
+          "quantity": 1,
+          "additonalPrice": 500,
+          "itemType": "DRINK"
+        }
+      ]
+    },
+    {
+      "itemId": 202,
+      "itemType": "DESSERT",
+      "quantity": 1,
+      "imageUrl": "https://example.com/images/cake.jpg",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": null,
+      "itemOptions": []
+    }
+  ],
+  "totalPrice": 10500
+}
+
+<> 2025-06-24T162316.200.json
+
+###
+
+POST http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 969
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "items": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "quantity": 2,
+      "imageUrl": "https://example.com/images/latte.jpg",
+      "beverageSizeOption": "VENTI",
+      "beverageTemperatureOption": "HOT",
+      "itemOptions": [
+        {
+          "itemOptionId": 1,
+          "syrupName": "바닐라 시럽",
+          "isRequired": false,
+          "quantity": 1,
+          "additonalPrice": 500,
+          "itemType": "DRINK"
+        },
+        {
+          "itemOptionId": 2,
+          "syrupName": "헤이즐넛 시럽",
+          "isRequired": false,
+          "quantity": 1,
+          "additonalPrice": 500,
+          "itemType": "DRINK"
+        }
+      ]
+    },
+    {
+      "itemId": 202,
+      "itemType": "DESSERT",
+      "quantity": 1,
+      "imageUrl": "https://example.com/images/cake.jpg",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": null,
+      "itemOptions": []
+    }
+  ],
+  "totalPrice": 10500
+}
+
+<> 2025-06-24T160851.500.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T160641.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T160538.500.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T160313.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T160154.200.json
+
+###
+
+POST http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 969
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "items": [
+    {
+      "itemId": 101,
+      "itemType": "DRINK",
+      "quantity": 2,
+      "imageUrl": "https://example.com/images/latte.jpg",
+      "beverageSizeOption": "VENTI",
+      "beverageTemperatureOption": "HOT",
+      "itemOptions": [
+        {
+          "itemOptionId": 1,
+          "syrupName": "바닐라 시럽",
+          "isRequired": false,
+          "quantity": 1,
+          "additonalPrice": 500,
+          "itemType": "DRINK"
+        },
+        {
+          "itemOptionId": 2,
+          "syrupName": "헤이즐넛 시럽",
+          "isRequired": false,
+          "quantity": 1,
+          "additonalPrice": 500,
+          "itemType": "DRINK"
+        }
+      ]
+    },
+    {
+      "itemId": 202,
+      "itemType": "DESSERT",
+      "quantity": 1,
+      "imageUrl": "https://example.com/images/cake.jpg",
+      "beverageSizeOption": null,
+      "beverageTemperatureOption": null,
+      "itemOptions": []
+    }
+  ],
+  "totalPrice": 10500
+}
+
+<> 2025-06-24T155039.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T155011.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154814.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154710.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154544.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 222
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "totalPrice": 9800,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154410.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 219
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "totalPrice": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154404.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 219
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "totalPrice": 0,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154400.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 200
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154327.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 236
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "id": 1,
+  "quantity": 0,
+  "totalPrice": 0,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154222.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 240
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartId": 1,
+  "quantity": 0,
+  "totalPrice": 0,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154202.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 240
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartId": 1,
+  "quantity": 0,
+  "totalPrice": 0,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154111.200.json
+
+###
+
+PUT http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Content-Length: 240
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.3.4.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "cartId": 1,
+  "quantity": 0,
+  "totalPrice": 0,
+  "cartItems": [
+    {
+      "cartItemId": 1,
+      "changeQuantity": 1,
+      "price": 4500
+    },
+    {
+      "cartItemId": 2,
+      "changeQuantity": 2,
+      "price": 5300
+    }
+  ]
+}
+
+<> 2025-06-24T154103.200.json
+
+###
+

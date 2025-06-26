@@ -47,12 +47,14 @@ public class BeverageItem extends BaseTimeEntity {
     private String iceImageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "category")
     private ItemType category;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private BeverageShotOption shotOption = BeverageShotOption.SHOT;
 
@@ -62,6 +64,7 @@ public class BeverageItem extends BaseTimeEntity {
             joinColumns = @JoinColumn(name = "beverage_item_id")
     )
     @Column(name = "size_option")
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private Set<BeverageSizeOption> supportedSizes= new HashSet<>();
 
@@ -70,6 +73,7 @@ public class BeverageItem extends BaseTimeEntity {
             name = "beverage_supported_temperatureoptions",
             joinColumns = @JoinColumn(name = "beverage_item_id")
     )
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private Set<BeverageTemperatureOption> supportedTemperatures = new HashSet<>();
 

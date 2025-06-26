@@ -1,0 +1,24 @@
+{
+  "status": 200,
+  "message": "카트에 성공적으로 추가되었습니다.",
+  "result": {
+    "status": 200,
+    "message": "메뉴가 성공적으로 추가되었습니다.",
+    "CartItemId": 1,
+    "cartItem": [
+      {
+        "cartItemId": 11,
+        "itemName": "카페 아메리카노",
+        "quantity": 2,
+        "price": 4700
+      },
+      {
+        "cartItemId": 12,
+        "itemName": "프렌치 크루아상",
+        "quantity": 1,
+        "price": 4200
+      }
+    ],
+    "totalPrice": 15600
+  }
+}

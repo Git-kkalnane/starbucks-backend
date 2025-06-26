@@ -34,6 +34,7 @@ public class DessertItem extends BaseTimeEntity {
     @Column(name = "image_url", length = 254)
     private String imageUrl;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;
 
