@@ -27,9 +27,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-    public static final String ACCESS_PREFIX_STRING = "Bearer ";
-    public static final String ACCESS_HEADER_STRING = "Authorization";
-
     private final SecretKey signingKey;
 
     @Value("${jwt.access-token-validity-in-milli-seconds}")

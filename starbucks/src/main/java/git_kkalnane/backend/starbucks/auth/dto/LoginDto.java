@@ -1,10 +1,14 @@
 package git_kkalnane.backend.starbucks.auth.dto;
 
-import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
+import git_kkalnane.backend.starbucks.auth.dto.response.LoginResponse;
 
-public record LoginDto(JwtToken token, UserInfo userInfo) {
+public record LoginDto(String accessToken, String refreshToken, String name, String nickname, String email) {
 
-    public static LoginDto of(JwtToken token, UserInfo userInfo) {
-        return new LoginDto(token, userInfo);
+    public static LoginDto of(String accessToken, String refreshToken, String name, String nickname, String email) {
+        return new LoginDto(accessToken, refreshToken, name, nickname, email);
+    }
+
+    public LoginResponse toLoginResponse() {
+        return new LoginResponse(name, nickname, email);
     }
 }

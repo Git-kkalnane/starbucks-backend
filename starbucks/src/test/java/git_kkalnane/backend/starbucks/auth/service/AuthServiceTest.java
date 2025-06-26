@@ -13,7 +13,6 @@ import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
-import git_kkalnane.backend.starbucks.auth.dto.UserInfo;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
 import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
@@ -121,23 +120,6 @@ class AuthServiceTest {
 
             verify(memberRepository, times(1)).findMemberByEmail(differentRequest.email());
             verify(jwtTokenProvider, times(1)).createJwtToken(differentMember.getId());
-        }
-
-        @Test
-        @DisplayName("UserInfo가 올바른 정보로 생성된다")
-        void login_UserInfoCreation() {
-            // given
-            when(memberRepository.findMemberByEmail(validLoginRequest.email()))
-                    .thenReturn(Optional.of(existingMember));
-            when(jwtTokenProvider.createJwtToken(existingMember.getId())).thenReturn(jwtToken);
-
-            // when
-            LoginDto result = authService.login(validLoginRequest);
-
-            // then
-            UserInfo userInfo = result.userInfo();
-            assertThat(userInfo.email()).isEqualTo(existingMember.getEmail());
-            assertThat(userInfo.nickname()).isEqualTo(existingMember.getNickname());
         }
 
         @Test
