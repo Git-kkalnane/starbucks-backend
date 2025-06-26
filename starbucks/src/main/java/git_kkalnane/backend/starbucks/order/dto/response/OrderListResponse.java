@@ -1,11 +1,9 @@
 package git_kkalnane.backend.starbucks.order.dto.response;
 
-import lombok.Builder;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Builder
 public record OrderListResponse(
     List<OrderSummaryResponse> orders,
     int currentPage,
@@ -21,14 +19,14 @@ public record OrderListResponse(
      * @return OrderListResponse DTO 객체
      */
     public static OrderListResponse from(Page<OrderSummaryResponse> orderPage) {
-        return OrderListResponse.builder()
-                .orders(orderPage.getContent())
-                .currentPage(orderPage.getNumber())
-                .totalPages(orderPage.getTotalPages())
-                .totalElements(orderPage.getTotalElements())
-                .size(orderPage.getSize())
-                .isFirst(orderPage.isFirst())
-                .isLast(orderPage.isLast())
-                .build();
+        return new OrderListResponse(
+                orderPage.getContent(),
+                orderPage.getNumber(),
+                orderPage.getTotalPages(),
+                orderPage.getTotalElements(),
+                orderPage.getSize(),
+                orderPage.isFirst(),
+                orderPage.isLast()
+        );
     }
 }
