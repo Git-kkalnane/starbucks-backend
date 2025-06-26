@@ -14,6 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class PayCardService {
     private final PayCardRepository payCardRepository;
 
+    /**
+     * 결제 시 카드 잔액 차감 로직
+     * 결제 시 카드 잔액을 차감하는 로직을 수행합니다.
+     * @param payment 결제 정보
+     * @return 차감된 PayCard 정보
+     */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayCard pay(Payment payment) {
         PayCard payCard = payCardRepository.getByMemberId(payment.getMember().getId());
