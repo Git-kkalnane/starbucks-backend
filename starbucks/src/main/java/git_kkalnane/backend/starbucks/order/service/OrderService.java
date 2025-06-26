@@ -12,8 +12,6 @@ import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
-
-
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
@@ -28,9 +26,7 @@ import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
