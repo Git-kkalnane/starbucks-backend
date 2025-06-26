@@ -196,4 +196,7 @@ src/main/generated
 # Git attributes file
 .gitattributes
 
+# 커스텀
 *.env
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml

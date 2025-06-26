@@ -10,8 +10,8 @@ public enum BeverageSizeOption {
 
     private final int extraPrice;
 
-    BeverageSizeOption(int extrePrice) {
-        this.extraPrice = extrePrice;
+    BeverageSizeOption(int extraPrice) {
+        this.extraPrice = extraPrice;
     }
     public int getExtraPrice() {
         return extraPrice;

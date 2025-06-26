@@ -8,7 +8,6 @@ import lombok.Getter;
 @Builder
 public class NotificationResponse {
     private String eventId;
-    private String emitterId;
     private Long senderId;
     private Long receiverId;
     private String title;

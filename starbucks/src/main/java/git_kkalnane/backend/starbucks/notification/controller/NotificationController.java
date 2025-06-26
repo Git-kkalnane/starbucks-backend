@@ -1,7 +1,7 @@
 package git_kkalnane.backend.starbucks.notification.controller;
 
 
-import git_kkalnane.backend.starbucks.global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.notification.common.success.NotificationSuccessCode;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
 import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
@@ -9,6 +9,9 @@ import git_kkalnane.backend.starbucks.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -47,6 +50,22 @@ public class NotificationController {
                 NotificationSuccessCode.NOTIFICATION_DELIVERED));
     }
 
+    @GetMapping
+    @Operation(summary = "멤버 알림 목록 조회"
+            , description = "멤버의 알림 목록을 조회합니다. 조회되지 않으면 빈 리스트를 반환합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "알림 목록 조회 완료"
+    )
+    public ResponseEntity<SuccessResponse<?>> fetchNotifications(
+            @RequestAttribute Long memberId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        return ResponseEntity.ok(SuccessResponse.of(
+                NotificationSuccessCode.NOTIFICATION_SUBSCRIPTION_RETRIEVED
+                , notificationService.fetchNotificationsByMemberId(memberId, pageable)));
+    }
+
 
     @GetMapping(value = "/subscribe/status")
     @Operation(summary = "멤버 알림 구독 현황 목록 조회"
@@ -58,6 +77,6 @@ public class NotificationController {
     public ResponseEntity<SuccessResponse<?>> fetchSubscribeList(@RequestAttribute Long memberId) {
         return ResponseEntity.ok(SuccessResponse.of(
                 NotificationSuccessCode.NOTIFICATION_SUBSCRIPTION_RETRIEVED
-                ,notificationService.getEmitters(memberId, NotificationTargetType.CUSTOMER)));
+                , notificationService.getEmitters(memberId, NotificationTargetType.CUSTOMER)));
     }
 }
