@@ -104,7 +104,7 @@ public class CartService {
      * @return : cartItemOption 반환
      */
     private CartItemOption addCartItemOption(AddCartItemOptionRequest addCartItemOptionRequest) {
-        if (addCartItemOptionRequest.itemType() == ItemType.DRINK) {
+        if (addCartItemOptionRequest.itemType() == ItemType.BEVERAGE) {
             ItemOption itemOption = itemOptionRepository.findById(addCartItemOptionRequest.itemOptionId())
                     .orElseThrow(() -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
             return CartItemOption.builder()
@@ -131,7 +131,7 @@ public class CartService {
 
         CartItem cartItem;
         switch (addItemsRequest.itemType()) {
-            case DRINK:
+            case BEVERAGE:
                 BeverageItem beverageItem = beverageItemRepository.findById(addItemsRequest.itemId()).orElseThrow(
                         () -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
                 cartItem = CartItem.builder()
