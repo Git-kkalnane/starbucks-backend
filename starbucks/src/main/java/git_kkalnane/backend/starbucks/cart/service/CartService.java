@@ -231,6 +231,9 @@ public class CartService {
                 () -> new CartException(CartErrorCode.CART_NOT_FOUND));
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
                 () -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
+        if (!cart.getMember().getId().equals(memberId)) {
+            throw new CartException(CartErrorCode.CART_INVALID);
+        }
         if (!cartItem.getCart().getId().equals(cart.getId())) {
             throw new CartException(CartErrorCode.CART_INVALID);
         }
