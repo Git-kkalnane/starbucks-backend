@@ -22,6 +22,7 @@ public class OrderItem extends BaseTimeEntity {
     @Column(name = "item_name_at_order", nullable = false)
     private String itemName;
 
+    @Builder.Default
     @Column(name = "order_item_quantity",nullable = false)
     private int orderItemQuantity = 1;
 

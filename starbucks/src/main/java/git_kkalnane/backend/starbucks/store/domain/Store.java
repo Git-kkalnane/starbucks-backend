@@ -41,6 +41,7 @@ public class Store extends BaseTimeEntity {
     @Column(name = "opening_hours")
     private String openingHours;
 
+    @Builder.Default
     @Column(name = "has_drive_through", nullable = false)
     private boolean hasDriveThrough = false;
 
@@ -57,6 +58,7 @@ public class Store extends BaseTimeEntity {
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "current_crowd_level", nullable = false)
     private CrowdLevel currentCrowdLevel = CrowdLevel.LOW;
 
