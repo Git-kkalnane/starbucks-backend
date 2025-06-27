@@ -43,6 +43,7 @@ public class DessertItem extends BaseTimeEntity {
     private ItemStatus status = ItemStatus.AVAILABLE;
 
     @OneToMany(mappedBy = "dessertItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<DessertItemCategory> dessertItemCategories = new ArrayList<>();
 
 }

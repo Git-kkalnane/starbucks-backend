@@ -41,6 +41,7 @@ public class BeverageItem extends BaseTimeEntity {
     private int price;
 
     @Column(name = "is_coffee", nullable = false)
+    @Builder.Default
     private boolean isCoffee = false;
 
     @Column(name = "hot_image_url", length = 254)
@@ -81,6 +82,7 @@ public class BeverageItem extends BaseTimeEntity {
     private Set<BeverageTemperatureOption> supportedTemperatures = new HashSet<>();
 
     @OneToMany(mappedBy = "beverageItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<BeverageItemCategory> beverageItemCategories = new ArrayList<>();
 
 }

@@ -108,7 +108,7 @@ public class CartService {
         if (addCartItemOptionRequest.itemType() == ItemType.BEVERAGE) {
 
             ItemOption itemOption = itemOptionRepository.findById(addCartItemOptionRequest.itemOptionId())
-                    .orElseThrow(() -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
+                    .orElseThrow(() -> new ItemException(ItemErrorCode.OPTION_NOT_FOUND));
             return CartItemOption.builder()
                     .itemOption(itemOption)
                     .build();
