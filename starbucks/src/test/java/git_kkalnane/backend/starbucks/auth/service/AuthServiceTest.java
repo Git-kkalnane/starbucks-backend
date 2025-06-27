@@ -3,6 +3,7 @@ package git_kkalnane.backend.starbucks.auth.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -523,6 +524,148 @@ class AuthServiceTest {
 
                 verify(accessTokenRepository, times(1)).findByMemberId(memberId);
                 verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("토큰 검증 테스트")
+    class VerifyTokenTest {
+
+        @Nested
+        @DisplayName("정상 시나리오")
+        class SuccessTest {
+
+            @Test
+            @DisplayName("유효한 토큰으로 요청 검증 시 성공한다")
+            void verifyTokenIncludedInRequest_Success() {
+                // given
+                String validToken = "valid-access-token";
+                Long memberId = 1L;
+                AccessToken accessToken = AccessToken.builder().memberId(memberId).token(validToken)
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(jwtTokenProvider.getMemberId(validToken)).thenReturn(memberId.toString());
+                when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(accessToken));
+
+                // when
+                Long result = authService.verifyTokenIncludedInRequest(validToken);
+
+                // then
+                assertThat(result).isEqualTo(memberId);
+
+                // verify
+                verify(jwtTokenProvider, times(1)).getMemberId(validToken);
+                verify(accessTokenRepository, times(1)).findByMemberId(memberId);
+            }
+
+            @Test
+            @DisplayName("다른 memberId의 유효한 토큰으로 요청 검증 시 성공한다")
+            void verifyTokenIncludedInRequest_DifferentMemberId() {
+                // given
+                String validToken = "different-access-token";
+                Long differentMemberId = 999L;
+                AccessToken accessToken = AccessToken.builder().memberId(differentMemberId)
+                        .token(validToken).expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(jwtTokenProvider.getMemberId(validToken)).thenReturn(differentMemberId.toString());
+                when(accessTokenRepository.findByMemberId(differentMemberId))
+                        .thenReturn(Optional.of(accessToken));
+
+                // when
+                Long result = authService.verifyTokenIncludedInRequest(validToken);
+
+                // then
+                assertThat(result).isEqualTo(differentMemberId);
+
+                // verify
+                verify(jwtTokenProvider, times(1)).getMemberId(validToken);
+                verify(accessTokenRepository, times(1)).findByMemberId(differentMemberId);
+            }
+        }
+
+        @Nested
+        @DisplayName("예외 시나리오")
+        class ExceptionTest {
+
+            @Test
+            @DisplayName("DB에 AccessToken이 존재하지 않을 때 TOKEN_NOT_FOUND_IN_DB 예외가 발생한다")
+            void verifyTokenIncludedInRequest_TokenNotFoundInDb() {
+                // given
+                String validToken = "valid-access-token";
+                Long memberId = 1L;
+
+                when(jwtTokenProvider.getMemberId(validToken)).thenReturn(memberId.toString());
+                when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
+
+                // when & then
+                assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(validToken))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB);
+                        });
+
+                verify(jwtTokenProvider, times(1)).getMemberId(validToken);
+                verify(accessTokenRepository, times(1)).findByMemberId(memberId);
+            }
+
+            @Test
+            @DisplayName("DB에 저장된 토큰과 요청 토큰이 일치하지 않을 때 INVALID_TOKEN 예외가 발생한다")
+            void verifyTokenIncludedInRequest_TokenMismatch() {
+                // given
+                String requestToken = "request-token";
+                String storedToken = "stored-token";
+                Long memberId = 1L;
+                AccessToken accessToken = AccessToken.builder().memberId(memberId).token(storedToken)
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(jwtTokenProvider.getMemberId(requestToken)).thenReturn(memberId.toString());
+                when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(accessToken));
+
+                // when & then
+                assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(requestToken))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode()).isEqualTo(AuthErrorCode.INVALID_TOKEN);
+                        });
+
+                verify(jwtTokenProvider, times(1)).getMemberId(requestToken);
+                verify(accessTokenRepository, times(1)).findByMemberId(memberId);
+            }
+
+            @Test
+            @DisplayName("JwtTokenProvider에서 예외가 발생할 때 예외가 전파된다")
+            void verifyTokenIncludedInRequest_JwtTokenProviderException() {
+                // given
+                String invalidToken = "invalid-token";
+
+                when(jwtTokenProvider.getMemberId(invalidToken))
+                        .thenThrow(new RuntimeException("JWT parsing failed"));
+
+                // when & then
+                assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(invalidToken))
+                        .isInstanceOf(RuntimeException.class).hasMessage("JWT parsing failed");
+
+                verify(jwtTokenProvider, times(1)).getMemberId(invalidToken);
+                verify(accessTokenRepository, times(0)).findByMemberId(anyLong());
+            }
+
+            @Test
+            @DisplayName("memberId가 숫자가 아닐 때 NumberFormatException이 발생한다")
+            void verifyTokenIncludedInRequest_InvalidMemberId() {
+                // given
+                String validToken = "valid-access-token";
+                String invalidMemberId = "invalid-member-id";
+
+                when(jwtTokenProvider.getMemberId(validToken)).thenReturn(invalidMemberId);
+
+                // when & then
+                assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(validToken))
+                        .isInstanceOf(NumberFormatException.class);
+
+                verify(jwtTokenProvider, times(1)).getMemberId(validToken);
+                verify(accessTokenRepository, times(0)).findByMemberId(anyLong());
             }
         }
     }
