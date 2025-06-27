@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.order.service;
+package git_kkalnane.backend.starbucks.order;
 
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
@@ -8,14 +8,18 @@ import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
-import git_kkalnane.backend.starbucks.order.domain.*;
+import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
+import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounterId;
+import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
+import git_kkalnane.backend.starbucks.order.domain.PickupType;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CreateResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
+import git_kkalnane.backend.starbucks.order.service.OrderService;
+import git_kkalnane.backend.starbucks.payment.service.PaymentService;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +35,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class OrderCreateTest {
@@ -43,6 +49,7 @@ class OrderCreateTest {
     @Mock private BeverageItemRepository beverageItemRepository;
     @Mock private OrderRepository orderRepository;
     @Mock private OrderItemRepository orderItemRepository;
+    @Mock private PaymentService paymentService;
 
 
     @InjectMocks private OrderService orderService;

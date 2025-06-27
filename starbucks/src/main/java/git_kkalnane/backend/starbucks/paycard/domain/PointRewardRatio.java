@@ -14,6 +14,6 @@ public enum PointRewardRatio {
     private final double ratio;
 
     public int getAppliedPointReward(int amount) {
-        return amount * (int) (ratio * 100);
+        return (int)(amount * ratio);
     }
 }
