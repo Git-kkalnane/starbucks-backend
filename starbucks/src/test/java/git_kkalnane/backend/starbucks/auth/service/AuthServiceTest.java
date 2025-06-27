@@ -67,8 +67,10 @@ class AuthServiceTest {
         existingMember = Member.builder().name("홍길동").nickname("길동이").email("test@example.com")
                 .password(hashedPassword).build();
 
-        TokenInfo accessTokenInfo = TokenInfo.builder().token("access-token-123").expiration(new Date()).build();
-        TokenInfo refreshTokenInfo = TokenInfo.builder().token("refresh-token-456").expiration(new Date()).build();
+        TokenInfo accessTokenInfo =
+                TokenInfo.builder().token("access-token-123").expiration(new Date()).build();
+        TokenInfo refreshTokenInfo =
+                TokenInfo.builder().token("refresh-token-456").expiration(new Date()).build();
 
         jwtToken = JwtToken.of(accessTokenInfo, refreshTokenInfo);
     }
@@ -81,18 +83,14 @@ class AuthServiceTest {
         @DisplayName("정상 시나리오")
         class SuccessTest {
             void commonWhen(LoginRequest request, Member member, JwtToken token) {
-                when(memberRepository.findMemberByEmail(request.email()))
-                        .thenReturn(Optional.of(member)); // login_Success, login_JwtTokenCreation,
-                when(jwtTokenProvider.createJwtToken(member.getId())).thenReturn(token); // login_Success, login_JwtTokenCreation
-                when(accessTokenRepository.findByMemberId(member.getId()))
-                        .thenReturn(Optional.empty()); // login_Success, login_JwtTokenCreation
-                when(refreshTokenRepository.findByMemberId(member.getId())) // login_Success, login_JwtTokenCreation
-                        .thenReturn(Optional.empty());
-                when(accessTokenRepository.save(any(AccessToken.class))).thenReturn(AccessToken.builder()// login_Success, login_JwtTokenCreation
+                when(memberRepository.findMemberByEmail(request.email())).thenReturn(Optional.of(member));
+                when(jwtTokenProvider.createJwtToken(member.getId())).thenReturn(token);
+                when(accessTokenRepository.findByMemberId(member.getId())).thenReturn(Optional.empty());
+                when(refreshTokenRepository.findByMemberId(member.getId())).thenReturn(Optional.empty());
+                when(accessTokenRepository.save(any(AccessToken.class))).thenReturn(AccessToken.builder()
                         .memberId(member.getId()).token("test").expiration(new Date()).build());
-                when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(
-                        RefreshToken.builder() // login_Success, login_JwtTokenCreation
-                                .memberId(member.getId()).token("test").expiration(new Date()).build());
+                when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(RefreshToken.builder()
+                        .memberId(member.getId()).token("test").expiration(new Date()).build());
             }
 
             void commonAssertion(LoginDto result, JwtToken token, Member member) {
@@ -173,11 +171,10 @@ class AuthServiceTest {
         @DisplayName("예외 시나리오")
         class ExceptionTest {
             void commonAssertThatThrownBy(LoginRequest request, AuthErrorCode errorCode) {
-                assertThatThrownBy(() -> authService.login(request))
-                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                assertThatThrownBy(() -> authService.login(request)).isInstanceOf(AuthException.class)
+                        .satisfies(exception -> {
                             AuthException authException = (AuthException) exception;
-                            assertThat(authException.getErrorCode())
-                                    .isEqualTo(errorCode);
+                            assertThat(authException.getErrorCode()).isEqualTo(errorCode);
                         });
             }
 
@@ -185,7 +182,8 @@ class AuthServiceTest {
             @DisplayName("존재하지 않는 이메일로 로그인 시 EMAIL_INVALID_EXCEPTION이 발생한다")
             void login_EmailNotFound() {
                 // given
-                LoginRequest invalidEmailRequest = new LoginRequest("nonexistent@example.com", "password123");
+                LoginRequest invalidEmailRequest =
+                        new LoginRequest("nonexistent@example.com", "password123");
                 when(memberRepository.findMemberByEmail(invalidEmailRequest.email()))
                         .thenReturn(Optional.empty());
 
@@ -287,8 +285,10 @@ class AuthServiceTest {
 
                 // 만료 시간이 현재 시간으로 설정되었는지 확인 (1초 이내)
                 long currentTime = System.currentTimeMillis();
-                assertThat(accessToken.getExpiration().getTime()).isBetween(currentTime - 1000, currentTime + 1000);
-                assertThat(refreshToken.getExpiration().getTime()).isBetween(currentTime - 1000, currentTime + 1000);
+                assertThat(accessToken.getExpiration().getTime()).isBetween(currentTime - 1000,
+                        currentTime + 1000);
+                assertThat(refreshToken.getExpiration().getTime()).isBetween(currentTime - 1000,
+                        currentTime + 1000);
             }
 
             @Test
@@ -296,9 +296,11 @@ class AuthServiceTest {
             void logout_Success() {
                 // given
                 Long memberId = 1L;
-                AccessToken accessToken = AccessToken.builder().memberId(memberId).token("valid-access-token")
-                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
-                RefreshToken refreshToken = RefreshToken.builder().memberId(memberId).token("valid-refresh-token")
+                AccessToken accessToken =
+                        AccessToken.builder().memberId(memberId).token("valid-access-token")
+                                .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+                RefreshToken refreshToken =
+                        RefreshToken.builder().memberId(memberId).token("valid-refresh-token")
                                 .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
 
                 when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(accessToken));
@@ -320,13 +322,17 @@ class AuthServiceTest {
             void logout_DifferentMemberId() {
                 // given
                 Long differentMemberId = 999L;
-                AccessToken accessToken = AccessToken.builder().memberId(differentMemberId).token("different-access-token")
+                AccessToken accessToken =
+                        AccessToken.builder().memberId(differentMemberId).token("different-access-token")
                                 .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
-                RefreshToken refreshToken = RefreshToken.builder().memberId(differentMemberId).token("different-refresh-token")
+                RefreshToken refreshToken =
+                        RefreshToken.builder().memberId(differentMemberId).token("different-refresh-token")
                                 .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
 
-                when(accessTokenRepository.findByMemberId(differentMemberId)).thenReturn(Optional.of(accessToken));
-                when(refreshTokenRepository.findByMemberId(differentMemberId)).thenReturn(Optional.of(refreshToken));
+                when(accessTokenRepository.findByMemberId(differentMemberId))
+                        .thenReturn(Optional.of(accessToken));
+                when(refreshTokenRepository.findByMemberId(differentMemberId))
+                        .thenReturn(Optional.of(refreshToken));
 
                 // when
                 authService.logout(differentMemberId);
@@ -349,8 +355,8 @@ class AuthServiceTest {
             void logout_RefreshTokenNotFound() {
                 // given
                 Long memberId = 1L;
-                AccessToken accessToken = AccessToken.builder().memberId(memberId).token("valid-access-token")
-                        .expiration(new Date()).build();
+                AccessToken accessToken = AccessToken.builder().memberId(memberId)
+                        .token("valid-access-token").expiration(new Date()).build();
 
                 when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(accessToken));
                 when(refreshTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
@@ -359,7 +365,8 @@ class AuthServiceTest {
                 assertThatThrownBy(() -> authService.logout(memberId)).isInstanceOf(AuthException.class)
                         .satisfies(exception -> {
                             AuthException authException = (AuthException) exception;
-                            assertThat(authException.getErrorCode()).isEqualTo(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB);
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB);
                         });
 
                 verify(accessTokenRepository, times(1)).findByMemberId(memberId);
