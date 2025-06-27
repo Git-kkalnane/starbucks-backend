@@ -210,4 +210,23 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 매장의 특정 주문 상세 정보를 조회합니다.
+     * 해당 주문이 실제 로그인한 매장의 주문인지 권한 검사를 수행합니다.
+     *
+     * @param storeId 현재 로그인한 매장의 ID
+     * @param orderId 조회할 주문의 ID
+     * @return Order 엔티티
+     * @throws OrderException 주문을 찾을 수 없거나, 해당 매장의 주문이 아닐 경우
+     */
+    public Order getStoreOrderDetail(Long storeId, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getStore().getId().equals(storeId)) {
+            throw new OrderException(OrderErrorCode.FORBIDDEN_ACCESS_ORDER);
+        }
+
+        return order;
+    }
 }
