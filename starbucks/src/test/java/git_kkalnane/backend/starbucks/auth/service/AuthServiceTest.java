@@ -272,6 +272,158 @@ class AuthServiceTest {
     }
 
     @Nested
+    @DisplayName("토큰저장 테스트")
+    class SaveTokenTest {
+
+        @Nested
+        @DisplayName("AccessToken 저장 테스트")
+        class AccessTokenSaveTest {
+
+            @Test
+            @DisplayName("새로운 AccessToken을 저장할 수 있다")
+            void saveAccessToken_NewToken() {
+                // given
+                Long memberId = 1L;
+                TokenInfo tokenInfo = TokenInfo.builder().token("new-access-token")
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
+                when(accessTokenRepository.save(any(AccessToken.class)))
+                        .thenReturn(AccessToken.builder().memberId(memberId).token(tokenInfo.getToken())
+                                .expiration(tokenInfo.getExpiration()).build());
+
+                // when
+                authService.saveAccessTokenToRepository(memberId, tokenInfo);
+
+                // then
+                verify(accessTokenRepository, times(1)).findByMemberId(memberId);
+                verify(accessTokenRepository, times(1)).save(any(AccessToken.class));
+            }
+
+            @Test
+            @DisplayName("기존 AccessToken을 업데이트할 수 있다")
+            void saveAccessToken_UpdateExistingToken() {
+                // given
+                Long memberId = 1L;
+                TokenInfo newTokenInfo = TokenInfo.builder().token("updated-access-token")
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                AccessToken existingToken =
+                        AccessToken.builder().memberId(memberId).token("old-access-token")
+                                .expiration(new Date(System.currentTimeMillis() - 1000)).build();
+
+                when(accessTokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(existingToken));
+
+                // when
+                authService.saveAccessTokenToRepository(memberId, newTokenInfo);
+
+                // then
+                verify(accessTokenRepository, times(1)).findByMemberId(memberId);
+                verify(accessTokenRepository, times(0)).save(any(AccessToken.class));
+
+                // 기존 토큰이 업데이트되었는지 확인
+                assertThat(existingToken.getToken()).isEqualTo(newTokenInfo.getToken());
+                assertThat(existingToken.getExpiration()).isEqualTo(newTokenInfo.getExpiration());
+            }
+
+            @Test
+            @DisplayName("다른 memberId의 AccessToken을 저장할 수 있다")
+            void saveAccessToken_DifferentMemberId() {
+                // given
+                Long differentMemberId = 999L;
+                TokenInfo tokenInfo = TokenInfo.builder().token("different-access-token")
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(accessTokenRepository.findByMemberId(differentMemberId)).thenReturn(Optional.empty());
+                when(accessTokenRepository.save(any(AccessToken.class)))
+                        .thenReturn(AccessToken.builder().memberId(differentMemberId)
+                                .token(tokenInfo.getToken()).expiration(tokenInfo.getExpiration()).build());
+
+                // when
+                authService.saveAccessTokenToRepository(differentMemberId, tokenInfo);
+
+                // then
+                verify(accessTokenRepository, times(1)).findByMemberId(differentMemberId);
+                verify(accessTokenRepository, times(1)).save(any(AccessToken.class));
+            }
+        }
+
+        @Nested
+        @DisplayName("RefreshToken 저장 테스트")
+        class RefreshTokenSaveTest {
+
+            @Test
+            @DisplayName("새로운 RefreshToken을 저장할 수 있다")
+            void saveRefreshToken_NewToken() {
+                // given
+                Long memberId = 1L;
+                TokenInfo tokenInfo = TokenInfo.builder().token("new-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                when(refreshTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
+                when(refreshTokenRepository.save(any(RefreshToken.class)))
+                        .thenReturn(RefreshToken.builder().memberId(memberId).token(tokenInfo.getToken())
+                                .expiration(tokenInfo.getExpiration()).build());
+
+                // when
+                authService.saveRefreshTokenToRepository(memberId, tokenInfo);
+
+                // then
+                verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+                verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
+            }
+
+            @Test
+            @DisplayName("기존 RefreshToken을 업데이트할 수 있다")
+            void saveRefreshToken_UpdateExistingToken() {
+                // given
+                Long memberId = 1L;
+                TokenInfo newTokenInfo = TokenInfo.builder().token("updated-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                RefreshToken existingToken =
+                        RefreshToken.builder().memberId(memberId).token("old-refresh-token")
+                                .expiration(new Date(System.currentTimeMillis() - 1000)).build();
+
+                when(refreshTokenRepository.findByMemberId(memberId))
+                        .thenReturn(Optional.of(existingToken));
+
+                // when
+                authService.saveRefreshTokenToRepository(memberId, newTokenInfo);
+
+                // then
+                verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+                verify(refreshTokenRepository, times(0)).save(any(RefreshToken.class));
+
+                // 기존 토큰이 업데이트되었는지 확인
+                assertThat(existingToken.getToken()).isEqualTo(newTokenInfo.getToken());
+                assertThat(existingToken.getExpiration()).isEqualTo(newTokenInfo.getExpiration());
+            }
+
+            @Test
+            @DisplayName("다른 memberId의 RefreshToken을 저장할 수 있다")
+            void saveRefreshToken_DifferentMemberId() {
+                // given
+                Long differentMemberId = 999L;
+                TokenInfo tokenInfo = TokenInfo.builder().token("different-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                when(refreshTokenRepository.findByMemberId(differentMemberId)).thenReturn(Optional.empty());
+                when(refreshTokenRepository.save(any(RefreshToken.class)))
+                        .thenReturn(RefreshToken.builder().memberId(differentMemberId)
+                                .token(tokenInfo.getToken()).expiration(tokenInfo.getExpiration()).build());
+
+                // when
+                authService.saveRefreshTokenToRepository(differentMemberId, tokenInfo);
+
+                // then
+                verify(refreshTokenRepository, times(1)).findByMemberId(differentMemberId);
+                verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
+            }
+        }
+    }
+
+    @Nested
     @DisplayName("로그아웃 테스트")
     class LogoutTest {
 
