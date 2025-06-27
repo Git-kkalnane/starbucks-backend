@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.item.domain.dessert;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.item.domain.ItemCategory;
+import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,6 +17,10 @@ public class DessertItemCategory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "dessert_item_id")
+    private DessertItem dessertItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_category_id")
