@@ -17,6 +17,10 @@ public class BeverageItemCategory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "beverage_item_id")
+    private BeverageItem beverageItem;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beverage_category_id")
     private BeverageCategory beverageCategory;
