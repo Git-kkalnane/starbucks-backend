@@ -213,8 +213,6 @@ public class CartService {
                 .sum();
 
         return new ModifyCartItemResponse(
-                200,
-                "아이템 수량이 성공적으로 수정되었습니다.",
                 updatedCartItems,
                 totalPrice
         );
