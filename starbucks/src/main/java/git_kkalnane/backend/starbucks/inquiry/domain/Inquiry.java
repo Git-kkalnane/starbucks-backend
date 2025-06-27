@@ -34,6 +34,7 @@ public class Inquiry extends BaseTimeEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "status", nullable = false)
     private InquiryStatus status = InquiryStatus.PENDING;
 

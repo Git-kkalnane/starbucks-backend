@@ -35,8 +35,8 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**")   // Swagger 관련 URI 제외
-                .excludePathPatterns("/auth/login", "/member/signup");      // 회원가입, 로그인 엔드포인트 제외
+                .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")   // Swagger 관련 URI 제외
+                .excludePathPatterns("/auth/login", "/members/signup");      // 회원가입, 로그인 엔드포인트 제외
     }
 
 //    @Override

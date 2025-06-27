@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.order.domain;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,7 @@ public class OrderItem extends BaseTimeEntity {
     @Column(name = "item_name_at_order", nullable = false)
     private String itemName;
 
+    @Builder.Default
     @Column(name = "order_item_quantity",nullable = false)
     private int orderItemQuantity = 1;
 
@@ -39,6 +41,10 @@ public class OrderItem extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dessert_item_id")
     private DessertItem dessertItem;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "temperature_option_at_order")
+    private BeverageTemperatureOption temperatureOption;
 
     public void setOrder(Order order) {
         this.order = order;

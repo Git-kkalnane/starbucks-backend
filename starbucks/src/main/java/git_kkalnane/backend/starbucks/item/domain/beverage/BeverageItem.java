@@ -40,6 +40,9 @@ public class BeverageItem extends BaseTimeEntity {
     @Column(name = "price", nullable = false)
     private int price;
 
+    @Column(name = "is_coffee", nullable = false)
+    private boolean isCoffee = false;
+
     @Column(name = "hot_image_url", length = 254)
     private String hotImageUrl;
 
@@ -47,12 +50,14 @@ public class BeverageItem extends BaseTimeEntity {
     private String iceImageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "category")
     private ItemType category;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private BeverageShotOption shotOption = BeverageShotOption.SHOT;
 
@@ -62,6 +67,7 @@ public class BeverageItem extends BaseTimeEntity {
             joinColumns = @JoinColumn(name = "beverage_item_id")
     )
     @Column(name = "size_option")
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private Set<BeverageSizeOption> supportedSizes= new HashSet<>();
 
@@ -70,8 +76,11 @@ public class BeverageItem extends BaseTimeEntity {
             name = "beverage_supported_temperatureoptions",
             joinColumns = @JoinColumn(name = "beverage_item_id")
     )
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private Set<BeverageTemperatureOption> supportedTemperatures = new HashSet<>();
 
+    @OneToMany(mappedBy = "beverageItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BeverageItemCategory> beverageItemCategories = new ArrayList<>();
 
 }

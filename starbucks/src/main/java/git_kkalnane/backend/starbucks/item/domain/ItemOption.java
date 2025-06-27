@@ -23,18 +23,21 @@ public class ItemOption extends BaseTimeEntity {
     @Column(name = "syrup_name", nullable = false, length = 10)
     private String syrupName;
 
+    @Builder.Default
     @Column(name = "is_required")
     private boolean isRequired = false;
 
     @Column(name = "display_order")
     private int displayOrder;
 
-    @Column(name = "additional_price", nullable = false)
+    @Column(name = "additional_price")
     private int additionalPrice;
 
+    @Builder.Default
     @Column(name = "quantity", nullable = false)
     private int quantity = 1;
 
+    @Builder.Default
     @OneToMany(mappedBy = "itemOption", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CartItemOption> cartItemOption = new ArrayList<>();
 

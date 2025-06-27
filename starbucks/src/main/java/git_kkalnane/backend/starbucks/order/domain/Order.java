@@ -30,6 +30,7 @@ public class Order extends BaseTimeEntity {
     private int orderTotalPrice;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus = OrderStatus.PLACED;
 
@@ -51,6 +52,7 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 

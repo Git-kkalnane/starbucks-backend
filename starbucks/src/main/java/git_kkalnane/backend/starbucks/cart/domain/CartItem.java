@@ -22,6 +22,7 @@ public class CartItem extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     @Column(name = "cart_item_quantity", nullable = false)
     private int cartItemQuantity = 1;
 

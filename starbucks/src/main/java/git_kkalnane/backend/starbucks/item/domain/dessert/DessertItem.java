@@ -2,8 +2,12 @@ package git_kkalnane.backend.starbucks.item.domain.dessert;
 
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.item.domain.ItemStatus;
+import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItemCategory;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -34,7 +38,11 @@ public class DessertItem extends BaseTimeEntity {
     @Column(name = "image_url", length = 254)
     private String imageUrl;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private ItemStatus status = ItemStatus.AVAILABLE;
+
+    @OneToMany(mappedBy = "dessertItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DessertItemCategory> dessertItemCategories = new ArrayList<>();
 
 }

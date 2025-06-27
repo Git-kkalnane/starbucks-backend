@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.order.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
+import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
@@ -17,6 +18,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 주문 관련 API 컨트롤러
@@ -79,4 +82,16 @@ public class OrderController {
                 .body(SuccessResponse.of(OrderSuccessCode.ORDER_DETAIL_VIEWED, orderList));
     }
 
+    @Operation(summary = "현재 주문 목록 조회", description = "현재 로그인한 사용자의 진행중인(접수, 준비중, 픽업 가능) 모든 주문 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("/users/{memberId}/current")
+    public ResponseEntity<SuccessResponse> getCurrentOrders(@PathVariable Long memberId) {
+
+        List<CurrentOrderResponse> result = orderService.getCurrentOrders(memberId);
+
+        return ResponseEntity
+                .ok(SuccessResponse.of(OrderSuccessCode.ORDER_CURRENT_VIEWED, result));
+    }
 }
