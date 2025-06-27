@@ -3,10 +3,14 @@ package git_kkalnane.backend.starbucks._global.error.handler;
 import git_kkalnane.backend.starbucks._global.error.core.BaseException;
 import git_kkalnane.backend.starbucks._global.error.core.ErrorCode;
 import git_kkalnane.backend.starbucks._global.error.core.ErrorResponse;
+import git_kkalnane.backend.starbucks._global.error.core.ValidationErrorResponse;
+import git_kkalnane.backend.starbucks._global.error.core.ValidationErrors;
 import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import git_kkalnane.backend.starbucks.store.common.exception.StoreErrorCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,6 +29,16 @@ public class GlobalExceptionHandler {
             errorCode = GlobalErrorCode.INVALID_PATH_VARIABLE_FORMAT;
         }
         return getErrorResponse(e, errorCode);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+
+        ValidationErrors validationErrors = new ValidationErrors();
+        e.getBindingResult().getFieldErrors().forEach(error ->
+                validationErrors.addError(error.getField(), error.getDefaultMessage()));
+
+        return getErrorResponse(e, new ValidationErrorResponse(validationErrors));
     }
 
     @ExceptionHandler(BaseException.class)
@@ -72,5 +86,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.of(errorCode, e.getMessage()));
+    }
+
+    private static ResponseEntity<ValidationErrorResponse> getErrorResponse(Exception e, ValidationErrorResponse response) {
+        GlobalLogger.error(e.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
     }
 }
