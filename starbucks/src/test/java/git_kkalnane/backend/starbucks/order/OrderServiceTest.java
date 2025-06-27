@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.order.service;
+package git_kkalnane.backend.starbucks.order;
 
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
@@ -21,6 +21,8 @@ import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
+import git_kkalnane.backend.starbucks.order.service.OrderService;
+import git_kkalnane.backend.starbucks.payment.service.PaymentService;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +54,7 @@ class OrderServiceTest {
     @Mock private DessertItemRepository dessertItemRepository;
     @Mock private OrderRepository orderRepository;
     @Mock private OrderItemRepository orderItemRepository;
+    @Mock private PaymentService paymentService;
 
 
     @InjectMocks private OrderService orderService;
@@ -132,6 +135,7 @@ class OrderServiceTest {
             }
             return order;
         });
+
         // When
         Order order = orderService.createOrder(request, mockMember.getId());
 
