@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.cart;
 
 import git_kkalnane.backend.starbucks.cart.common.exception.CartException;
 import git_kkalnane.backend.starbucks.cart.domain.Cart;
+import git_kkalnane.backend.starbucks.cart.domain.CartItem;
 import git_kkalnane.backend.starbucks.cart.dto.request.AddCartItemOptionRequest;
 import git_kkalnane.backend.starbucks.cart.dto.request.AddCartItemRequest;
 import git_kkalnane.backend.starbucks.cart.dto.request.AddItemsRequest;
@@ -14,6 +15,7 @@ import git_kkalnane.backend.starbucks.item.common.exception.ItemException;
 import git_kkalnane.backend.starbucks.item.domain.ItemOption;
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
+import git_kkalnane.backend.starbucks.item.domain.beverage.CartItemOption;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
 import git_kkalnane.backend.starbucks.item.repository.DessertItemRepository;
@@ -60,6 +62,9 @@ class CartCreateTest {
     private BeverageItem beverageItem;
     private ItemOption itemOption;
 
+    /**
+     * 테스트마다 공통으로 사용할 기본값 세팅
+     */
     @BeforeEach
     void setup() {
         member = Member.builder().id(1L).build();
@@ -67,6 +72,7 @@ class CartCreateTest {
         beverageItem = BeverageItem.builder().id(10L).price(5000).beverageItemNameKo("아이스 아메리카노").build();
         itemOption = ItemOption.builder().id(100L).build();
     }
+
 
     @Test
     void 카트_아이템_추가_성공() {
@@ -96,7 +102,7 @@ class CartCreateTest {
     }
 
     @Test
-    void testAddDessertItemToCart() {
+    void 카트아이템_디저트_추가성공() {
         Long memberId = 2L;
         Long dessertItemId = 202L;
 
@@ -134,7 +140,7 @@ class CartCreateTest {
         assertThat(response.cartItem().get(0).itemName()).isEqualTo("치즈케이크");
     }
     @Test
-    void testAddDessertAndBeverageItemsToCart() {
+    void 카트아이템_디저트음료수_추가성공() {
         // given
         Long memberId = 1L;
         Member member = Member.builder().id(memberId).build();
@@ -184,7 +190,7 @@ class CartCreateTest {
         AddCartItemRequest request = new AddCartItemRequest(
                 1L,
                 List.of(beverageRequest, dessertRequest),
-                10000
+                15000
         );
 
         // mocking
@@ -291,6 +297,23 @@ class CartCreateTest {
                     assertThat(ie.getErrorCode()).isEqualTo(ItemErrorCode.OPTION_NOT_FOUND);
                 });
     }
+
+    @Test
+    void 카트아이템_가격계산_정상작동() {
+        BeverageItem item = BeverageItem.builder().price(4500).build();
+        ItemOption option = ItemOption.builder().additionalPrice(500).build();
+        CartItemOption cartItemOption = CartItemOption.builder().itemOption(option).build();
+        CartItem cartItem = CartItem.builder()
+                .beverageItem(item)
+                .cartItemQuantity(2)
+                .cartItemOption(List.of(cartItemOption))
+                .build();
+
+        int total = cartItem.totalPrice();
+
+        assertThat(total).isEqualTo((4500 + 500) * 2);
+    }
+
 }
 
 
