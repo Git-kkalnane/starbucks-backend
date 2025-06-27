@@ -14,6 +14,7 @@ import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
+import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
@@ -88,10 +89,9 @@ public class OrderService {
             order.addOrderItem(item);
         }
 
-        orderRepository.save(order);
-        orderItemRepository.saveAll(orderItems);
+        Order savedOrder = orderRepository.save(order);
 
-        return order;
+        return savedOrder;
 
     }
 
@@ -186,6 +186,28 @@ public class OrderService {
         Page<OrderSummaryResponse> summaryPage = orderPage.map(OrderSummaryResponse::from);
 
         return OrderListResponse.from(summaryPage);
-
     }
+    /**
+     * 특정 회원의 현재 진행중인 모든 주문 목록(주문 접수, 준비중, 픽업 가능)을 조회합니다.
+     *
+     * @param memberId 조회할 회원의 ID
+     * @return 현재 진행중인 주문의 상세 정보 DTO 리스트
+     */
+    public List<CurrentOrderResponse> getCurrentOrders(Long memberId) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.MEMBER_NOT_FOUND));
+
+        List<OrderStatus> currentStatuses = List.of(
+                OrderStatus.PLACED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP
+        );
+
+        List<Order> currentOrders = orderRepository.findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(memberId, currentStatuses);
+
+        return currentOrders.stream()
+                .map(CurrentOrderResponse::from)
+                .collect(Collectors.toList());
+    }
+
 }

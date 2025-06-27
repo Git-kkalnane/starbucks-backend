@@ -8,9 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByMemberIdAndOrderStatusIn(Long memberId, Collection<OrderStatus> statuses, Pageable pageable);
+    List<Order> findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(Long memberId, List<OrderStatus> statuses);
 }
