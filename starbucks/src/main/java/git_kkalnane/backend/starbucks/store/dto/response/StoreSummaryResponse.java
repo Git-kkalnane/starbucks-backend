@@ -10,14 +10,13 @@ import lombok.RequiredArgsConstructor;
  * @author Seongjun In
  * @version 1.0
  */
-@Getter
-@RequiredArgsConstructor
-public class StoreSummaryResponse {
-    private final Long id;
-    private final String name;
-    private final String address;
-    private final String imageUrl;
-
+public record StoreSummaryResponse (
+    Long id,
+    String name,
+    String address,
+    String imageUrl,
+    boolean hasDriveThrough
+){
     /**
      * Store 엔티티를 StoreSummaryResponse DTO로 변환합니다.
      * @param store 원본 Store 엔티티
@@ -28,7 +27,8 @@ public class StoreSummaryResponse {
                 store.getId(),
                 store.getName(),
                 store.getAddress(),
-                store.getImageUrl()
+                store.getImageUrl(),
+                store.isHasDriveThrough()
         );
     }
 }
