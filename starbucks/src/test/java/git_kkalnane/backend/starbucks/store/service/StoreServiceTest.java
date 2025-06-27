@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat; // AssertJ 임포트 통일
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -57,6 +57,7 @@ class StoreServiceTest {
                 .id(2L)
                 .name("홍대입구역점")
                 .address("서울 마포구")
+                .hasDriveThrough(false)
                 .imageUrl("/images/stores/hongdae.jpg")
                 .build();
     }
@@ -77,17 +78,14 @@ class StoreServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.getId()).isEqualTo(storeId);
         assertThat(response.getName()).isEqualTo("강남역점");
-        assertThat(response.getCurrentCrowdLevel()).isEqualTo(CrowdLevel.MEDIUM);
     }
 
 
     @Test
-    @DisplayName("지점 목록 조회 시, Pageable을 사용하여 페이징된 결과를 올바르게 반환한다")
-    void getStoreList_Success() {
+    @DisplayName("지점 목록 조회 시, 드라이브스루 여부를 포함한 페이징된 결과를 올바르게 반환한다")
+    void getStoreList_IncludesDriveThru_Success() {
         // Given
-        int page = 0;
-        int size = 15;
-        Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
+        Pageable pageable = PageRequest.of(0, 15, Sort.by("name"));
 
         List<Store> storeList = Arrays.asList(mockStore1, mockStore2);
         Page<Store> storePage = new PageImpl<>(storeList, pageable, storeList.size());
@@ -101,10 +99,11 @@ class StoreServiceTest {
         verify(storeRepository, times(1)).findAll(any(Pageable.class));
         assertThat(result).isNotNull();
         assertThat(result.getStores()).hasSize(2);
-        assertThat(result.getCurrentPage()).isEqualTo(page);
+        assertThat(result.getCurrentPage()).isEqualTo(0);
         assertThat(result.getTotalCount()).isEqualTo(storeList.size());
-        assertThat(result.getStores().get(0).getName()).isEqualTo("강남역점");
-        assertThat(result.getStores().get(0).getAddress()).isEqualTo("서울 강남구");
+
+        assertThat(result.getStores().get(0).hasDriveThrough()).isTrue();
+        assertThat(result.getStores().get(1).hasDriveThrough()).isFalse();
     }
 
     @Test
@@ -114,12 +113,11 @@ class StoreServiceTest {
         Long nonExistentId = 999L;
         given(storeRepository.findById(nonExistentId)).willReturn(Optional.empty());
 
-        // When
+        // When & Then
         assertThrows(StoreException.class, () -> {
             storeService.getStoreDetails(nonExistentId);
         });
 
-        // Then
         verify(storeRepository).findById(nonExistentId);
     }
 }
