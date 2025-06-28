@@ -6,16 +6,13 @@ import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
-import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
 import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
-import git_kkalnane.backend.starbucks.auth.repository.AccessTokenRepository;
 import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final MemberRepository memberRepository;
-    private final AccessTokenRepository accessTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -52,39 +48,12 @@ public class AuthService {
         }
 
         JwtToken tokens = jwtTokenProvider.createJwtToken(member.getId());
-        saveAccessTokenToRepository(member.getId(), tokens.getAccessTokenInfo());
         saveRefreshTokenToRepository(member.getId(), tokens.getRefreshTokenInfo());
 
         String accessToken = tokens.getAccessTokenInfo().getToken();
         String refreshToken = tokens.getRefreshTokenInfo().getToken();
 
         return LoginDto.of(accessToken, refreshToken, member.getName(), member.getNickname(), member.getEmail());
-    }
-
-    /**
-     * 생성된 accessToken을 accessTokenRepository에 저장하는 메서드
-     *
-     * @param memberId  사용자 ID (식별자)
-     * @param tokenInfo TokenInfo DTO 인스턴스
-     */
-    @Transactional
-    public void saveAccessTokenToRepository(Long memberId, TokenInfo tokenInfo) {
-        Optional<AccessToken> maybeAccessToken = accessTokenRepository.findByMemberId(memberId);
-
-        // maybeAccessToken의 값이 null일 경우 (DB에 해당 멤버의 토큰 존재 X) 새로 저장
-        if (maybeAccessToken.isEmpty()) {
-            accessTokenRepository.save(AccessToken.builder()
-                    .memberId(memberId)
-                    .token(tokenInfo.getToken())
-                    .expiration(tokenInfo.getExpiration())
-                    .build());
-            return;
-        }
-
-        // maybeAccessToken의 값이 null이 아닐 경우 (DB에 해당 멤버의 토큰 존재) 업데이트
-        AccessToken accessToken = maybeAccessToken.get();
-        accessToken.modifyToken(tokenInfo.getToken());
-        accessToken.modifyExpiration(tokenInfo.getExpiration());
     }
 
     /**
@@ -121,14 +90,8 @@ public class AuthService {
     @Transactional
     public void logout(Long memberId) {
 
-        // 액세스 토큰에 대한 검증은 인터셉터에서 이루어진다.
-        AccessToken accessToken = accessTokenRepository.findByMemberId(memberId).orElseThrow();
         RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
-
-        // accessToken, refreshToken 엔티티의 토큰 값, 만료일시 초기화
-        accessToken.modifyToken("");
-        accessToken.modifyExpiration(new Date());
 
         refreshToken.modifyToken("");
         refreshToken.modifyExpiration(new Date());
@@ -138,21 +101,10 @@ public class AuthService {
      * HTTP 요청의 헤더에 있는 AccessToken의 유효성을 검증하는 메서드이다.
      *
      * @param accessToken
-     * @return bearerToken에 포함된 멤버 엔티티 식별자
+     * @return 토큰의 페이로드에 포함된 멤버 엔티티 식별자
      */
     public Long verifyTokenIncludedInRequest(String accessToken) {
 
-        Long memberId = Long.parseLong(jwtTokenProvider.getMemberId(accessToken));
-
-        // DB에 액세스 토큰이 존재하지 않으면 예외 발생
-        AccessToken accessTokenObj = accessTokenRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
-
-        // DB에 저장된 액세스 토큰값과 HTTP 요청에 포함된 토큰값이 일치하지 않으면 예외 발생
-        if (!Objects.equals(accessTokenObj.getToken(), accessToken)) {
-            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
-        }
-
-        return accessTokenObj.getMemberId();
+        return Long.parseLong(jwtTokenProvider.getMemberId(accessToken));
     }
 }
