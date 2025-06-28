@@ -93,7 +93,7 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        paymentService.processPayment(order);
+       paymentService.processPayment(order); // TODO Card 만들면 작업
 
         return savedOrder;
     }
@@ -108,7 +108,7 @@ public class OrderService {
     private OrderItem validateAndCreateOrderItems(OrderItemRequest request) {
         int orderQuantity = request.quantity();
 
-        if (request.itemType() == ItemType.COFFEE) {
+        if (request.itemType() == ItemType.BEVERAGE) {
             BeverageItem item = beverageItemRepository.findById(request.itemId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
 

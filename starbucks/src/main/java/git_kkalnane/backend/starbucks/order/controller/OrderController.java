@@ -1,6 +1,7 @@
 package git_kkalnane.backend.starbucks.order.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks.auth.common.annotation.CurrentMemberId;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
 import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
@@ -41,9 +42,10 @@ public class OrderController {
             @ApiResponse(responseCode = "201", description = "주문 생성 성공")
     })
     @PostMapping
-    public ResponseEntity<SuccessResponse> createOrder(@Valid @RequestBody CreateOrderDTO request) {
-
-        Long memberId = 1L;
+    public ResponseEntity<SuccessResponse> createOrder(
+            @CurrentMemberId Long memberId,
+            @Valid @RequestBody CreateOrderDTO request) {
+        
         orderService.createOrder(request, memberId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
