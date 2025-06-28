@@ -1,8 +1,11 @@
 package git_kkalnane.backend.starbucks._global.config;
 
+import git_kkalnane.backend.starbucks.auth.common.resolver.CurrentMemberIdArgumentResolver;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,6 +15,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
+    private final CurrentMemberIdArgumentResolver currentMemberIdArgumentResolver;
+
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -50,5 +55,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .exposedHeaders("Authorization", "Set-Cookie")    // 서버가 프론트엔드로 응답을 보낼 시 노출할 헤더를 지정하는 메서드
                 .allowCredentials(true)                           // 클라이언트가 서버로 요청을 보낼 시 허용할 자격 증명 허용 여부를 지정하는 메서드
                 .maxAge(maxAge);                                  // preflight 요청의 캐시 시간을 지정하는 메서드
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(currentMemberIdArgumentResolver);
     }
 }
