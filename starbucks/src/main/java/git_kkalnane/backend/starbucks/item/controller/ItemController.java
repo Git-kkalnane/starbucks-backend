@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.item.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.item.common.success.ItemSuccessCode;
+import git_kkalnane.backend.starbucks.item.dto.response.ItemDetailResponse;
 import git_kkalnane.backend.starbucks.item.dto.response.ItemListResponse;
 import git_kkalnane.backend.starbucks.item.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,5 +66,25 @@ public class ItemController {
     ) {
         ItemListResponse response = itemService.getDessertItems(pageable);
         return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DESSERT_LIST_RETRIEVED, response));
+    }
+    
+    /**
+     * 특정 디저트의 상세 정보를 조회합니다.
+     *
+     * @param id 조회할 디저트의 ID
+     * @return 디저트 상세 정보
+     */
+    @Operation(summary = "디저트 상세 정보 조회", description = "디저트 ID로 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "디저트 상세 정보 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 ID의 디저트를 찾을 수 없음")
+    })
+    @GetMapping("/desserts/{id}")
+    public ResponseEntity<SuccessResponse<ItemDetailResponse>> getDessertDetail(
+            @Parameter(description = "디저트 ID", required = true, example = "1")
+            @PathVariable Long id
+    ) {
+        ItemDetailResponse response = itemService.getDessertDetail(id);
+        return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DESSERT_DETAIL_RETRIEVED, response));
     }
 }
