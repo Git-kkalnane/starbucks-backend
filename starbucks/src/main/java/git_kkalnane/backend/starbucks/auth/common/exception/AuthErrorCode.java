@@ -19,6 +19,7 @@ public enum AuthErrorCode implements ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "위변조된 토큰입니다."),
     // 헤더에서 토큰을 추출할 때 사용
     MISSING_PREFIX(HttpStatus.BAD_REQUEST, "Authorization 헤더에 Bearer가 포함되어 있지 않습니다."),
+    INVALID_AUTH_HEADER(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 헤더입니다."),
     // 토큰 관련 - 주로 JwtTokenProvider에서 사용
     MALFORMED_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰 형식입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
