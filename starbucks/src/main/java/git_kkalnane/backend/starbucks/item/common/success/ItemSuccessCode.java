@@ -21,7 +21,12 @@ public enum ItemSuccessCode implements SuccessCode {
     /**
      * 디저트 목록을 성공적으로 조회했을 때 사용됩니다.
      */
-    DESSERT_LIST_RETRIEVED(HttpStatus.OK, "디저트 목록 조회 성공");
+    DESSERT_LIST_RETRIEVED(HttpStatus.OK, "디저트 목록 조회 성공"),
+
+    /**
+     * 음료 상세 정보를 성공적으로 조회했을 때 사용됩니다.
+     */
+    DRINK_DETAIL_RETRIEVED(HttpStatus.OK, "음료 상세 정보 조회 성공");
 
     private final HttpStatus status;
     private final String message;
