@@ -6,6 +6,7 @@ import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
+import git_kkalnane.backend.starbucks.auth.common.jwt.utils.TokenParser;
 import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
@@ -36,7 +37,6 @@ public class AuthService {
      * @return 멤버의 이름을 담은 SignUpResponse 객체
      */
     public LoginDto login(LoginRequest request) {
-
         // 로그인 요청에 포함된 이메일을 가진 멤버가 존재하는지 조회
         // 이 과정에서 이메일이 존재하지 않을 경우 예외가 발생한다.
         Member member = memberRepository.findMemberByEmail(request.email())
@@ -89,7 +89,6 @@ public class AuthService {
      */
     @Transactional
     public void logout(Long memberId) {
-
         RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
 
@@ -100,11 +99,32 @@ public class AuthService {
     /**
      * HTTP 요청의 헤더에 있는 AccessToken의 유효성을 검증하는 메서드이다.
      *
-     * @param accessToken
+     * @param token Authorization 헤더에 있는 토큰
      * @return 토큰의 페이로드에 포함된 멤버 엔티티 식별자
      */
-    public Long verifyTokenIncludedInRequest(String accessToken) {
+    public Long verifyTokenIncludedInRequest(String token) {
+        return Long.parseLong(jwtTokenProvider.getMemberId(token));
+    }
 
-        return Long.parseLong(jwtTokenProvider.getMemberId(accessToken));
+    /**
+     * 매개변수로 들어온 리프레쉬 토큰의 유효셩을 검증한 뒤 새로운 액세스 토큰을 생성하여 반환하는 메서드
+     *
+     * @param refreshToken 리프레쉬 토큰
+     * @param memberId 사용자 ID (식별자)
+     * @return 재발급된 액세스 토큰
+     */
+    public TokenInfo reissueAccessToken(String refreshToken, Long memberId) {
+        // DB에 있는 해당 멤버의 토큰을 조회, 만약 존재하지 않을 경우 예외 발생
+        RefreshToken refreshTokenInDB = refreshTokenRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
+
+        String plainToken = TokenParser.removeBearerTokenPrefix(refreshToken);
+
+        // DB에 있는 토큰과 HTTP 요청 헤더에 있는 토큰이 일치하지 않으면 예외 발생
+        if (!refreshTokenInDB.validateToken(plainToken)) {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+        }
+
+        return jwtTokenProvider.reissueAccessTokenIfRefreshTokenIsValid(plainToken);
     }
 }
