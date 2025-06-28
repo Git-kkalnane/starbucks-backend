@@ -8,26 +8,39 @@ import git_kkalnane.backend.starbucks.paycard.repository.PayCardRepository;
 import git_kkalnane.backend.starbucks.payment.domain.Payment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PayCardService 테스트")
 class PayCardServiceTest {
+
+    private static final long TEST_MEMBER_ID = 1L;
+    private static final String TEST_EMAIL = "test@example.com";
+    private static final long TEST_INIT_AMOUNT = 0L;
 
     @Mock
     private PayCardRepository payCardRepository;
 
     @InjectMocks
     private PayCardService payCardService;
+
+    @Captor
+    private ArgumentCaptor<PayCard> payCardCaptor;
 
     private Member member;
     private PayCard payCard;
@@ -36,8 +49,8 @@ class PayCardServiceTest {
     @BeforeEach
     void setUp() {
         member = Member.builder()
-                .id(1L)
-                .email("test@example.com")
+                .id(TEST_MEMBER_ID)
+                .email(TEST_EMAIL)
                 .build();
 
         payCard = PayCard.builder()
@@ -52,6 +65,80 @@ class PayCardServiceTest {
                 .amountPaidByPoint(5000)
                 .member(member)
                 .build();
+    }
+
+    @Nested
+    @DisplayName("createPayCard 메서드")
+    class CreatePayCardTest {
+
+        @Test
+        @DisplayName("성공 - 새로운 PayCard를 생성한다")
+        void createPayCard_Success() {
+            // given
+            given(payCardRepository.existsByMemberId(TEST_MEMBER_ID)).willReturn(false);
+            given(payCardRepository.save(any(PayCard.class))).willAnswer(invocation -> {
+                PayCard inputCard = (PayCard) invocation.getArgument(0);
+                return PayCard.builder()
+                        .id(1L)
+                        .cardNumber(inputCard.getCardNumber())
+                        .cardAmount(inputCard.getCardAmount())
+                        .member(inputCard.getMember())
+                        .build();
+            });
+
+            // when
+            PayCard createdCard = payCardService.createPayCard(member);
+
+            // then
+            verify(payCardRepository).existsByMemberId(TEST_MEMBER_ID);
+            verify(payCardRepository).save(payCardCaptor.capture());
+            
+            PayCard capturedCard = payCardCaptor.getValue();
+            assertThat(capturedCard.getMember()).isEqualTo(member);
+            assertThat(capturedCard.getCardAmount()).isEqualTo(TEST_INIT_AMOUNT);
+            assertThat(capturedCard.getCardNumber()).hasSize(19); // 16 digits + 3 spaces
+            assertThat(createdCard.getId()).isNotNull();
+            
+            // Verify the card number format (XXXX XXXX XXXX XXXX)
+            assertThat(capturedCard.getCardNumber().matches("\\d{4} \\d{4} \\d{4} \\d{4}")).isTrue();
+        }
+
+        @Test
+        @DisplayName("실패 - 이미 PayCard가 존재하는 경우 예외가 발생한다")
+        void createPayCard_Fail_WhenCardAlreadyExists() {
+            // given
+            given(payCardRepository.existsByMemberId(TEST_MEMBER_ID)).willReturn(true);
+
+            // when & then
+            assertThatThrownBy(() -> payCardService.createPayCard(member))
+                    .isInstanceOf(PayCardException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", PayCardErrorCode.PAY_CARD_ALREADY_EXISTS);
+
+            verify(payCardRepository, never()).save(any(PayCard.class));
+        }
+
+        @Test
+        @DisplayName("성공 - 카드 번호가 고유하게 생성되는지 확인")
+        void createPayCard_ShouldGenerateUniqueCardNumbers() {
+            // given
+            given(payCardRepository.existsByMemberId(TEST_MEMBER_ID)).willReturn(false);
+            given(payCardRepository.save(any(PayCard.class))).willAnswer(invocation -> {
+                PayCard inputCard = invocation.getArgument(0);
+                return PayCard.builder()
+                        .id(1L)
+                        .cardNumber(inputCard.getCardNumber())
+                        .cardAmount(inputCard.getCardAmount())
+                        .member(inputCard.getMember())
+                        .build();
+            });
+
+            // when
+            PayCard card1 = payCardService.createPayCard(member);
+            PayCard card2 = payCardService.createPayCard(member);
+
+            // then
+            assertThat(card1.getCardNumber()).isNotEqualTo(card2.getCardNumber());
+        }
     }
 
     @Test
