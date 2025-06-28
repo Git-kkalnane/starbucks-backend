@@ -60,3 +60,7 @@ cors:
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
   allowed-headers: '*'
   max-age: 3600
+
+# PayCard 설정
+pay-card:
+  init-amount: 500000
