@@ -71,33 +71,33 @@ public class ItemService {
                 .pageSize(dessertPage.getSize())
                 .build();
     }
-
-  /**
-   * ID로 음료 상세 정보를 조회합니다.
-   *
-   * @param id 조회할 음료 ID
-   * @return 음료 상세 정보
-   * @throws EntityNotFoundException 해당 ID의 음료를 찾을 수 없는 경우
-   */
-  /**
-   * ID로 음료 상세 정보를 조회합니다.
-   *
-   * @param id 조회할 음료 ID
-   * @return 음료 상세 정보
-   * @throws NotFoundException 해당 ID의 음료를 찾을 수 없는 경우
-   */
-  /**
-   * ID로 음료 상세 정보를 조회합니다.
-   * @throws ResponseStatusException 해당 ID의 음료를 찾을 수 없는 경우 404 에러 반환
-   */
-  public ItemDetailResponse getDrinkDetail(Long id) {
-    BeverageItem beverageItem = beverageItemRepository.findByIdWithDetails(id)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            String.format(BEVERAGE_NOT_FOUND, id)
-        ));
-
-    return ItemDetailResponse.from(beverageItem);
-  }
+    
+    /**
+     * ID로 음료 상세 정보를 조회합니다.
+     *
+     * @param id 조회할 음료 ID
+     * @return 음료 상세 정보
+     * @throws EntityNotFoundException 해당 ID의 음료를 찾을 수 없는 경우
+     */
+    /**
+     * ID로 음료 상세 정보를 조회합니다.
+     *
+     * @param id 조회할 음료 ID
+     * @return 음료 상세 정보
+     * @throws NotFoundException 해당 ID의 음료를 찾을 수 없는 경우
+     */
+    /**
+     * ID로 음료 상세 정보를 조회합니다.
+     * @throws ResponseStatusException 해당 ID의 음료를 찾을 수 없는 경우 404 에러 반환
+     */
+    public ItemDetailResponse getBeverageDetail(Long id) {
+        BeverageItem beverageItem = beverageItemRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        String.format(BEVERAGE_NOT_FOUND, id)
+                ));
+                
+        return ItemDetailResponse.from(beverageItem);
+    }
 
 }
