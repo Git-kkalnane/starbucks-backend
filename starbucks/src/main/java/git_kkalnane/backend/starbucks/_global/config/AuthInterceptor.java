@@ -31,10 +31,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         validateBearerToken(bearerToken);
 
         // Authorization 헤더의 값에서 접두사(Bearer)를 제거한다.
-        String accessToken = TokenParser.removeBearerTokenPrefix(bearerToken);
+        String plainToken = TokenParser.removeBearerTokenPrefix(bearerToken);
 
         // 액세스 토큰 유효성 검증
-        Long memberId = authService.verifyTokenIncludedInRequest(accessToken);
+        Long memberId = authService.verifyTokenIncludedInRequest(plainToken);
 
         // HTTP 요청의 속성에 멤버 엔티티의 식별자를 추가한다.
         request.setAttribute("memberId", memberId);
