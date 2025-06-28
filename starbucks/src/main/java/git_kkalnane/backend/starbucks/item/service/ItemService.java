@@ -2,6 +2,7 @@ package git_kkalnane.backend.starbucks.item.service;
 
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
+import git_kkalnane.backend.starbucks.item.dto.response.ItemDetailResponse;
 import git_kkalnane.backend.starbucks.item.dto.response.ItemListResponse;
 import git_kkalnane.backend.starbucks.item.dto.response.ItemSummaryResponse;
 import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
@@ -9,11 +10,11 @@ import git_kkalnane.backend.starbucks.item.repository.DessertItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,8 @@ public class ItemService {
 
     private final BeverageItemRepository beverageItemRepository;
     private final DessertItemRepository dessertItemRepository;
+    
+    private static final String BEVERAGE_NOT_FOUND = "해당하는 음료를 찾을 수 없습니다. ID: %d";
 
     /**
      * 모든 음료(커피 포함) 목록을 조회, 정렬, 페이징하여 반환합니다.
@@ -68,5 +71,33 @@ public class ItemService {
                 .pageSize(dessertPage.getSize())
                 .build();
     }
+
+  /**
+   * ID로 음료 상세 정보를 조회합니다.
+   *
+   * @param id 조회할 음료 ID
+   * @return 음료 상세 정보
+   * @throws EntityNotFoundException 해당 ID의 음료를 찾을 수 없는 경우
+   */
+  /**
+   * ID로 음료 상세 정보를 조회합니다.
+   *
+   * @param id 조회할 음료 ID
+   * @return 음료 상세 정보
+   * @throws NotFoundException 해당 ID의 음료를 찾을 수 없는 경우
+   */
+  /**
+   * ID로 음료 상세 정보를 조회합니다.
+   * @throws ResponseStatusException 해당 ID의 음료를 찾을 수 없는 경우 404 에러 반환
+   */
+  public ItemDetailResponse getDrinkDetail(Long id) {
+    BeverageItem beverageItem = beverageItemRepository.findByIdWithDetails(id)
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            String.format(BEVERAGE_NOT_FOUND, id)
+        ));
+
+    return ItemDetailResponse.from(beverageItem);
+  }
 
 }
