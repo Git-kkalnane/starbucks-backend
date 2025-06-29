@@ -13,7 +13,6 @@ import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
-import git_kkalnane.backend.starbucks.auth.domain.AccessToken;
 import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
@@ -48,11 +47,14 @@ class AuthServiceTest {
     private LoginRequest validLoginRequest;
     private Member existingMember;
     private JwtToken jwtToken;
+    private TokenInfo accessTokenInfo;
+    private TokenInfo refreshTokenInfo;
 
     @BeforeEach
     void setUp() {
         encryptor = new Encryptor();
-        authService = new AuthService(memberRepository, refreshTokenRepository, jwtTokenProvider, encryptor);
+        authService = new AuthService(memberRepository, refreshTokenRepository, jwtTokenProvider,
+                encryptor);
 
         String rawPassword = "password123";
         String hashedPassword = encryptor.encrypt(rawPassword);
@@ -62,8 +64,11 @@ class AuthServiceTest {
         existingMember = Member.builder().name("홍길동").nickname("길동이").email("test@example.com")
                 .password(hashedPassword).build();
 
-        TokenInfo accessTokenInfo = TokenInfo.builder().token("access-token-123").expiration(new Date()).build();
-        TokenInfo refreshTokenInfo = TokenInfo.builder().token("refresh-token-456").expiration(new Date()).build();
+        accessTokenInfo = TokenInfo.builder().token("access-token-123")
+                .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+        refreshTokenInfo = TokenInfo.builder().token("refresh-token-456")
+                .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
 
         jwtToken = JwtToken.of(accessTokenInfo, refreshTokenInfo);
     }
@@ -73,99 +78,120 @@ class AuthServiceTest {
     class LoginTest {
 
         @Nested
-        @DisplayName("정상 시나리오")
+        @DisplayName("성공 시나리오")
         class SuccessTest {
-            void commonWhen(LoginRequest request, Member member, JwtToken token) {
-                when(memberRepository.findMemberByEmail(request.email())).thenReturn(Optional.of(member));
-                when(jwtTokenProvider.createJwtToken(member.getId())).thenReturn(token);
-                when(refreshTokenRepository.findByMemberId(member.getId())).thenReturn(Optional.empty());
-                when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(RefreshToken.builder()
-                        .memberId(member.getId()).token("test").expiration(new Date()).build());
-            }
-
-            void commonAssertion(LoginDto result, JwtToken token, Member member) {
-                assertThat(result).isNotNull();
-                assertThat(result.accessToken()).isEqualTo(token.getAccessTokenInfo().getToken());
-                assertThat(result.refreshToken()).isEqualTo(token.getRefreshTokenInfo().getToken());
-                assertThat(result.name()).isEqualTo(member.getName());
-                assertThat(result.email()).isEqualTo(member.getEmail());
-                assertThat(result.nickname()).isEqualTo(member.getNickname());
-            }
-
-            void commonVerify(LoginRequest request, Member member) {
-                verify(memberRepository, times(1)).findMemberByEmail(request.email());
-                verify(jwtTokenProvider, times(1)).createJwtToken(member.getId());
-                verify(refreshTokenRepository, times(1)).findByMemberId(member.getId());
-            }
 
             @Test
             @DisplayName("정상적인 로그인 요청 시 성공적으로 로그인한다")
             void login_Success() {
                 // given
-                commonWhen(validLoginRequest, existingMember, jwtToken);
+                when(memberRepository.findMemberByEmail(validLoginRequest.email()))
+                        .thenReturn(Optional.of(existingMember));
+                when(jwtTokenProvider.createJwtToken(existingMember.getId())).thenReturn(jwtToken);
+                when(refreshTokenRepository.findByMemberId(existingMember.getId()))
+                        .thenReturn(Optional.empty());
+                when(refreshTokenRepository.save(any(RefreshToken.class)))
+                        .thenReturn(RefreshToken.builder().memberId(existingMember.getId())
+                                .token(refreshTokenInfo.getToken())
+                                .expiration(refreshTokenInfo.getExpiration()).build());
 
                 // when
                 LoginDto result = authService.login(validLoginRequest);
 
                 // then
-                commonAssertion(result, jwtToken, existingMember);
+                assertThat(result).isNotNull();
+                assertThat(result.accessToken()).isEqualTo(accessTokenInfo.getToken());
+                assertThat(result.refreshToken()).isEqualTo(refreshTokenInfo.getToken());
+                assertThat(result.name()).isEqualTo(existingMember.getName());
+                assertThat(result.nickname()).isEqualTo(existingMember.getNickname());
+                assertThat(result.email()).isEqualTo(existingMember.getEmail());
 
                 // verify
-                commonVerify(validLoginRequest, existingMember);
+                verify(memberRepository, times(1)).findMemberByEmail(validLoginRequest.email());
+                verify(jwtTokenProvider, times(1)).createJwtToken(existingMember.getId());
+                verify(refreshTokenRepository, times(1)).findByMemberId(existingMember.getId());
+                verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
+            }
+
+            @Test
+            @DisplayName("기존 RefreshToken이 있을 때 업데이트한다")
+            void login_UpdateExistingRefreshToken() {
+                // given
+                RefreshToken existingRefreshToken = RefreshToken.builder()
+                        .memberId(existingMember.getId()).token("old-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() - 1000)).build();
+
+                when(memberRepository.findMemberByEmail(validLoginRequest.email()))
+                        .thenReturn(Optional.of(existingMember));
+                when(jwtTokenProvider.createJwtToken(existingMember.getId())).thenReturn(jwtToken);
+                when(refreshTokenRepository.findByMemberId(existingMember.getId()))
+                        .thenReturn(Optional.of(existingRefreshToken));
+
+                // when
+                LoginDto result = authService.login(validLoginRequest);
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.accessToken()).isEqualTo(accessTokenInfo.getToken());
+                assertThat(result.refreshToken()).isEqualTo(refreshTokenInfo.getToken());
+
+                // 기존 토큰이 업데이트되었는지 확인
+                assertThat(existingRefreshToken.getToken()).isEqualTo(refreshTokenInfo.getToken());
+                assertThat(existingRefreshToken.getExpiration())
+                        .isEqualTo(refreshTokenInfo.getExpiration());
+
+                // verify
+                verify(memberRepository, times(1)).findMemberByEmail(validLoginRequest.email());
+                verify(jwtTokenProvider, times(1)).createJwtToken(existingMember.getId());
+                verify(refreshTokenRepository, times(1)).findByMemberId(existingMember.getId());
+                verify(refreshTokenRepository, times(0)).save(any(RefreshToken.class));
             }
 
             @Test
             @DisplayName("다른 회원으로 로그인 시 올바른 정보가 반환된다")
             void login_DifferentMember() {
                 // given
-                Member differentMember = Member.builder().name("김철수").nickname("철수이")
-                        .email("chulsoo@example.com").password(encryptor.encrypt("chulsoo123")).build();
+                Member anotherMember =
+                        Member.builder().name("김철수").nickname("철수이").email("chulsoo@example.com")
+                                .password(encryptor.encrypt("chulsoo123")).build();
 
-                LoginRequest differentRequest = new LoginRequest("chulsoo@example.com", "chulsoo123");
+                LoginRequest anotherRequest = new LoginRequest("chulsoo@example.com", "chulsoo123");
 
-                TokenInfo differentAccessTokenInfo =
-                        TokenInfo.builder().token("different-access-token").expiration(new Date()).build();
-                TokenInfo differentRefreshTokenInfo =
-                        TokenInfo.builder().token("different-refresh-token").expiration(new Date()).build();
-                JwtToken differentToken = JwtToken.of(differentAccessTokenInfo, differentRefreshTokenInfo);
+                TokenInfo anotherAccessTokenInfo = TokenInfo.builder().token("another-access-token")
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+                TokenInfo anotherRefreshTokenInfo = TokenInfo.builder()
+                        .token("another-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+                JwtToken anotherJwtToken =
+                        JwtToken.of(anotherAccessTokenInfo, anotherRefreshTokenInfo);
 
-                commonWhen(differentRequest, differentMember, differentToken);
-
-                // when
-                LoginDto result = authService.login(differentRequest);
-
-                // then
-                commonAssertion(result, differentToken, differentMember);
-
-                // verify
-                commonVerify(differentRequest, differentMember);
-            }
-
-            @Test
-            @DisplayName("토큰이 올바르게 생성된다")
-            void login_JwtTokenCreation() {
-                // given
-                commonWhen(validLoginRequest, existingMember, jwtToken);
+                when(memberRepository.findMemberByEmail(anotherRequest.email()))
+                        .thenReturn(Optional.of(anotherMember));
+                when(jwtTokenProvider.createJwtToken(anotherMember.getId()))
+                        .thenReturn(anotherJwtToken);
+                when(refreshTokenRepository.findByMemberId(anotherMember.getId()))
+                        .thenReturn(Optional.empty());
+                when(refreshTokenRepository.save(any(RefreshToken.class)))
+                        .thenReturn(RefreshToken.builder().memberId(anotherMember.getId())
+                                .token(anotherRefreshTokenInfo.getToken())
+                                .expiration(anotherRefreshTokenInfo.getExpiration()).build());
 
                 // when
-                LoginDto result = authService.login(validLoginRequest);
+                LoginDto result = authService.login(anotherRequest);
 
                 // then
-                assertThat(result.accessToken()).isEqualTo("access-token-123");
-                assertThat(result.refreshToken()).isEqualTo("refresh-token-456");
+                assertThat(result).isNotNull();
+                assertThat(result.accessToken()).isEqualTo(anotherAccessTokenInfo.getToken());
+                assertThat(result.refreshToken()).isEqualTo(anotherRefreshTokenInfo.getToken());
+                assertThat(result.name()).isEqualTo(anotherMember.getName());
+                assertThat(result.nickname()).isEqualTo(anotherMember.getNickname());
+                assertThat(result.email()).isEqualTo(anotherMember.getEmail());
             }
         }
 
         @Nested
         @DisplayName("예외 시나리오")
         class ExceptionTest {
-            void commonAssertThatThrownBy(LoginRequest request, AuthErrorCode errorCode) {
-                assertThatThrownBy(() -> authService.login(request)).isInstanceOf(AuthException.class)
-                        .satisfies(exception -> {
-                            AuthException authException = (AuthException) exception;
-                            assertThat(authException.getErrorCode()).isEqualTo(errorCode);
-                        });
-            }
 
             @Test
             @DisplayName("존재하지 않는 이메일로 로그인 시 EMAIL_INVALID_EXCEPTION이 발생한다")
@@ -177,25 +203,38 @@ class AuthServiceTest {
                         .thenReturn(Optional.empty());
 
                 // when & then
-                commonAssertThatThrownBy(invalidEmailRequest, AuthErrorCode.EMAIL_INVALID_EXCEPTION);
+                assertThatThrownBy(() -> authService.login(invalidEmailRequest))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.EMAIL_INVALID_EXCEPTION);
+                        });
 
                 // verify
                 verify(memberRepository, times(1)).findMemberByEmail(invalidEmailRequest.email());
+                verify(jwtTokenProvider, times(0)).createJwtToken(any());
             }
 
             @Test
-            @DisplayName("빈 이메일로 로그인 시 EMAIL_INVALID_EXCEPTION이 발생한다")
-            void login_EmptyEmail() {
+            @DisplayName("잘못된 비밀번호로 로그인 시 PASSWORD_INVALID_EXCEPTION이 발생한다")
+            void login_WrongPassword() {
                 // given
-                LoginRequest emptyEmailRequest = new LoginRequest("", "password123");
-                when(memberRepository.findMemberByEmail(emptyEmailRequest.email()))
-                        .thenReturn(Optional.empty());
+                LoginRequest wrongPasswordRequest =
+                        new LoginRequest("test@example.com", "wrongpassword");
+                when(memberRepository.findMemberByEmail(wrongPasswordRequest.email()))
+                        .thenReturn(Optional.of(existingMember));
 
                 // when & then
-                commonAssertThatThrownBy(emptyEmailRequest, AuthErrorCode.EMAIL_INVALID_EXCEPTION);
+                assertThatThrownBy(() -> authService.login(wrongPasswordRequest))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
+                        });
 
                 // verify
-                verify(memberRepository, times(1)).findMemberByEmail(emptyEmailRequest.email());
+                verify(memberRepository, times(1)).findMemberByEmail(wrongPasswordRequest.email());
+                verify(jwtTokenProvider, times(0)).createJwtToken(any());
             }
 
             @Test
@@ -203,44 +242,15 @@ class AuthServiceTest {
             void login_NullEmail() {
                 // given
                 LoginRequest nullEmailRequest = new LoginRequest(null, "password123");
-                when(memberRepository.findMemberByEmail(nullEmailRequest.email()))
-                        .thenReturn(Optional.empty());
+                when(memberRepository.findMemberByEmail(null)).thenReturn(Optional.empty());
 
                 // when & then
-                commonAssertThatThrownBy(nullEmailRequest, AuthErrorCode.EMAIL_INVALID_EXCEPTION);
-
-                // verify
-                verify(memberRepository, times(1)).findMemberByEmail(nullEmailRequest.email());
-            }
-
-            @Test
-            @DisplayName("잘못된 비밀번호로 로그인 시 PASSWORD_INVALID_EXCEPTION이 발생한다")
-            void login_WrongPassword() {
-                // given
-                LoginRequest wrongPasswordRequest = new LoginRequest("test@example.com", "wrongpassword");
-                when(memberRepository.findMemberByEmail(wrongPasswordRequest.email()))
-                        .thenReturn(Optional.of(existingMember));
-
-                // when & then
-                commonAssertThatThrownBy(wrongPasswordRequest, AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
-
-                // verify
-                verify(memberRepository, times(1)).findMemberByEmail(wrongPasswordRequest.email());
-            }
-
-            @Test
-            @DisplayName("빈 비밀번호로 로그인 시 PASSWORD_INVALID_EXCEPTION이 발생한다")
-            void login_EmptyPassword() {
-                // given
-                LoginRequest emptyPasswordRequest = new LoginRequest("test@example.com", "");
-                when(memberRepository.findMemberByEmail(emptyPasswordRequest.email()))
-                        .thenReturn(Optional.of(existingMember));
-
-                // when & then
-                commonAssertThatThrownBy(emptyPasswordRequest, AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
-
-                // verify
-                verify(memberRepository, times(1)).findMemberByEmail(emptyPasswordRequest.email());
+                assertThatThrownBy(() -> authService.login(nullEmailRequest))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.EMAIL_INVALID_EXCEPTION);
+                        });
             }
 
             @Test
@@ -252,21 +262,23 @@ class AuthServiceTest {
                         .thenReturn(Optional.of(existingMember));
 
                 // when & then
-                commonAssertThatThrownBy(nullPasswordRequest, AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
-
-                // verify
-                verify(memberRepository, times(1)).findMemberByEmail(nullPasswordRequest.email());
+                assertThatThrownBy(() -> authService.login(nullPasswordRequest))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
+                        });
             }
         }
     }
 
     @Nested
-    @DisplayName("토큰저장 테스트")
-    class SaveTokenTest {
+    @DisplayName("RefreshToken 저장 테스트")
+    class SaveRefreshTokenTest {
 
         @Nested
-        @DisplayName("RefreshToken 저장 테스트")
-        class RefreshTokenSaveTest {
+        @DisplayName("성공 시나리오")
+        class SuccessTest {
 
             @Test
             @DisplayName("새로운 RefreshToken을 저장할 수 있다")
@@ -277,8 +289,8 @@ class AuthServiceTest {
                         .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
 
                 when(refreshTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
-                when(refreshTokenRepository.save(any(RefreshToken.class)))
-                        .thenReturn(RefreshToken.builder().memberId(memberId).token(tokenInfo.getToken())
+                when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(
+                        RefreshToken.builder().memberId(memberId).token(tokenInfo.getToken())
                                 .expiration(tokenInfo.getExpiration()).build());
 
                 // when
@@ -315,27 +327,6 @@ class AuthServiceTest {
                 assertThat(existingToken.getToken()).isEqualTo(newTokenInfo.getToken());
                 assertThat(existingToken.getExpiration()).isEqualTo(newTokenInfo.getExpiration());
             }
-
-            @Test
-            @DisplayName("다른 memberId의 RefreshToken을 저장할 수 있다")
-            void saveRefreshToken_DifferentMemberId() {
-                // given
-                Long differentMemberId = 999L;
-                TokenInfo tokenInfo = TokenInfo.builder().token("different-refresh-token")
-                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
-
-                when(refreshTokenRepository.findByMemberId(differentMemberId)).thenReturn(Optional.empty());
-                when(refreshTokenRepository.save(any(RefreshToken.class)))
-                        .thenReturn(RefreshToken.builder().memberId(differentMemberId)
-                                .token(tokenInfo.getToken()).expiration(tokenInfo.getExpiration()).build());
-
-                // when
-                authService.saveRefreshTokenToRepository(differentMemberId, tokenInfo);
-
-                // then
-                verify(refreshTokenRepository, times(1)).findByMemberId(differentMemberId);
-                verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
-            }
         }
     }
 
@@ -344,33 +335,31 @@ class AuthServiceTest {
     class LogoutTest {
 
         @Nested
-        @DisplayName("정상 시나리오")
+        @DisplayName("성공 시나리오")
         class SuccessTest {
-            void commonAssertion(RefreshToken refreshToken) {
-                // 토큰이 빈 문자열로 초기화되었는지 확인
-                assertThat(refreshToken.getToken()).isEqualTo("");
-
-                // 만료 시간이 현재 시간으로 설정되었는지 확인 (1초 이내)
-                long currentTime = System.currentTimeMillis();
-                assertThat(refreshToken.getExpiration().getTime()).isBetween(currentTime - 1000,
-                        currentTime + 1000);
-            }
 
             @Test
             @DisplayName("정상적인 로그아웃 시 토큰이 초기화된다")
             void logout_Success() {
                 // given
                 Long memberId = 1L;
-                RefreshToken refreshToken = RefreshToken.builder().memberId(memberId).token("valid-refresh-token")
-                                .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+                RefreshToken refreshToken = RefreshToken.builder().memberId(memberId)
+                        .token("valid-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
 
-                when(refreshTokenRepository.findByMemberId(memberId)).thenReturn(Optional.of(refreshToken));
+                when(refreshTokenRepository.findByMemberId(memberId))
+                        .thenReturn(Optional.of(refreshToken));
 
                 // when
                 authService.logout(memberId);
 
                 // then
-                commonAssertion(refreshToken);
+                assertThat(refreshToken.getToken()).isEqualTo("");
+
+                // 만료 시간이 현재 시간으로 설정되었는지 확인 (1초 이내)
+                long currentTime = System.currentTimeMillis();
+                assertThat(refreshToken.getExpiration().getTime()).isBetween(currentTime - 1000,
+                        currentTime + 1000);
 
                 // verify
                 verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
@@ -381,9 +370,9 @@ class AuthServiceTest {
             void logout_DifferentMemberId() {
                 // given
                 Long differentMemberId = 999L;
-                RefreshToken refreshToken =
-                        RefreshToken.builder().memberId(differentMemberId).token("different-refresh-token")
-                                .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+                RefreshToken refreshToken = RefreshToken.builder().memberId(differentMemberId)
+                        .token("different-refresh-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
 
                 when(refreshTokenRepository.findByMemberId(differentMemberId))
                         .thenReturn(Optional.of(refreshToken));
@@ -392,7 +381,11 @@ class AuthServiceTest {
                 authService.logout(differentMemberId);
 
                 // then
-                commonAssertion(refreshToken);
+                assertThat(refreshToken.getToken()).isEqualTo("");
+
+                long currentTime = System.currentTimeMillis();
+                assertThat(refreshToken.getExpiration().getTime()).isBetween(currentTime - 1000,
+                        currentTime + 1000);
 
                 // verify
                 verify(refreshTokenRepository, times(1)).findByMemberId(differentMemberId);
@@ -408,14 +401,11 @@ class AuthServiceTest {
             void logout_RefreshTokenNotFound() {
                 // given
                 Long memberId = 1L;
-                AccessToken accessToken = AccessToken.builder().memberId(memberId)
-                        .token("valid-access-token").expiration(new Date()).build();
-
                 when(refreshTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
 
                 // when & then
-                assertThatThrownBy(() -> authService.logout(memberId)).isInstanceOf(AuthException.class)
-                        .satisfies(exception -> {
+                assertThatThrownBy(() -> authService.logout(memberId))
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
                             AuthException authException = (AuthException) exception;
                             assertThat(authException.getErrorCode())
                                     .isEqualTo(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB);
@@ -432,7 +422,7 @@ class AuthServiceTest {
     class VerifyTokenTest {
 
         @Nested
-        @DisplayName("정상 시나리오")
+        @DisplayName("성공 시나리오")
         class SuccessTest {
 
             @Test
@@ -441,8 +431,6 @@ class AuthServiceTest {
                 // given
                 String validToken = "valid-access-token";
                 Long memberId = 1L;
-                AccessToken accessToken = AccessToken.builder().memberId(memberId).token(validToken)
-                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
 
                 when(jwtTokenProvider.getMemberId(validToken)).thenReturn(memberId.toString());
 
@@ -462,10 +450,9 @@ class AuthServiceTest {
                 // given
                 String validToken = "different-access-token";
                 Long differentMemberId = 999L;
-                AccessToken accessToken = AccessToken.builder().memberId(differentMemberId)
-                        .token(validToken).expiration(new Date(System.currentTimeMillis() + 3600000)).build();
 
-                when(jwtTokenProvider.getMemberId(validToken)).thenReturn(differentMemberId.toString());
+                when(jwtTokenProvider.getMemberId(validToken))
+                        .thenReturn(differentMemberId.toString());
 
                 // when
                 Long result = authService.verifyTokenIncludedInRequest(validToken);
@@ -481,6 +468,7 @@ class AuthServiceTest {
         @Nested
         @DisplayName("예외 시나리오")
         class ExceptionTest {
+
             @Test
             @DisplayName("JwtTokenProvider에서 예외가 발생할 때 예외가 전파된다")
             void verifyTokenIncludedInRequest_JwtTokenProviderException() {
@@ -488,11 +476,15 @@ class AuthServiceTest {
                 String invalidToken = "invalid-token";
 
                 when(jwtTokenProvider.getMemberId(invalidToken))
-                        .thenThrow(new RuntimeException("JWT parsing failed"));
+                        .thenThrow(new AuthException(AuthErrorCode.INVALID_TOKEN));
 
                 // when & then
                 assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(invalidToken))
-                        .isInstanceOf(RuntimeException.class).hasMessage("JWT parsing failed");
+                        .isInstanceOf(AuthException.class).satisfies(exception -> {
+                            AuthException authException = (AuthException) exception;
+                            assertThat(authException.getErrorCode())
+                                    .isEqualTo(AuthErrorCode.INVALID_TOKEN);
+                        });
 
                 verify(jwtTokenProvider, times(1)).getMemberId(invalidToken);
             }
@@ -501,16 +493,176 @@ class AuthServiceTest {
             @DisplayName("memberId가 숫자가 아닐 때 NumberFormatException이 발생한다")
             void verifyTokenIncludedInRequest_InvalidMemberId() {
                 // given
-                String validToken = "valid-access-token";
-                String invalidMemberId = "invalid-member-id";
+                String invalidToken = "token-with-invalid-member-id";
 
-                when(jwtTokenProvider.getMemberId(validToken)).thenReturn(invalidMemberId);
+                when(jwtTokenProvider.getMemberId(invalidToken)).thenReturn("invalid-member-id");
 
                 // when & then
-                assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(validToken))
+                assertThatThrownBy(() -> authService.verifyTokenIncludedInRequest(invalidToken))
                         .isInstanceOf(NumberFormatException.class);
 
-                verify(jwtTokenProvider, times(1)).getMemberId(validToken);
+                verify(jwtTokenProvider, times(1)).getMemberId(invalidToken);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("액세스 토큰 재발급 테스트")
+    class ReissueAccessTokenTest {
+
+        @Nested
+        @DisplayName("성공 시나리오")
+        class SuccessTest {
+
+            @Test
+            @DisplayName("유효한 리프레시 토큰으로 액세스 토큰을 재발급할 수 있다")
+            void reissueAccessToken_Success() {
+                // given
+                Long memberId = 1L;
+                String bearerRefreshToken = "Bearer refresh-token-456";
+                String plainRefreshToken = "refresh-token-456";
+
+                RefreshToken refreshTokenInDB = RefreshToken.builder().memberId(memberId)
+                        .token(plainRefreshToken)
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                TokenInfo newAccessTokenInfo = TokenInfo.builder().token("new-access-token")
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(refreshTokenRepository.findByMemberId(memberId))
+                        .thenReturn(Optional.of(refreshTokenInDB));
+                when(jwtTokenProvider.reissueAccessTokenIfRefreshTokenIsValid(plainRefreshToken))
+                        .thenReturn(newAccessTokenInfo);
+
+                // when
+                TokenInfo result = authService.reissueAccessToken(bearerRefreshToken, memberId);
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.getToken()).isEqualTo(newAccessTokenInfo.getToken());
+                assertThat(result.getExpiration()).isEqualTo(newAccessTokenInfo.getExpiration());
+
+                // verify
+                verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+                verify(jwtTokenProvider, times(1))
+                        .reissueAccessTokenIfRefreshTokenIsValid(plainRefreshToken);
+            }
+
+            @Test
+            @DisplayName("다른 사용자의 유효한 리프레시 토큰으로 액세스 토큰을 재발급할 수 있다")
+            void reissueAccessToken_DifferentUser() {
+                // given
+                Long anotherMemberId = 999L;
+                String bearerRefreshToken = "Bearer another-refresh-token";
+                String plainRefreshToken = "another-refresh-token";
+
+                RefreshToken anotherRefreshTokenInDB = RefreshToken.builder()
+                        .memberId(anotherMemberId).token(plainRefreshToken)
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                TokenInfo anotherAccessTokenInfo =
+                        TokenInfo.builder().token("another-new-access-token")
+                                .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
+
+                when(refreshTokenRepository.findByMemberId(anotherMemberId))
+                        .thenReturn(Optional.of(anotherRefreshTokenInDB));
+                when(jwtTokenProvider.reissueAccessTokenIfRefreshTokenIsValid(plainRefreshToken))
+                        .thenReturn(anotherAccessTokenInfo);
+
+                // when
+                TokenInfo result =
+                        authService.reissueAccessToken(bearerRefreshToken, anotherMemberId);
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.getToken()).isEqualTo(anotherAccessTokenInfo.getToken());
+                assertThat(result.getExpiration())
+                        .isEqualTo(anotherAccessTokenInfo.getExpiration());
+            }
+        }
+
+        @Nested
+        @DisplayName("예외 시나리오")
+        class ExceptionTest {
+
+            @Test
+            @DisplayName("DB에 리프레시 토큰이 존재하지 않을 때 TOKEN_NOT_FOUND_IN_DB 예외가 발생한다")
+            void reissueAccessToken_RefreshTokenNotFoundInDB() {
+                // given
+                Long memberId = 1L;
+                String bearerRefreshToken = "Bearer non-existent-refresh-token";
+
+                when(refreshTokenRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
+
+                // when & then
+                assertThatThrownBy(
+                        () -> authService.reissueAccessToken(bearerRefreshToken, memberId))
+                                .isInstanceOf(AuthException.class).satisfies(exception -> {
+                                    AuthException authException = (AuthException) exception;
+                                    assertThat(authException.getErrorCode())
+                                            .isEqualTo(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB);
+                                });
+
+                // verify
+                verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+                verify(jwtTokenProvider, times(0)).reissueAccessTokenIfRefreshTokenIsValid(any());
+            }
+
+            @Test
+            @DisplayName("요청의 리프레시 토큰과 DB의 토큰이 일치하지 않을 때 INVALID_TOKEN 예외가 발생한다")
+            void reissueAccessToken_TokenMismatch() {
+                // given
+                Long memberId = 1L;
+                String bearerRefreshToken = "Bearer different-refresh-token";
+                String dbRefreshToken = "db-refresh-token";
+
+                RefreshToken refreshTokenInDB = RefreshToken.builder().memberId(memberId)
+                        .token(dbRefreshToken)
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                when(refreshTokenRepository.findByMemberId(memberId))
+                        .thenReturn(Optional.of(refreshTokenInDB));
+
+                // when & then
+                assertThatThrownBy(
+                        () -> authService.reissueAccessToken(bearerRefreshToken, memberId))
+                                .isInstanceOf(AuthException.class).satisfies(exception -> {
+                                    AuthException authException = (AuthException) exception;
+                                    assertThat(authException.getErrorCode())
+                                            .isEqualTo(AuthErrorCode.INVALID_TOKEN);
+                                });
+
+                // verify
+                verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+                verify(jwtTokenProvider, times(0)).reissueAccessTokenIfRefreshTokenIsValid(any());
+            }
+
+            @Test
+            @DisplayName("Bearer prefix가 없는 토큰으로 요청 시 MISSING_PREFIX 예외가 발생한다")
+            void reissueAccessToken_MissingBearerPrefix() {
+                // given
+                Long memberId = 1L;
+                String refreshTokenWithoutBearer = "refresh-token-without-bearer";
+
+                RefreshToken refreshTokenInDB = RefreshToken.builder().memberId(memberId)
+                        .token("some-token")
+                        .expiration(new Date(System.currentTimeMillis() + 86400000)).build();
+
+                when(refreshTokenRepository.findByMemberId(memberId))
+                        .thenReturn(Optional.of(refreshTokenInDB));
+
+                // when & then
+                assertThatThrownBy(
+                        () -> authService.reissueAccessToken(refreshTokenWithoutBearer, memberId))
+                                .isInstanceOf(AuthException.class).satisfies(exception -> {
+                                    AuthException authException = (AuthException) exception;
+                                    assertThat(authException.getErrorCode())
+                                            .isEqualTo(AuthErrorCode.MISSING_PREFIX);
+                                });
+
+                // verify
+                verify(refreshTokenRepository, times(1)).findByMemberId(memberId);
+                verify(jwtTokenProvider, times(0)).reissueAccessTokenIfRefreshTokenIsValid(any());
             }
         }
     }
