@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import git_kkalnane.backend.starbucks.paycard.common.exception.PayCardErrorCode;
+import git_kkalnane.backend.starbucks.paycard.common.exception.PayCardException;
 
 @Slf4j
 @Component
@@ -35,10 +37,15 @@ public class MemberSignupEventListener {
         Member member = event.getMember();
         try {
             payCardService.createPayCard(member);
-            log.info("Created PayCard for member: {}", member.getEmail());
+            log.info( "PayCard 생성 - 회원: {}", member.getEmail());
+        } catch (PayCardException e) {
+            if (e.getErrorCode() == PayCardErrorCode.PAY_CARD_ALREADY_EXISTS) {
+                log.warn("PayCard 이미 존재 - 회원 : {}", member.getEmail());
+            } else {
+                log.error("PayCard 생성 실패 - 회원: {}. 오류: {}", member.getEmail(), e.getMessage(), e);
+            }
         } catch (Exception e) {
-            log.error("Failed to create PayCard for member: " + member.getEmail(), e);
-            // 실패 시 로깅만 하고 예외를 던지지 않아 회원가입 프로세스에는 영향을 주지 않음
+            log.error("PayCard 생성 중 예상치 못한 오류가 발생했습니다. 회원: {}", member.getEmail(), e);
         }
     }
 }
