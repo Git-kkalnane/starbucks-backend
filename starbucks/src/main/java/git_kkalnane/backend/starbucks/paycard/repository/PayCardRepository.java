@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface PayCardRepository extends JpaRepository<PayCard, Long> {
 
     Optional<PayCard> findByMemberId(Long memberId);
+    
+    boolean existsByMemberId(Long memberId);
 
     default PayCard getByMemberId(Long memberId) {
         return findByMemberId(memberId)

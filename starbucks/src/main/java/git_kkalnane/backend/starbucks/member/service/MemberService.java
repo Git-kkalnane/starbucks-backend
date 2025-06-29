@@ -6,8 +6,10 @@ import git_kkalnane.backend.starbucks.member.common.exception.MemberException;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.dto.request.SignUpRequest;
 import git_kkalnane.backend.starbucks.member.dto.response.SignUpResponse;
+import git_kkalnane.backend.starbucks.member.event.MemberSignedUpEvent;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
     private final Encryptor encryptor;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * SignUpRequest를 바탕으로 DB에 회원정보를 저장하는 메서드
@@ -39,9 +41,11 @@ public class MemberService {
                 .password(encryptedPassword)
                 .build();
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+        
+        eventPublisher.publishEvent(new MemberSignedUpEvent(this, savedMember));
 
-        return new SignUpResponse(member.getName());
+        return new SignUpResponse(savedMember.getName());
     }
 
     /**
