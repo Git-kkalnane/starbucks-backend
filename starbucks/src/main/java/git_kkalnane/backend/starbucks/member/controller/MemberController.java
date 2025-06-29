@@ -111,4 +111,31 @@ public class MemberController {
         return ResponseEntity.ok(SuccessResponse.of(MemberSuccessCode.MEMBER_NICKNAME_UPDATE_COMPLETE));
     }
 
+    /**
+     * HTTP Request 속성에 있는 멤버 ID를 이용해 멤버의 비밀번호를 변경하는 컨트롤러 메서드이다.
+     */
+    @Operation(
+            summary = "멤버 비밀번호 갱신",
+            description = "멤버 비밀번호를 갱신 시 사용하는 API"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "멤버 비밀번호가 성공적으로 갱신됨"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 멤버를 찾을 수 없음"
+            )
+    })
+    @PostMapping("/update/password")
+    public ResponseEntity<SuccessResponse<?>> updatePassword(
+            @RequestAttribute(name = "memberId") Long memberId,
+            @RequestBody @Valid UpdatePasswordRequest request) {
+
+        memberService.updatePassword(memberId, request);
+
+        return ResponseEntity.ok(SuccessResponse.of(MemberSuccessCode.MEMBER_PASSWORD_UPDATE_COMPLETE));
+    }
+
 }
