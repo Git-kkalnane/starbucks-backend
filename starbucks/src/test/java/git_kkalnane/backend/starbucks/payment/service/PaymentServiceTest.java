@@ -82,7 +82,7 @@ class PaymentServiceTest {
 
         pointTransaction = PointTransaction.builder()
                 .id(1L)
-                .amount(550.0) // 11000 * 0.05
+                .amount(550) // 11000 * 0.05
                 .description(PointAwardReasonMessage.PAYMENT.getDescription())
                 .member(member)
                 .payment(payment)

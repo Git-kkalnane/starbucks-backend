@@ -38,7 +38,21 @@ public record ItemDetailResponse(
     Set<BeverageSizeOption> supportedSizes,
     Set<BeverageTemperatureOption> supportedTemperatures
 ) {
-  
+  public static ItemDetailResponse from(BeverageItem beverageItem) {
+    return new ItemDetailResponse(
+        beverageItem.getId(),
+        beverageItem.getBeverageItemNameKo(),
+        beverageItem.getBeverageItemNameEn(),
+        beverageItem.getDescription(),
+        beverageItem.getPrice(),
+        beverageItem.isCoffee(),
+        ImageUrl.from(beverageItem),
+        ItemType.BEVERAGE,
+        beverageItem.getStatus(),
+        beverageItem.getSupportedSizes(),
+        beverageItem.getSupportedTemperatures()
+    );
+  }
   public static ItemDetailResponse from(DessertItem dessertItem) {
     return new ItemDetailResponse(
         dessertItem.getId(),

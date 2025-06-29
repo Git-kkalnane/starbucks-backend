@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -53,6 +52,26 @@ public class ItemController {
     }
 
     /**
+     * 특정 음료의 상세 정보를 조회합니다.
+     *
+     * @param id 조회할 음료의 ID
+     * @return 음료 상세 정보
+     */
+    @Operation(summary = "음료 상세 정보 조회", description = "음료 ID로 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "음료 상세 정보 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "해당 ID의 음료를 찾을 수 없음")
+    })
+    @GetMapping("/drinks/{id}")
+    public ResponseEntity<SuccessResponse<ItemDetailResponse>> getDrinkDetail(
+        @Parameter(description = "음료 ID", required = true, example = "1")
+        @PathVariable Long id
+    ) {
+        ItemDetailResponse response = itemService.getBeverageDetail(id);
+        return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DRINKS_LIST_RETRIEVED, response));
+    }
+
+    /**
      * 모든 디저트 아이템 목록을 조회합니다.
      */
     @Operation(summary = "전체 디저트 목록 조회")
@@ -67,7 +86,6 @@ public class ItemController {
         ItemListResponse response = itemService.getDessertItems(pageable);
         return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DESSERT_LIST_RETRIEVED, response));
     }
-    
     /**
      * 특정 디저트의 상세 정보를 조회합니다.
      *
@@ -76,13 +94,13 @@ public class ItemController {
      */
     @Operation(summary = "디저트 상세 정보 조회", description = "디저트 ID로 상세 정보를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "디저트 상세 정보 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "해당 ID의 디저트를 찾을 수 없음")
+        @ApiResponse(responseCode = "200", description = "디저트 상세 정보 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "해당 ID의 디저트를 찾을 수 없음")
     })
     @GetMapping("/desserts/{id}")
     public ResponseEntity<SuccessResponse<ItemDetailResponse>> getDessertDetail(
-            @Parameter(description = "디저트 ID", required = true, example = "1")
-            @PathVariable Long id
+        @Parameter(description = "디저트 ID", required = true, example = "1")
+        @PathVariable Long id
     ) {
         ItemDetailResponse response = itemService.getDessertDetail(id);
         return ResponseEntity.ok(SuccessResponse.of(ItemSuccessCode.DESSERT_DETAIL_RETRIEVED, response));
