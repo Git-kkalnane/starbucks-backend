@@ -118,6 +118,7 @@ public class OrderController {
 
         return ResponseEntity
                 .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDER_DETAIL_VIEWED, responseDto));
+    }
 
     @Operation(summary = "매장의 현재 주문 목록 조회", description = "특정 매장의 진행중인(접수, 준비중, 픽업 가능) 모둔 주문 목록을 조회합니다.")
     @ApiResponses(value = {

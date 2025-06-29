@@ -396,8 +396,8 @@ class OrderServiceTest {
         verify(storeRepository, times(1)).findById(nonExistentStoreId);
         verify(orderRepository, never()).findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(anyLong(), anyList());
     }
-}
 
+    @Test
     @DisplayName("매장 주문 상세 조회 성공")
     void getStoreOrderDetail_Success() {
         Long storeId = 1L;
