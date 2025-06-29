@@ -75,7 +75,7 @@ public class MemberService {
      * 매개변수로 들어온 멤버 엔티티 식별자(ID)를 바탕으로 멤버의 닉네임을 변경하는 메서드
      *
      * @param memberId 사용자 엔티티 식별자 (ID)
-     * @param request
+     * @param request {@link UpdateNicknameRequest}
      */
     @Transactional
     public void updateNickname(Long memberId, UpdateNicknameRequest request) {
@@ -89,7 +89,7 @@ public class MemberService {
      * 매개변수로 들어온 멤버 엔티티 식별자(ID)를 바탕으로 멤버의 비밀번호를 변경하는 메서드
      *
      * @param memberId 사용자 엔티티 식별자 (ID)
-     * @param request
+     * @param request {@link UpdatePasswordRequest}
      */
     @Transactional
     public void updatePassword(Long memberId, UpdatePasswordRequest request) {
