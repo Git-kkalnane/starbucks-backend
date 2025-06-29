@@ -14,15 +14,13 @@ import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.*;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounterId;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
+import git_kkalnane.backend.starbucks.payment.service.PaymentService;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +48,7 @@ public class OrderService {
     private final BeverageItemRepository beverageItemRepository;
     private final DessertItemRepository dessertItemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final PaymentService paymentService;
 
     /**
      * 주문생성 로직
@@ -91,8 +90,9 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        return savedOrder;
+        paymentService.processPayment(order);
 
+        return savedOrder;
     }
 
     /**
@@ -209,7 +209,27 @@ public class OrderService {
                 .map(CurrentOrderResponse::from)
                 .collect(Collectors.toList());
     }
+    /**
+     * 특정 매장의 현재 진행중인 모든 주문 목록(주문 접수, 준비중, 픽업 가능)을 조회합니다.
+     * @param storeId 조회할 매장의 ID
+     * @return 현재 진행중인 주문의 상세 정보 DTO 리스트
+     */
+    public List<StoreOrderResponse> getStoreCurrentOrders(Long storeId) {
+        storeRepository.findById(storeId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.STORE_NOT_FOUND));
 
+              List<OrderStatus> currentStatuses = List.of(
+                OrderStatus.PLACED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP
+        );
+
+        List<Order> currentOrders = orderRepository.findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(storeId, currentStatuses);
+
+        return currentOrders.stream()
+                .map(StoreOrderResponse::from)
+                .collect(Collectors.toList());
+    }
     /**
      * 매장의 특정 주문 상세 정보를 조회합니다.
      * 해당 주문이 실제 로그인한 매장의 주문인지 권한 검사를 수행합니다.
@@ -228,5 +248,6 @@ public class OrderService {
         }
 
         return order;
+
     }
 }

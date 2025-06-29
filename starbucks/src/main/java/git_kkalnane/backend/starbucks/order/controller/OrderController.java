@@ -8,6 +8,7 @@ import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderDetailResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderResponse;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,7 +85,7 @@ public class OrderController {
                 .body(SuccessResponse.of(OrderSuccessCode.ORDER_DETAIL_VIEWED, orderList));
     }
 
-    @Operation(summary = "현재 주문 목록 조회", description = "현재 로그인한 사용자의 진행중인(접수, 준비중, 픽업 가능) 모든 주문 목록을 조회합니다.")
+    @Operation(summary = "고객 현재 주문 목록 조회", description = "현재 로그인한 사용자의 진행중인(접수, 준비중, 픽업 가능) 모든 주문 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
@@ -115,8 +116,20 @@ public class OrderController {
         Order order = orderService.getStoreOrderDetail(storeId, orderId);
         StoreOrderDetailResponse responseDto = StoreOrderDetailResponse.from(order);
 
-        // SuccessResponse로 감싸서 반환하도록 수정
         return ResponseEntity
                 .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDER_DETAIL_VIEWED, responseDto));
+
+    @Operation(summary = "매장의 현재 주문 목록 조회", description = "특정 매장의 진행중인(접수, 준비중, 픽업 가능) 모둔 주문 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "매장을 찾을 수 없음")
+    })
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<SuccessResponse> getStoreCurrentOrders(@PathVariable Long storeId) {
+
+        List<StoreOrderResponse> result = orderService.getStoreCurrentOrders(storeId);
+
+        return ResponseEntity
+                .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDERS_VIEWED, result));
     }
 }

@@ -6,7 +6,8 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
-    private static final String PASSWORD_PATTERN = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,20}$";
+    // 영문 대문자, 영문 소문자, 숫자, 특수문자(!@#$%^*+=) 최소 1개 이상 포함, 10-20자, 공백/한글/하이픈/언더스코어 제외
+    private static final String PASSWORD_PATTERN = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^*+=])[^\\s가-힣\\-_]{10,20}$";
 
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
@@ -20,7 +21,6 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         }
 
         // 비밀번호 정규표현식 검증
-        // 영문, 숫자, 특수문자 포함, 10-20자
         return value.matches(PASSWORD_PATTERN);
     }
 }
