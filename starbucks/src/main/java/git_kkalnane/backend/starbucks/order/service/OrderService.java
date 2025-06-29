@@ -14,10 +14,7 @@ import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.*;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounterId;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
@@ -212,5 +209,25 @@ public class OrderService {
                 .map(CurrentOrderResponse::from)
                 .collect(Collectors.toList());
     }
+    /**
+     * 특정 매장의 현재 진행중인 모든 주문 목록(주문 접수, 준비중, 픽업 가능)을 조회합니다.
+     * @param storeId 조회할 매장의 ID
+     * @return 현재 진행중인 주문의 상세 정보 DTO 리스트
+     */
+    public List<StoreOrderResponse> getStoreCurrentOrders(Long storeId) {
+        storeRepository.findById(storeId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.STORE_NOT_FOUND));
 
+        List<OrderStatus> currentStatuses = List.of(
+                OrderStatus.PLACED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP
+        );
+
+        List<Order> currentOrders = orderRepository.findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(storeId, currentStatuses);
+
+        return currentOrders.stream()
+                .map(StoreOrderResponse::from)
+                .collect(Collectors.toList());
+    }
 }
