@@ -5,6 +5,9 @@ import git_kkalnane.backend.starbucks.member.common.exception.MemberErrorCode;
 import git_kkalnane.backend.starbucks.member.common.exception.MemberException;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.dto.request.SignUpRequest;
+import git_kkalnane.backend.starbucks.member.dto.request.UpdateNicknameRequest;
+import git_kkalnane.backend.starbucks.member.dto.request.UpdatePasswordRequest;
+import git_kkalnane.backend.starbucks.member.dto.response.MemberDetailInfo;
 import git_kkalnane.backend.starbucks.member.dto.response.SignUpResponse;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,4 +57,18 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.EMAIL_ALREADY_EXISTS);
         }
     }
+
+    /**
+     * 매개변수로 들어온 멤버 엔티티 식별자(ID)를 바탕으로 사용자 정보를 DB에서 찾아내어 반환하는 메서드
+     *
+     * @param memberId 사용자 엔티티 식별자 (ID)
+     * @return {@link MemberDetailInfo} 객체
+     */
+    public MemberDetailInfo getMemberDetailInfo(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        return MemberDetailInfo.of(member.getName(), member.getEmail(), member.getNickname());
+    }
+
 }
