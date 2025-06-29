@@ -1,5 +1,8 @@
 package git_kkalnane.backend.starbucks.item.service;
 
+
+import git_kkalnane.backend.starbucks.item.common.exception.ItemErrorCode;
+import git_kkalnane.backend.starbucks.item.common.exception.ItemException;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import git_kkalnane.backend.starbucks.item.dto.response.ItemDetailResponse;
@@ -10,7 +13,6 @@ import git_kkalnane.backend.starbucks.item.repository.DessertItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -79,13 +81,12 @@ public class ItemService {
      *
      * @param id 조회할 디저트 ID
      * @return 디저트 상세 정보
-     * @throws ResponseStatusException 해당 ID의 디저트를 찾을 수 없는 경우 404 에러 반환
+     * @throws ItemException 해당 ID의 디저트를 찾을 수 없는 경우 404 에러 반환
      */
     public ItemDetailResponse getDessertDetail(Long id) {
         DessertItem dessertItem = dessertItemRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format(DESSERT_NOT_FOUND, id)
+                .orElseThrow(() -> new ItemException(
+                       ItemErrorCode.DESSERT_NOT_FOUND
                 ));
                 
         return ItemDetailResponse.from(dessertItem);
