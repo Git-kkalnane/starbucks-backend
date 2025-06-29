@@ -152,6 +152,8 @@ public class NotificationService {
 
                     emitterRepository.saveEventCache(key, notification);
                     send(emitter, event, key, responseDto);
+
+                    emitterRepository.deleteById(key);
                 }
         );
 
@@ -196,9 +198,13 @@ public class NotificationService {
         emitters.forEach(
                 (key, emitter) -> {
                     NotificationResponse responseDto = notification.toDto();
-
-                    emitterRepository.saveEventCache(key, notification);
                     send(emitter, event, key, responseDto);
+
+                    // 주문완료 알림을 전송할 경우 receiver의 emitter를 삭제
+                    if(notification.getNotificationType().equals(NotificationType.ORDER_SET)){
+                        emitter.complete();
+                        emitterRepository.deleteById(key);
+                    }
                 }
         );
 
@@ -242,6 +248,8 @@ public class NotificationService {
      */
     private void send(SseEmitter emitter, NotificationEvent event, String emitterId, Object data) {
         try {
+
+            // TODO: emitter.send()는 동기작업으로 쓰레드를 블로킹한다. 다른 쓰레드에 작업을 할당하여 동기작업을 수행해야 한다.
             emitter.send(SseEmitter.event()
                     .id(event.value())
                     .name("sse")
