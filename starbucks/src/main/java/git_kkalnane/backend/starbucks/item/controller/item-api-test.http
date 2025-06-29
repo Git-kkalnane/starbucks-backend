@@ -20,6 +20,8 @@ GET {{baseUrl}}/items/drinks?page=0&size=2
 # 음료 목록의 두 번째 페이지(page=1)를 3개씩(size=3) 조회합니다.
 GET {{baseUrl}}/items/drinks?page=1&size=3
 
+### 4. 음료 상세 조회
+GET {{baseUrl}}/items/drinks/112
 
 ### ========================================
 ### 디저트 (Desserts) API 테스트
