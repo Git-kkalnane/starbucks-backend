@@ -10,13 +10,21 @@ import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
  */
 public record ImageUrl(
     String hot,
-    String ice
+    String ice,
+    String defaultUrl
+
 ) {
+
   public static ImageUrl from(BeverageItem beverageItem) {
     return new ImageUrl(
         beverageItem.getHotImageUrl(),
-        beverageItem.getIceImageUrl()
+        beverageItem.getIceImageUrl(),
+        ""
     );
+  }
+
+  public static ImageUrl fromDefaultUrl(String url) {
+    return new ImageUrl("", "", url);
   }
 }
 

@@ -5,6 +5,7 @@ import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
 import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageSizeOption;
 import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
+import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import git_kkalnane.backend.starbucks.item.dto.common.ImageUrl;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import java.util.Set;
  * @param supportedSizes 지원되는 사이즈 목록
  * @param supportedTemperatures 지원되는 온도 옵션 목록
  */
+
 public record ItemDetailResponse(
     Long id,
     String nameKo,
@@ -45,10 +47,25 @@ public record ItemDetailResponse(
         beverageItem.getPrice(),
         beverageItem.isCoffee(),
         ImageUrl.from(beverageItem),
-        beverageItem.getCategory(),
+        ItemType.BEVERAGE,
         beverageItem.getStatus(),
         beverageItem.getSupportedSizes(),
         beverageItem.getSupportedTemperatures()
+    );
+  }
+  public static ItemDetailResponse from(DessertItem dessertItem) {
+    return new ItemDetailResponse(
+        dessertItem.getId(),
+        dessertItem.getDessertItemNameKo(),
+        dessertItem.getDessertItemNameEn(),
+        dessertItem.getDescription(),
+        dessertItem.getPrice(),
+        false, // isCoffee 항상 false
+        ImageUrl.fromDefaultUrl(dessertItem.getImageUrl()),
+        ItemType.DESSERT,
+        dessertItem.getStatus(),
+        Set.of(), // 사이즈 옵션 항상 없음
+        Set.of()  // 아직 디저트는 옵션이 없음,
     );
   }
 }
