@@ -21,6 +21,11 @@ public enum NotificationType {
     public String getTitle(Object ... args) {
         return title.formatted(args);
     }
+
+    public String getMessage() {
+        return message;
+    }
+
     public String getMessage(Object ... args) {
         return message.formatted(args);
     }
