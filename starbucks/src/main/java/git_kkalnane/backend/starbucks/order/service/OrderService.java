@@ -14,10 +14,7 @@ import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.*;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounterId;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
@@ -212,5 +209,45 @@ public class OrderService {
                 .map(CurrentOrderResponse::from)
                 .collect(Collectors.toList());
     }
+    /**
+     * 특정 매장의 현재 진행중인 모든 주문 목록(주문 접수, 준비중, 픽업 가능)을 조회합니다.
+     * @param storeId 조회할 매장의 ID
+     * @return 현재 진행중인 주문의 상세 정보 DTO 리스트
+     */
+    public List<StoreOrderResponse> getStoreCurrentOrders(Long storeId) {
+        storeRepository.findById(storeId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.STORE_NOT_FOUND));
 
+              List<OrderStatus> currentStatuses = List.of(
+                OrderStatus.PLACED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP
+        );
+
+        List<Order> currentOrders = orderRepository.findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(storeId, currentStatuses);
+
+        return currentOrders.stream()
+                .map(StoreOrderResponse::from)
+                .collect(Collectors.toList());
+    }
+    /**
+     * 매장의 특정 주문 상세 정보를 조회합니다.
+     * 해당 주문이 실제 로그인한 매장의 주문인지 권한 검사를 수행합니다.
+     *
+     * @param storeId 현재 로그인한 매장의 ID
+     * @param orderId 조회할 주문의 ID
+     * @return Order 엔티티
+     * @throws OrderException 주문을 찾을 수 없거나, 해당 매장의 주문이 아닐 경우
+     */
+    public Order getStoreOrderDetail(Long storeId, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getStore().getId().equals(storeId)) {
+            throw new OrderException(OrderErrorCode.FORBIDDEN_ACCESS_ORDER);
+        }
+
+        return order;
+
+    }
 }

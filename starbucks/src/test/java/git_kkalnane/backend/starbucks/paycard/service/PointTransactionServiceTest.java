@@ -57,7 +57,7 @@ class PointTransactionServiceTest {
 
         savedPointTransaction = PointTransaction.builder()
                 .id(1L)
-                .amount(500)
+                .amount(500) // 10000 * 0.05
                 .description(PointAwardReasonMessage.PAYMENT.getDescription())
                 .transactionType(TransactionType.PAYMENT)
                 .member(member)
