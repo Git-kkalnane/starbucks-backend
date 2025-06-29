@@ -85,4 +85,19 @@ public class MemberService {
         member.modifyNickname(request.nickname());
     }
 
+    /**
+     * 매개변수로 들어온 멤버 엔티티 식별자(ID)를 바탕으로 멤버의 비밀번호를 변경하는 메서드
+     *
+     * @param memberId 사용자 엔티티 식별자 (ID)
+     * @param request
+     */
+    @Transactional
+    public void updatePassword(Long memberId, UpdatePasswordRequest request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        String encryptedPassword = encryptor.encrypt(request.password());
+
+        member.modifyPassword(encryptedPassword);
+    }
 }
