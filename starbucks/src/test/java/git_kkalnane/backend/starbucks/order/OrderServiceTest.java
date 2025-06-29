@@ -397,3 +397,47 @@ class OrderServiceTest {
         verify(orderRepository, never()).findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(anyLong(), anyList());
     }
 }
+
+    @DisplayName("매장 주문 상세 조회 성공")
+    void getStoreOrderDetail_Success() {
+        Long storeId = 1L;
+        Long orderId = 10L;
+
+        Store testMockStore = mock(Store.class);
+        given(testMockStore.getId()).willReturn(storeId);
+        Order testMockOrder = mock(Order.class);
+        given(testMockOrder.getId()).willReturn(orderId);
+        given(testMockOrder.getStore()).willReturn(testMockStore);
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(testMockOrder));
+
+        // when
+        Order foundOrder = orderService.getStoreOrderDetail(storeId, orderId);
+
+        // then
+        assertThat(foundOrder).isNotNull();
+        assertThat(foundOrder.getId()).isEqualTo(orderId);
+        verify(orderRepository, times(1)).findById(orderId);
+    }
+
+    @Test
+    @DisplayName("매장 주문 상세 조회 실패 - 다른 매장의 주문이라 권한 없음")
+    void getStoreOrderDetail_Fail_ForbiddenAccess() {
+        // given
+        Long myStoreId = 1L;
+        Long anotherStoreId = 2L;
+        Long orderId = 10L;
+
+        Store anotherStore = mock(Store.class);
+        given(anotherStore.getId()).willReturn(anotherStoreId);
+
+        Order mockOrder = mock(Order.class);
+        given(mockOrder.getStore()).willReturn(anotherStore);
+
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.getStoreOrderDetail(myStoreId, orderId))
+                .isInstanceOf(OrderException.class)
+                .hasMessageContaining("해당 주문에 접근할 권한이 없습니다.");
+    }
+}

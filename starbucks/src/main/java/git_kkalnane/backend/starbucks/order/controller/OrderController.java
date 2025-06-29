@@ -2,10 +2,12 @@ package git_kkalnane.backend.starbucks.order.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
+import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
+import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderResponse;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,6 +97,27 @@ public class OrderController {
         return ResponseEntity
                 .ok(SuccessResponse.of(OrderSuccessCode.ORDER_CURRENT_VIEWED, result));
     }
+
+    /**
+     * [매장용 API] 특정 주문에 대한 상세 정보를 조회합니다.
+     *
+     * // TODO: 추후 Auth 로직 구현 시, @AuthenticationPrincipal을 사용하도록 변경.
+     *
+     * @param storeId 매장의 ID (임시로 URL 경로에서 직접 받습니다.)
+     * @param orderId 조회할 주문의 ID
+     * @return 주문 상세 정보를 담은 ResponseEntity
+     */
+    @GetMapping("/store/{storeId}/{orderId}") // 임시 url
+    public ResponseEntity<SuccessResponse> getStoreOrderDetail(
+            @PathVariable Long storeId, // 임시
+            @PathVariable Long orderId
+    ) {
+        // TODO: 인증 구현 후 @AuthenticationPrincipal 사용
+        Order order = orderService.getStoreOrderDetail(storeId, orderId);
+        StoreOrderDetailResponse responseDto = StoreOrderDetailResponse.from(order);
+
+        return ResponseEntity
+                .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDER_DETAIL_VIEWED, responseDto));
 
     @Operation(summary = "매장의 현재 주문 목록 조회", description = "특정 매장의 진행중인(접수, 준비중, 픽업 가능) 모둔 주문 목록을 조회합니다.")
     @ApiResponses(value = {
