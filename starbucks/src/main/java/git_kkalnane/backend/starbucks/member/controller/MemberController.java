@@ -4,6 +4,8 @@ package git_kkalnane.backend.starbucks.member.controller;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.member.common.success.MemberSuccessCode;
 import git_kkalnane.backend.starbucks.member.dto.request.SignUpRequest;
+import git_kkalnane.backend.starbucks.member.dto.request.UpdateNicknameRequest;
+import git_kkalnane.backend.starbucks.member.dto.request.UpdatePasswordRequest;
 import git_kkalnane.backend.starbucks.member.dto.response.MemberDetailInfo;
 import git_kkalnane.backend.starbucks.member.dto.response.SignUpResponse;
 import git_kkalnane.backend.starbucks.member.service.MemberService;
@@ -80,6 +82,33 @@ public class MemberController {
 
         return ResponseEntity.ok(SuccessResponse.of(MemberSuccessCode.GET_MEMBER_DETAIL_INFO_COMPLETE,
                 memberService.getMemberDetailInfo(memberId)));
+    }
+
+    /**
+     * HTTP Request 속성에 있는 멤버 ID를 이용해 멤버의 닉네임을 변경하는 컨트롤러 메서드이다.
+     */
+    @Operation(
+            summary = "멤버 닉네임 갱신",
+            description = "멤버 닉네임을 갱신 시 사용하는 API"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "멤버 닉네임이 성공적으로 갱신됨"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 멤버를 찾을 수 없음"
+            )
+    })
+    @PostMapping("/update/nickname")
+    public ResponseEntity<SuccessResponse<?>> updateNickname(
+            @RequestAttribute(name = "memberId") Long memberId,
+            @RequestBody @Valid UpdateNicknameRequest request) {
+
+        memberService.updateNickname(memberId, request);
+
+        return ResponseEntity.ok(SuccessResponse.of(MemberSuccessCode.MEMBER_NICKNAME_UPDATE_COMPLETE));
     }
 
 }
