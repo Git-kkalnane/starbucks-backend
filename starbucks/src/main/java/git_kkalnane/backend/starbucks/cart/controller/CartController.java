@@ -4,12 +4,15 @@ package git_kkalnane.backend.starbucks.cart.controller;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.cart.common.success.CartSuccessCode;
 import git_kkalnane.backend.starbucks.cart.dto.request.AddCartItemRequest;
+import git_kkalnane.backend.starbucks.cart.dto.request.CheckCartItemRequest;
 import git_kkalnane.backend.starbucks.cart.dto.request.ModifyCartItemRequest;
+import git_kkalnane.backend.starbucks.cart.dto.response.CheckCartItemResponse;
 import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemResponse;
 import git_kkalnane.backend.starbucks.cart.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,10 +39,10 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "카트에 Item 추가 성공")
     })
     @PostMapping
-    public ResponseEntity<SuccessResponse> addItem(@Valid @RequestBody AddCartItemRequest addCartItemRequest) {
+    public ResponseEntity<SuccessResponse> addItem(@RequestBody AddCartItemRequest addCartItemRequest) {
 
-        Long memberId = 1L;
 
+        Long memberId = 2L;
         cartService.addItem(addCartItemRequest, memberId);
 
         return ResponseEntity
@@ -75,5 +78,19 @@ public class CartController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(SuccessResponse.of(CartSuccessCode.CART_SUCCESS_DELETED));
+    }
+
+    @Operation(summary = "카트 아이템 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카트 아이템 목록 조회")
+    })
+    @GetMapping
+    public ResponseEntity<SuccessResponse> getItems(@RequestParam Long memberId) {
+
+        CheckCartItemResponse checkCartItemResponse = cartService.getCartItems(memberId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SuccessResponse.of(CartSuccessCode.CART_SUCCESS_CHECK, checkCartItemResponse));
     }
 }

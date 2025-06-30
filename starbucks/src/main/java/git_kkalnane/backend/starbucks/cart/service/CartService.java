@@ -5,10 +5,7 @@ import git_kkalnane.backend.starbucks.cart.common.exception.CartException;
 import git_kkalnane.backend.starbucks.cart.domain.Cart;
 import git_kkalnane.backend.starbucks.cart.domain.CartItem;
 import git_kkalnane.backend.starbucks.cart.dto.request.*;
-import git_kkalnane.backend.starbucks.cart.dto.response.AddCartItemResponse;
-import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemsResponse;
-import git_kkalnane.backend.starbucks.cart.dto.response.AddCartItemsResponse;
-import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemResponse;
+import git_kkalnane.backend.starbucks.cart.dto.response.*;
 import git_kkalnane.backend.starbucks.cart.repository.CartItemRepository;
 import git_kkalnane.backend.starbucks.cart.repository.CartRepository;
 import git_kkalnane.backend.starbucks.item.common.exception.ItemErrorCode;
@@ -54,7 +51,7 @@ public class CartService {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 사용자입니다."));
 
-        Cart cart = cartRepository.findById(memberId).orElseThrow(
+        Cart cart = cartRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CartException(CartErrorCode.CART_NOT_FOUND));
 
         //TODO : 후에 Store 검증 로직도 필요 시 추가 예정
@@ -69,8 +66,6 @@ public class CartService {
         List<AddCartItemsResponse> cartItemsResponse = CartItemResponse(cartItems);
 
         return new AddCartItemResponse(
-                200,
-                "메뉴가 성공적으로 추가되었습니다.",
                 cart.getId(),
                 cartItemsResponse,
                 totalPrice
@@ -240,6 +235,49 @@ public class CartService {
         cartItemRepository.deleteById(cartItemId);
         return cartItemId;
     }
+
+    @Transactional
+    public CheckCartItemResponse getCartItems(Long memberId) {
+
+        Cart cart = cartRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CartException(CartErrorCode.CART_NOT_FOUND));
+        List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
+
+        List<CheckCartItemRequest> checkCartItems = cartItems.stream()
+                .map(cartItem -> {
+                    ItemType itemType;
+                    String itemName;
+
+                    if(cartItem.getBeverageItem() != null) {
+                        itemType = ItemType.BEVERAGE;
+                        itemName = cartItem.getBeverageItem().getBeverageItemNameKo();
+                    } else {
+                        itemType = ItemType.DESSERT;
+                        itemName = cartItem.getDessertItem().getDessertItemNameKo();
+                    }
+
+                    List<CheckCartItemOptionRequest> options = cartItem.getCartItemOption().stream()
+                            .map(option -> new CheckCartItemOptionRequest(
+                                    option.getItemOption().getId(),
+                                    option.getItemOption().getSyrupName(),
+                                    option.getItemOption().getQuantity(),
+                                    option.getItemOption().getAdditionalPrice()
+                            )).toList();
+
+                    return CheckCartItemRequest.builder()
+                            .cartItemId(cartItem.getId())
+                            .itemType(itemType)
+                            .itemName(itemName)
+                            .quantity(cartItem.getCartItemQuantity())
+                            .options(options)
+                            .build();
+
+                }).toList();
+
+        return new CheckCartItemResponse(checkCartItems);
+
+    }
+
 }
 
 
