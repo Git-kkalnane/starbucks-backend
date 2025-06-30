@@ -11,7 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final AuthInterceptor authInterceptor;
+    private final MemberAuthInterceptor memberAuthInterceptor;
+    private final MerchantAuthInterceptor merchantAuthInterceptor;
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -33,12 +34,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(authInterceptor)
+        registry.addInterceptor(memberAuthInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/swagger-ui/**", "/v3/api-docs/**")   // Swagger 관련 URI 제외
                 .excludePathPatterns("/items/**", "/stores/**")    // item과 매장 정보 GET 관련 제외
                 .excludePathPatterns("/members/signup", "/auth/login")     // 고객 회원가입, 로그인 엔드포인트 제외
-                .excludePathPatterns("/merchant/signup", "/merchant/login"); // 매장 회원가입, 로그인 엔드포인트 제외
+                .excludePathPatterns("/merchant/**");
+
+        registry.addInterceptor(merchantAuthInterceptor)
+                .addPathPatterns("/merchant/**")
+                .excludePathPatterns("/merchant/signup", "/merchant/login") // 매장 회원가입, 로그인 엔드포인트 제외
+        ;
     }
 
     @Override
