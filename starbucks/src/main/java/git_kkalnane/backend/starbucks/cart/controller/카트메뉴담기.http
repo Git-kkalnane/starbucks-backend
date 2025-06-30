@@ -1,7 +1,7 @@
 @host = localhost
 @port = 8080
 @baseUrl = http://{{host}}:{{port}}/api/v1
-@accessToken = Bearer eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6MiwiaWF0IjoxNzUxMjU2MjI3LCJleHAiOjE3NTEyNTgwMjd9.4bMiV04gNaOWxZPhiv35ffeMtZpwoUMbEa5cD-zXiDxoiawAo5abuOfnSzUnJARnP4o1StlziQpeBalhQb-gPw
+@accessToken =
 ### ========================================
 ### 주문 생성 테스트
 ### ========================================
