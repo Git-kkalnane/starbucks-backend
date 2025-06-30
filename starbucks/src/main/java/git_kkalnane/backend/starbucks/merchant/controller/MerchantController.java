@@ -23,7 +23,6 @@ public class MerchantController {
 
     private final MerchantService merchantService;
 
-
     /**
      * HTTP Request Body에 전송된 정보를 이용해 회원가입 요청을 처리하는 컨트롤러 메서드이다.
      *
