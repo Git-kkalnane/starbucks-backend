@@ -1,5 +1,6 @@
 package git_kkalnane.backend.starbucks.paycard.eventlistener;
 
+import git_kkalnane.backend.starbucks.cart.service.CartService;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.event.MemberSignedUpEvent;
 import git_kkalnane.backend.starbucks.paycard.service.PayCardService;
@@ -20,6 +21,7 @@ import git_kkalnane.backend.starbucks.paycard.common.exception.PayCardException;
 public class MemberSignupEventListener {
 
     private final PayCardService payCardService;
+    private final CartService cartService;
 
     /**
      * 회원가입 완료 후 PayCard를 생성하는 이벤트 리스너
@@ -33,11 +35,18 @@ public class MemberSignupEventListener {
         phase = TransactionPhase.AFTER_COMPLETION,
         classes = MemberSignedUpEvent.class
     )
+    /**
+     * cartService.createCartCForMember
+     */
     public void handleMemberSignedUpEvent(MemberSignedUpEvent event) {
         Member member = event.getMember();
         try {
             payCardService.createPayCard(member);
             log.info( "PayCard 생성 - 회원: {}", member.getEmail());
+
+            // PayCard생성 시 cartRepository에 member가 없다면 Cart생성하기
+            cartService.createCartForMember(member);
+         
         } catch (PayCardException e) {
             if (e.getErrorCode() == PayCardErrorCode.PAY_CARD_ALREADY_EXISTS) {
                 log.warn("PayCard 이미 존재 - 회원 : {}", member.getEmail());

@@ -16,7 +16,7 @@ public class Merchant extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "merchant_name", nullable = false, length = 50, unique = true)
+    @Column(name = "merchant_name", length = 50, unique = true)
     private String merchantName;
 
     @Column(name = "email", nullable = false, unique = true)
