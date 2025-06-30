@@ -250,4 +250,27 @@ public class OrderService {
         return order;
 
     }
+
+    /**
+     * 매장의 특정 주문 상태를 변경합니다.
+     *
+     * @param storeId   요청한 매장의 ID (권한 검증용)
+     * @param orderId   상태를 변경할 주문의 ID
+     * @param newStatus 변경할 새로운 주문 상태
+     */
+    @Transactional
+    public void updateOrderStatus(Long storeId, Long orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getStore().getId().equals(storeId)) {
+            throw new OrderException(OrderErrorCode.FORBIDDEN_ACCESS_ORDER);
+        }
+
+        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED) {
+            throw new OrderException(OrderErrorCode.CANNOT_UPDATE_COMPLETED_ORDER);
+        }
+
+        order.updateStatus(newStatus);
+    }
 }

@@ -440,4 +440,89 @@ class OrderServiceTest {
                 .isInstanceOf(OrderException.class)
                 .hasMessageContaining("해당 주문에 접근할 권한이 없습니다.");
     }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 성공")
+    void updateOrderStatus_Success() {
+        Long storeId = 1L;
+        Long orderId = 10L;
+        OrderStatus newStatus = OrderStatus.PREPARING;
+
+        Store mockStore = mock(Store.class);
+        given(mockStore.getId()).willReturn(storeId);
+
+        Order mockOrder = mock(Order.class);
+        given(mockOrder.getStore()).willReturn(mockStore);
+        given(mockOrder.getOrderStatus()).willReturn(OrderStatus.PLACED);
+
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
+
+        // when
+        orderService.updateOrderStatus(storeId, orderId, newStatus);
+
+        // then
+        verify(mockOrder, times(1)).updateStatus(newStatus);
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 실패 (다른 매장 주문)")
+    void updateOrderStatus_Fail_ForbiddenAccess() {
+        // given
+        Long myStoreId = 1L;
+        Long anotherStoreId = 2L;
+        Long orderId = 10L;
+        OrderStatus newStatus = OrderStatus.PREPARING;
+
+        Store anotherStore = mock(Store.class);
+        given(anotherStore.getId()).willReturn(anotherStoreId);
+
+        Order mockOrder = mock(Order.class);
+        given(mockOrder.getStore()).willReturn(anotherStore);
+
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.updateOrderStatus(myStoreId, orderId, newStatus))
+                .isInstanceOf(OrderException.class)
+                .hasMessageContaining("해당 주문에 접근할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 실패 (이미 완료된 주문)")
+    void updateOrderStatus_Fail_AlreadyCompleted() {
+        // given
+        Long storeId = 1L;
+        Long orderId = 10L;
+        OrderStatus newStatus = OrderStatus.PREPARING;
+
+        Store mockStore = mock(Store.class);
+        given(mockStore.getId()).willReturn(storeId);
+
+        Order mockOrder = mock(Order.class);
+        given(mockOrder.getStore()).willReturn(mockStore);
+        given(mockOrder.getOrderStatus()).willReturn(OrderStatus.COMPLETED);
+
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(mockOrder));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.updateOrderStatus(storeId, orderId, newStatus))
+                .isInstanceOf(OrderException.class)
+                .hasMessageContaining("이미 완료되거나 취소된 주문의 상태는 변경할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 - 실패 (존재하지 않는 주문)")
+    void updateOrderStatus_Fail_OrderNotFound() {
+        // given
+        Long storeId = 1L;
+        Long nonExistentOrderId = 999L;
+        OrderStatus newStatus = OrderStatus.PREPARING;
+
+        given(orderRepository.findById(nonExistentOrderId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> orderService.updateOrderStatus(storeId, nonExistentOrderId, newStatus))
+                .isInstanceOf(OrderException.class)
+                .hasMessageContaining("요청하신 주문을 찾을 수 없습니다.");
+    }
 }
