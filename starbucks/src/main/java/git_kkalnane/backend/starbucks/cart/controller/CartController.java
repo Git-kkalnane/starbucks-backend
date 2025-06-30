@@ -4,7 +4,6 @@ package git_kkalnane.backend.starbucks.cart.controller;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.cart.common.success.CartSuccessCode;
 import git_kkalnane.backend.starbucks.cart.dto.request.AddCartItemRequest;
-import git_kkalnane.backend.starbucks.cart.dto.request.CheckCartItemRequest;
 import git_kkalnane.backend.starbucks.cart.dto.request.ModifyCartItemRequest;
 import git_kkalnane.backend.starbucks.cart.dto.response.CheckCartItemResponse;
 import git_kkalnane.backend.starbucks.cart.dto.response.ModifyCartItemResponse;
@@ -12,8 +11,6 @@ import git_kkalnane.backend.starbucks.cart.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +55,7 @@ public class CartController {
                                                       @RequestAttribute(name = "memberId") Long memberId) {
 
 
-        ModifyCartItemResponse modifyCartItemResponse = cartService.modifiyCartItem(modifyCartItemRequest, memberId);
+        ModifyCartItemResponse modifyCartItemResponse = cartService.modifyCartItem(modifyCartItemRequest, memberId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
