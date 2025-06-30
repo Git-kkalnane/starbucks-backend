@@ -44,9 +44,10 @@ public class OrderController {
             @ApiResponse(responseCode = "201", description = "주문 생성 성공")
     })
     @PostMapping
-    public ResponseEntity<SuccessResponse> createOrder(@Valid @RequestBody CreateOrderDTO request) {
-
-        Long memberId = 1L;
+    public ResponseEntity<SuccessResponse> createOrder(
+        @RequestAttribute(name = "memberId") Long memberId,
+            @Valid @RequestBody CreateOrderDTO request) {
+        
         orderService.createOrder(request, memberId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
