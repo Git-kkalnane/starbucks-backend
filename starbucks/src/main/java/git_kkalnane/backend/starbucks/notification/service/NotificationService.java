@@ -1,6 +1,7 @@
 package git_kkalnane.backend.starbucks.notification.service;
 
 
+import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import git_kkalnane.backend.starbucks.notification.common.success.NotificationSuccessCode;
 import git_kkalnane.backend.starbucks.notification.domain.*;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
@@ -57,8 +58,15 @@ public class NotificationService {
         SseEmitter emitter = emitterRepository.save(sseEmitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         // 클라이언트의 연결 종료 및 타임아웃에 대한 이벤트 처리 -> Emiiter 삭제
-        emitter.onCompletion(() -> emitterRepository.deleteById(sseEmitterId.getId()));
-        emitter.onTimeout(() -> emitterRepository.deleteById(sseEmitterId.getId()));
+        emitter.onCompletion(() -> {
+            GlobalLogger.info("SSE 연결 종료", "emitterId: " + sseEmitterId.getId());
+            emitterRepository.deleteById(sseEmitterId.getId());
+        });
+
+        emitter.onTimeout(() -> {
+            GlobalLogger.info("SSE 연결 종료", "emitterId: " + sseEmitterId.getId());
+            emitterRepository.deleteById(sseEmitterId.getId());
+        });
 
         // 503 에러를 방지하기 위한 구독용 더미 이벤트 전송
         NotificationEvent event = NotificationEvent.of
@@ -149,9 +157,12 @@ public class NotificationService {
         emitters.forEach(
                 (key, emitter) -> {
                     NotificationItemResponse<T> responseDto = notification.toDto(item);
-
-                    emitterRepository.saveEventCache(key, notification);
                     send(emitter, event, key, responseDto);
+
+                    if(notificationTargetType.equals(NotificationTargetType.CUSTOMER)
+                            && notificationType.equals(NotificationType.ORDER_SET)){
+                        emitter.complete();
+                    }
                 }
         );
 
@@ -196,9 +207,12 @@ public class NotificationService {
         emitters.forEach(
                 (key, emitter) -> {
                     NotificationResponse responseDto = notification.toDto();
-
-                    emitterRepository.saveEventCache(key, notification);
                     send(emitter, event, key, responseDto);
+
+                    if(notificationTargetType.equals(NotificationTargetType.CUSTOMER)
+                            && notificationType.equals(NotificationType.ORDER_SET)){
+                        emitter.complete();
+                    }
                 }
         );
 
@@ -223,7 +237,7 @@ public class NotificationService {
 
         return sendNotification(
                 notificationType.getTitle(),
-                NotificationType.getAppropriateMessage(notificationType, order.getOrderNumber()),
+                notificationType.getMessage(order.getOrderNumber()),
                 // TODO: 현재는 주문 완료 메시지만 반환할 수 있음. 추후 리팩토링을 통해 코드를 분리할 수 있도록 수정
                 requestDto.getSenderId(),
                 requestDto.getReceiverId(),
@@ -242,12 +256,23 @@ public class NotificationService {
      */
     private void send(SseEmitter emitter, NotificationEvent event, String emitterId, Object data) {
         try {
+            GlobalLogger.info("SSE 전송 시작", "emitterId: " + emitterId + ", event: " + event.value() + ", data: " + data);
+            
+            // TODO: emitter.send()는 동기작업으로 쓰레드를 블로킹한다. 다른 쓰레드에 작업을 할당하여 동기작업을 수행해야 한다.
             emitter.send(SseEmitter.event()
                     .id(event.value())
                     .name("sse")
                     .data(data)
             );
+            
+            GlobalLogger.info("SSE 전송 성공", "emitterId: " + emitterId);
+            
         } catch (IOException exception) {
+            GlobalLogger.error("SSE Emitter 전송 실패 - IOException", exception);
+            GlobalLogger.error("SSE 전송 실패 상세", "emitterId: " + emitterId + ", event: " + event.value() + ", error: " + exception.getMessage());
+        } catch (Exception exception) {
+            GlobalLogger.error("SSE Emitter 전송 실패 - 기타 예외", exception);
+            GlobalLogger.error("SSE 전송 실패 상세", "emitterId: " + emitterId + ", event: " + event.value() + ", error: " + exception.getMessage());
             emitterRepository.deleteById(emitterId);
         }
     }

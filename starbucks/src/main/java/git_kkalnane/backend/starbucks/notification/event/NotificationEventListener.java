@@ -1,6 +1,8 @@
 package git_kkalnane.backend.starbucks.notification.event;
 
 
+import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
+import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationType;
 import git_kkalnane.backend.starbucks.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +34,8 @@ public class NotificationEventListener {
                 ),
                 event.getReceiver().value(),
                 event.getSender().value(),
-                event.getNotificationType(),
-                event.getNotificationTargetType()
+                NotificationType.ORDER_ACCEPTED,
+                NotificationTargetType.CUSTOMER
         );
 
         // 지점에게 주문 발생 알림 전송
