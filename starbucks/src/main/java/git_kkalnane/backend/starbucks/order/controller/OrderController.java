@@ -1,7 +1,6 @@
 package git_kkalnane.backend.starbucks.order.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
-import git_kkalnane.backend.starbucks.auth.common.annotation.CurrentMemberId;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
 import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
@@ -43,7 +42,7 @@ public class OrderController {
     })
     @PostMapping
     public ResponseEntity<SuccessResponse> createOrder(
-            @CurrentMemberId Long memberId,
+        @RequestAttribute(name = "memberId") Long memberId,
             @Valid @RequestBody CreateOrderDTO request) {
         
         orderService.createOrder(request, memberId);
