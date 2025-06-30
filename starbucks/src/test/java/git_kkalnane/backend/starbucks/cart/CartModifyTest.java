@@ -67,7 +67,7 @@ public class CartModifyTest {
         when(cartItemRepository.findById(100L)).thenReturn(Optional.of(cartItem));
 
         System.out.println("수정 전 아이템 수량: " + cartItem.getCartItemQuantity());  // 원래 수량
-        ModifyCartItemResponse response = cartService.modifiyCartItem(request, 1L);
+        ModifyCartItemResponse response = cartService.modifyCartItem(request, 1L);
         System.out.println("수정 후 아이템 수량: " + itemRequest.changeQuantity()); // 요청한 변경 수량
 
         assertThat(response.totalPrice()).isEqualTo(4500 * 2);
@@ -86,7 +86,7 @@ public class CartModifyTest {
 
         when(memberRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> cartService.modifiyCartItem(request, 1L))
+        assertThatThrownBy(() -> cartService.modifyCartItem(request, 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 사용자");
     }
@@ -98,7 +98,7 @@ public class CartModifyTest {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
         when(cartRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> cartService.modifiyCartItem(request, 1L))
+        assertThatThrownBy(() -> cartService.modifyCartItem(request, 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 장바구니");
     }
@@ -112,7 +112,7 @@ public class CartModifyTest {
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartItemRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> cartService.modifiyCartItem(request, 1L))
+        assertThatThrownBy(() -> cartService.modifyCartItem(request, 1L))
                 .isInstanceOf(CartException.class)
                 .hasMessageContaining(CartErrorCode.CART_ITEM_NOT_FOUND.getMessage());
     }
@@ -137,7 +137,7 @@ public class CartModifyTest {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
-        assertThatThrownBy(() -> cartService.modifiyCartItem(request, 1L))
+        assertThatThrownBy(() -> cartService.modifyCartItem(request, 1L))
                 .isInstanceOf(CartException.class)
                 .hasMessageContaining(CartErrorCode.CART_INVALID.getMessage());
     }
