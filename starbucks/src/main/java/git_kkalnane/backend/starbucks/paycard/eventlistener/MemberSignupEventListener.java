@@ -35,9 +35,7 @@ public class MemberSignupEventListener {
         phase = TransactionPhase.AFTER_COMPLETION,
         classes = MemberSignedUpEvent.class
     )
-    /**
-     * cartService.createCartCForMember
-     */
+
     public void handleMemberSignedUpEvent(MemberSignedUpEvent event) {
         Member member = event.getMember();
         try {
@@ -46,7 +44,7 @@ public class MemberSignupEventListener {
 
             // PayCard생성 시 cartRepository에 member가 없다면 Cart생성하기
             cartService.createCartForMember(member);
-         
+
         } catch (PayCardException e) {
             if (e.getErrorCode() == PayCardErrorCode.PAY_CARD_ALREADY_EXISTS) {
                 log.warn("PayCard 이미 존재 - 회원 : {}", member.getEmail());
