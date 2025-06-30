@@ -19,5 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(Long memberId, List<OrderStatus> statuses);
     // 매장 주문 목록 조회용
     List<Order> findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(Long storeId, List<OrderStatus> statuses);
+    // 매장 과거 주문 목록 조회용
+    Page<Order> findByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses, Pageable pageable);
 
 }

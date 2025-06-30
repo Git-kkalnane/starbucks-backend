@@ -248,6 +248,22 @@ public class OrderService {
         }
 
         return order;
+    }
 
+    /**
+     * 특정 매장의 과거 주문 내역(완료, 취소)을 페이지네이션하여 조회합니다.
+     *
+     * @param storeId  조회할 매장의 ID
+     * @param pageable 페이징 및 정렬 정보
+     * @return         페이지네이션된 과거 주문 내역 DTO
+     */
+    public StoreOrderHistoryListResponse getStoreOrderHistory(Long storeId, Pageable pageable) {
+        storeRepository.findById(storeId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.STORE_NOT_FOUND));
+
+        List<OrderStatus> pastStatuses = List.of(OrderStatus.COMPLETED, OrderStatus.CANCELED);
+        Page<Order> orderPage = orderRepository.findByStoreIdAndOrderStatusIn(storeId, pastStatuses, pageable);
+
+        return StoreOrderHistoryListResponse.from(orderPage);
     }
 }
