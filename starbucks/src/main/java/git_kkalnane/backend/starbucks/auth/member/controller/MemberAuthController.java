@@ -131,7 +131,7 @@ public class MemberAuthController {
     @PostMapping("/reissue-access-token")
     public ResponseEntity<SuccessResponse<?>> reissueAccessToken(
             @RequestHeader(name = "Authorization") String refreshToken,
-            @RequestAttribute(name = "id") Long memberId) {
+            @RequestAttribute(name = "memberId") Long memberId) {
         TokenInfo accessTokenInfo = memberAuthService.reissueAccessToken(refreshToken, memberId);
 
         return ResponseEntity.ok()
