@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum NotificationTargetType {
 
     CUSTOMER("고객"),
-    STORE("지점")
+    MERCHANT("지점")
     ;
 
     private final String type;

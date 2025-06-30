@@ -5,6 +5,7 @@ import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
+import git_kkalnane.backend.starbucks.notification.dto.response.NotificationItemResponse;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -65,4 +66,7 @@ public class Notification extends BaseTimeEntity {
                 .build();
     }
 
+    public <T> NotificationItemResponse<T> toDto(T item) {
+        return NotificationItemResponse.of(toDto(), item);
+    }
 }

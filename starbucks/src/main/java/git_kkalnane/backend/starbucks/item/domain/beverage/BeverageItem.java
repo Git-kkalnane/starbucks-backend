@@ -43,6 +43,7 @@ public class BeverageItem extends BaseTimeEntity {
     @Column(name = "is_coffee", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isCoffee;
 
+
     @Column(name = "hot_image_url", length = 254)
     private String hotImageUrl;
 

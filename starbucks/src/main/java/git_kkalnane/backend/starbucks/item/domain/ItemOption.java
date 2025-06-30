@@ -31,7 +31,7 @@ public class ItemOption extends BaseTimeEntity {
     private int displayOrder;
 
     @Column(name = "additional_price")
-    private int additionalPrice;
+    private int additionalPrice = 0;
 
     @Builder.Default
     @Column(name = "quantity", nullable = false)

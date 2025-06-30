@@ -518,6 +518,7 @@ class OrderServiceTest {
                 .hasMessageContaining("해당 매장을 찾을 수 없습니다.");
 
         verify(orderRepository, never()).findByStoreIdAndOrderStatusIn(anyLong(), anyList(), any(Pageable.class));
+    }
 
     @Test
     @DisplayName("주문 상태 변경 - 성공")

@@ -2,14 +2,10 @@ package git_kkalnane.backend.starbucks.cart.dto.request;
 
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 
-public record AddCartItemOptionRequest(
-
+public record CheckCartItemOptionRequest(
         Long itemOptionId,
         String syrupName,
-        boolean isRequired,
         int quantity,
-        int additionalPrice,
-        ItemType itemType
-) {
-
+        int additionalPrice)
+{
 }

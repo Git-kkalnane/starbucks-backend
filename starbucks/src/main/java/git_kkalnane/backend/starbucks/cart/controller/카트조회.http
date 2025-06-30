@@ -1,0 +1,13 @@
+@host = localhost
+@port = 8080
+@baseUrl = http://{{host}}:{{port}}/api/v1
+@accessToken = Bearer eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6MiwiaWF0IjoxNzUxMjc2MzQ2LCJleHAiOjE3NTEyNzgxNDZ9.c89ZMVD-ijUQIMedpCZ-gZnn-g7sLUpg4pf39Mxnk2wnBdcvRwLKAuX8xAsadIV-D2gSxdhqEVY9_Pbd_ltYEg
+### ========================================
+### 카트 조회 테스트
+### ========================================
+
+### 1. 카트 조회 수정
+GET {{baseUrl}}/carts?memberId=2
+Authorization: {{accessToken}}
+
+Content-Type: application/json
