@@ -29,6 +29,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -37,6 +38,10 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
 
     private Encryptor encryptor;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+    // TODO: 이벤트 발행을 추가하도록 테스트 코드 수정해야함
 
     @InjectMocks
     private MemberService memberService;
@@ -47,7 +52,7 @@ class MemberServiceTest {
     @BeforeEach
     void setUp() {
         encryptor = new Encryptor();
-        memberService = new MemberService(memberRepository, encryptor);
+        memberService = new MemberService(memberRepository, encryptor, eventPublisher);
 
         signUpRequest = new SignUpRequest("홍길동", "나는야홍길동", "test@example.com", "password123");
 

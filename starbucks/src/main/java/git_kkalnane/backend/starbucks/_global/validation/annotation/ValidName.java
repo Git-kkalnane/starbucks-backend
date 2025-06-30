@@ -1,6 +1,6 @@
-package git_kkalnane.backend.starbucks.member.validation.annotation;
+package git_kkalnane.backend.starbucks._global.validation.annotation;
 
-import git_kkalnane.backend.starbucks.member.validation.validator.ValidNameValidator;
+import git_kkalnane.backend.starbucks._global.validation.validator.ValidNameValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
