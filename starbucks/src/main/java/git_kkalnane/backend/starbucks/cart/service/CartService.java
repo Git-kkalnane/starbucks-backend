@@ -14,7 +14,6 @@
     import git_kkalnane.backend.starbucks.item.domain.ItemType;
     import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
     import git_kkalnane.backend.starbucks.item.domain.beverage.CartItemOption;
-    import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageSizeOption;
     import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
     import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
     import git_kkalnane.backend.starbucks.item.repository.BeverageItemRepository;
@@ -27,9 +26,7 @@
     import org.springframework.transaction.annotation.Transactional;
 
     import java.util.ArrayList;
-    import java.util.HashSet;
     import java.util.List;
-    import java.util.Set;
     import java.util.stream.Collectors;
 
     @Service
@@ -177,7 +174,7 @@
          * @return : ResponseDTO
          */
         @Transactional
-        public ModifyCartItemResponse modifiyCartItem(ModifyCartItemRequest modifyCartItemRequest, Long memberId) {
+        public ModifyCartItemResponse modifyCartItem(ModifyCartItemRequest modifyCartItemRequest, Long memberId) {
 
             Member member = memberRepository.findById(memberId).orElseThrow(
                     () -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -214,8 +211,6 @@
                     .sum();
 
             return new ModifyCartItemResponse(
-                    200,
-                    "아이템 수량이 성공적으로 수정되었습니다.",
                     updatedCartItems,
                     totalPrice
             );
