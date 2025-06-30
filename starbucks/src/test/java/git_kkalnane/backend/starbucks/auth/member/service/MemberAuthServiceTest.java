@@ -63,8 +63,8 @@ class MemberAuthServiceTest {
 
         validLoginRequest = new LoginRequest("test@example.com", rawPassword);
 
-        existingMember = Member.builder().name("홍길동").nickname("길동이").email("test@example.com")
-                .password(hashedPassword).build();
+        existingMember = Member.builder().name("홍길동").nickname("길동이")
+                .email("test@example.com").password(hashedPassword).build();
 
         accessTokenInfo = TokenInfo.builder().token("access-token-123")
                 .expiration(new Date(System.currentTimeMillis() + 3600000)).build();
