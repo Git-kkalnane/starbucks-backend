@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * AuthInterceptor를 적용 또는 제외할 URI를 설정하는 메서드
      *
-     * @param registry
+     * @param registry {@link InterceptorRegistry}
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
