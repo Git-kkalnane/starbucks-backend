@@ -4,7 +4,7 @@ import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.utils.TokenParser;
-import git_kkalnane.backend.starbucks.auth.service.AuthService;
+import git_kkalnane.backend.starbucks.auth.merchant.service.MerchantAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +14,15 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
-public class AuthInterceptor implements HandlerInterceptor {
+public class MerchantAuthInterceptor implements HandlerInterceptor {
 
     private static final String REQUEST_URI_LOG_PREFIX = "[Intercept] 요청 경로 정보: ";
-    private static final String MEMBER_ID_LOG_PREFIX = "[Intercept] memberId: ";
+    private static final String MERCHANT_ID_LOG_PREFIX = "[Intercept] merchantId: ";
 
-    private final AuthService authService;
+    private final MerchantAuthService merchantAuthService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        // Preflight OPTIONS 요청인 경우 인증 검증을 건너뜁니다.
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            return true;
-        }
 
         GlobalLogger.info(REQUEST_URI_LOG_PREFIX, request.getMethod(), request.getRequestURI());
 
@@ -37,13 +33,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         // Authorization 헤더의 값에서 접두사(Bearer)를 제거한다.
         String plainToken = TokenParser.removeBearerTokenPrefix(bearerToken);
 
-        // 액세스 토큰 유효성 검증
-        Long memberId = authService.verifyTokenIncludedInRequest(plainToken);
+        Long merchantId = merchantAuthService.verifyTokenIncludedInRequest(plainToken);
 
         // HTTP 요청의 속성에 멤버 엔티티의 식별자를 추가한다.
-        request.setAttribute("memberId", memberId);
+        request.setAttribute("memberId", merchantId);
 
-        GlobalLogger.info(MEMBER_ID_LOG_PREFIX, memberId);
+        GlobalLogger.info(MERCHANT_ID_LOG_PREFIX, merchantId);
 
         return true;
     }

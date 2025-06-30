@@ -1,12 +1,12 @@
-package git_kkalnane.backend.starbucks.auth.controller;
+package git_kkalnane.backend.starbucks.auth.member.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
-import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
-import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
-import git_kkalnane.backend.starbucks.auth.dto.response.LoginResponse;
-import git_kkalnane.backend.starbucks.auth.service.AuthService;
+import git_kkalnane.backend.starbucks.auth.member.dto.MemberLoginDto;
+import git_kkalnane.backend.starbucks.auth.common.dto.request.LoginRequest;
+import git_kkalnane.backend.starbucks.auth.member.dto.response.MemberLoginResponse;
+import git_kkalnane.backend.starbucks.auth.member.service.MemberAuthService;
 import git_kkalnane.backend.starbucks.auth.utils.CookieGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-public class AuthController {
+public class MemberAuthController {
 
     public static final String ACCESS_PREFIX_STRING = "Bearer ";
 
-    private final AuthService authService;
+    private final MemberAuthService memberAuthService;
 
     /**
      * HTTP Request Body에 전송된 정보를 이용해 로그인 요청을 처리하는 컨트롤러 메서드이다.
@@ -59,15 +59,15 @@ public class AuthController {
             @Parameter(name = "password", description = "비밀번호", example = "password0123")
     })
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
-        LoginDto loginDto = authService.login(request);
+    public ResponseEntity<SuccessResponse<MemberLoginResponse>> login(@RequestBody LoginRequest request) {
+        MemberLoginDto memberLoginDto = memberAuthService.login(request);
 
-        ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(loginDto.refreshToken());
+        ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(memberLoginDto.refreshToken());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + loginDto.accessToken())
-                .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED, loginDto.toLoginResponse()));
+                .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + memberLoginDto.accessToken())
+                .body(SuccessResponse.of(AuthSuccessCode.LOGIN_COMPLETED, memberLoginDto.toLoginResponse()));
     }
 
     /**
@@ -91,9 +91,9 @@ public class AuthController {
             )
     })
     @PostMapping("/logout")
-    public ResponseEntity<SuccessResponse<String>> logout(@RequestAttribute Long memberId) {
+    public ResponseEntity<SuccessResponse<String>> logout(@RequestAttribute(name = "id") Long memberId) {
         // 서비스 레이어 호출
-        authService.logout(memberId);
+        memberAuthService.logout(memberId);
 
         // 쿠키 무력화
         ResponseCookie responseCookie = CookieGenerator.destroyRefreshTokenCookie();
@@ -132,7 +132,7 @@ public class AuthController {
     public ResponseEntity<SuccessResponse<?>> reissueAccessToken(
             @RequestHeader(name = "Authorization") String refreshToken,
             @RequestAttribute(name = "memberId") Long memberId) {
-        TokenInfo accessTokenInfo = authService.reissueAccessToken(refreshToken, memberId);
+        TokenInfo accessTokenInfo = memberAuthService.reissueAccessToken(refreshToken, memberId);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + accessTokenInfo.getToken())

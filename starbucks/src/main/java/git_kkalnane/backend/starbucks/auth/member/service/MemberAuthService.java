@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.auth.service;
+package git_kkalnane.backend.starbucks.auth.member.service;
 
 import git_kkalnane.backend.starbucks._global.utils.Encryptor;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
@@ -7,10 +7,10 @@ import git_kkalnane.backend.starbucks.auth.common.jwt.JwtTokenProvider;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.JwtToken;
 import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
 import git_kkalnane.backend.starbucks.auth.common.jwt.utils.TokenParser;
-import git_kkalnane.backend.starbucks.auth.domain.RefreshToken;
-import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
-import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
-import git_kkalnane.backend.starbucks.auth.repository.RefreshTokenRepository;
+import git_kkalnane.backend.starbucks.auth.member.domain.MemberRefreshToken;
+import git_kkalnane.backend.starbucks.auth.member.dto.MemberLoginDto;
+import git_kkalnane.backend.starbucks.auth.common.dto.request.LoginRequest;
+import git_kkalnane.backend.starbucks.auth.member.repository.MemberRefreshTokenRepository;
 import git_kkalnane.backend.starbucks.member.domain.Member;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
 import java.util.Date;
@@ -22,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AuthService {
+public class MemberAuthService {
 
     private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRefreshTokenRepository memberRefreshTokenRepository;
 
     private final JwtTokenProvider jwtTokenProvider;
     private final Encryptor encryptor;
@@ -33,10 +33,10 @@ public class AuthService {
     /**
      * LoginRequest를 바탕으로 토큰을 발행한 뒤 토큰과 사용자 정보를 반환하는 메서드
      *
-     * @param request SignUpRequest 객체
-     * @return 멤버의 이름을 담은 SignUpResponse 객체
+     * @param request {@link LoginRequest}
+     * @return {@link MemberLoginDto}
      */
-    public LoginDto login(LoginRequest request) {
+    public MemberLoginDto login(LoginRequest request) {
         // 로그인 요청에 포함된 이메일을 가진 멤버가 존재하는지 조회
         // 이 과정에서 이메일이 존재하지 않을 경우 예외가 발생한다.
         Member member = memberRepository.findMemberByEmail(request.email())
@@ -47,13 +47,13 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.PASSWORD_INVALID_EXCEPTION);
         }
 
-        JwtToken tokens = jwtTokenProvider.createJwtToken(member.getId());
+        JwtToken tokens = jwtTokenProvider.createJwtToken("MEMBER", member.getId());
         saveRefreshTokenToRepository(member.getId(), tokens.getRefreshTokenInfo());
 
         String accessToken = tokens.getAccessTokenInfo().getToken();
         String refreshToken = tokens.getRefreshTokenInfo().getToken();
 
-        return LoginDto.of(accessToken, refreshToken, member.getName(), member.getNickname(), member.getEmail());
+        return MemberLoginDto.of(accessToken, refreshToken, member.getName(), member.getNickname(), member.getEmail());
     }
 
     /**
@@ -64,11 +64,11 @@ public class AuthService {
      */
     @Transactional
     public void saveRefreshTokenToRepository(Long memberId, TokenInfo tokenInfo) {
-        Optional<RefreshToken> maybeRefreshToken = refreshTokenRepository.findByMemberId(memberId);
+        Optional<MemberRefreshToken> maybeRefreshToken = memberRefreshTokenRepository.findByMemberId(memberId);
 
         // maybeRefreshToken의 값이 null일 경우 (DB에 해당 멤버의 토큰 존재 X) 새로 저장
         if (maybeRefreshToken.isEmpty()) {
-            refreshTokenRepository.save(RefreshToken.builder()
+            memberRefreshTokenRepository.save(MemberRefreshToken.builder()
                     .memberId(memberId)
                     .token(tokenInfo.getToken())
                     .expiration(tokenInfo.getExpiration())
@@ -77,9 +77,9 @@ public class AuthService {
         }
 
         // maybeRefreshToken의 값이 null이 아닐 경우 (DB에 해당 멤버의 토큰 존재) 업데이트
-        RefreshToken refreshToken = maybeRefreshToken.get();
-        refreshToken.modifyToken(tokenInfo.getToken());
-        refreshToken.modifyExpiration(tokenInfo.getExpiration());
+        MemberRefreshToken memberRefreshToken = maybeRefreshToken.get();
+        memberRefreshToken.modifyToken(tokenInfo.getToken());
+        memberRefreshToken.modifyExpiration(tokenInfo.getExpiration());
     }
 
     /**
@@ -89,11 +89,11 @@ public class AuthService {
      */
     @Transactional
     public void logout(Long memberId) {
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberId(memberId)
+        MemberRefreshToken memberRefreshToken = memberRefreshTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
 
-        refreshToken.modifyToken("");
-        refreshToken.modifyExpiration(new Date());
+        memberRefreshToken.modifyToken("");
+        memberRefreshToken.modifyExpiration(new Date());
     }
 
     /**
@@ -103,7 +103,7 @@ public class AuthService {
      * @return 토큰의 페이로드에 포함된 멤버 엔티티 식별자
      */
     public Long verifyTokenIncludedInRequest(String token) {
-        return Long.parseLong(jwtTokenProvider.getMemberId(token));
+        return Long.parseLong(jwtTokenProvider.getMemberId("MEMBER", token));
     }
 
     /**
@@ -115,16 +115,16 @@ public class AuthService {
      */
     public TokenInfo reissueAccessToken(String refreshToken, Long memberId) {
         // DB에 있는 해당 멤버의 토큰을 조회, 만약 존재하지 않을 경우 예외 발생
-        RefreshToken refreshTokenInDB = refreshTokenRepository.findByMemberId(memberId)
+        MemberRefreshToken memberRefreshTokenInDB = memberRefreshTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.TOKEN_NOT_FOUND_IN_DB));
 
         String plainToken = TokenParser.removeBearerTokenPrefix(refreshToken);
 
         // DB에 있는 토큰과 HTTP 요청 헤더에 있는 토큰이 일치하지 않으면 예외 발생
-        if (!refreshTokenInDB.validateToken(plainToken)) {
+        if (!memberRefreshTokenInDB.validateToken(plainToken)) {
             throw new AuthException(AuthErrorCode.INVALID_TOKEN);
         }
 
-        return jwtTokenProvider.reissueAccessTokenIfRefreshTokenIsValid(plainToken);
+        return jwtTokenProvider.reissueAccessTokenIfRefreshTokenIsValid("MEMBER", plainToken);
     }
 }

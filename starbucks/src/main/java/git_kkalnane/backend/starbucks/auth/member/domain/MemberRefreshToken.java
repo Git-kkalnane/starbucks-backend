@@ -1,4 +1,4 @@
-package git_kkalnane.backend.starbucks.auth.domain;
+package git_kkalnane.backend.starbucks.auth.member.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,15 +9,18 @@ import jakarta.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "refresh_token")
+@Table(name = "member_refresh_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Getter
-public class RefreshToken {
+public class MemberRefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +34,6 @@ public class RefreshToken {
 
     @Column(name = "expiration", nullable = false)
     private Date expiration;
-
-    @Builder
-    public RefreshToken(Long memberId, String token, Date expiration) {
-        this.memberId = memberId;
-        this.token = token;
-        this.expiration = expiration;
-    }
 
     public void modifyToken(String token) {
         this.token = token;
