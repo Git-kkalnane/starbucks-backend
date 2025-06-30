@@ -13,6 +13,13 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
+    // 고객의 과거 주문 내역 조회용
     Page<Order> findByMemberIdAndOrderStatusIn(Long memberId, Collection<OrderStatus> statuses, Pageable pageable);
+    // 고객의 현재 주문 내역 조회용
     List<Order> findByMemberIdAndOrderStatusInOrderByCreatedAtAsc(Long memberId, List<OrderStatus> statuses);
+    // 매장 주문 목록 조회용
+    List<Order> findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(Long storeId, List<OrderStatus> statuses);
+    // 매장 과거 주문 목록 조회용
+    Page<Order> findByStoreIdAndOrderStatusIn(Long storeId, Collection<OrderStatus> statuses, Pageable pageable);
+
 }

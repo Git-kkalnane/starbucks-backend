@@ -61,4 +61,8 @@ public class Order extends BaseTimeEntity {
         item.setOrder(this);
     }
 
+    public void updateStatus(OrderStatus newStatus) {
+        this.orderStatus = newStatus;
+    }
+
 }

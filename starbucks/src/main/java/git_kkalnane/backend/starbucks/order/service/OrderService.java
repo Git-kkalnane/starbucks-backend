@@ -14,15 +14,13 @@ import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounter;
 import git_kkalnane.backend.starbucks.order.domain.OrderItem;
 import git_kkalnane.backend.starbucks.order.domain.OrderStatus;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderSummaryResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.*;
 import git_kkalnane.backend.starbucks.order.domain.OrderDailyCounterId;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
+import git_kkalnane.backend.starbucks.payment.service.PaymentService;
 import git_kkalnane.backend.starbucks.store.domain.Store;
 import git_kkalnane.backend.starbucks.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +48,7 @@ public class OrderService {
     private final BeverageItemRepository beverageItemRepository;
     private final DessertItemRepository dessertItemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final PaymentService paymentService;
 
     /**
      * 주문생성 로직
@@ -91,8 +90,9 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        return savedOrder;
+       paymentService.processPayment(order); // TODO Card 만들면 작업
 
+        return savedOrder;
     }
 
     /**
@@ -105,7 +105,7 @@ public class OrderService {
     private OrderItem validateAndCreateOrderItems(OrderItemRequest request) {
         int orderQuantity = request.quantity();
 
-        if (request.itemType() == ItemType.COFFEE) {
+        if (request.itemType() == ItemType.BEVERAGE) {
             BeverageItem item = beverageItemRepository.findById(request.itemId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 음료입니다."));
 
@@ -209,5 +209,84 @@ public class OrderService {
                 .map(CurrentOrderResponse::from)
                 .collect(Collectors.toList());
     }
+    /**
+     * 특정 매장의 현재 진행중인 모든 주문 목록(주문 접수, 준비중, 픽업 가능)을 조회합니다.
+     * @param storeId 조회할 매장의 ID
+     * @return 현재 진행중인 주문의 상세 정보 DTO 리스트
+     */
+    public List<StoreOrderResponse> getStoreCurrentOrders(Long storeId) {
+        storeRepository.findById(storeId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.STORE_NOT_FOUND));
 
+              List<OrderStatus> currentStatuses = List.of(
+                OrderStatus.PLACED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP
+        );
+
+        List<Order> currentOrders = orderRepository.findByStoreIdAndOrderStatusInOrderByCreatedAtAsc(storeId, currentStatuses);
+
+        return currentOrders.stream()
+                .map(StoreOrderResponse::from)
+                .collect(Collectors.toList());
+    }
+    /**
+     * 매장의 특정 주문 상세 정보를 조회합니다.
+     * 해당 주문이 실제 로그인한 매장의 주문인지 권한 검사를 수행합니다.
+     *
+     * @param storeId 현재 로그인한 매장의 ID
+     * @param orderId 조회할 주문의 ID
+     * @return Order 엔티티
+     * @throws OrderException 주문을 찾을 수 없거나, 해당 매장의 주문이 아닐 경우
+     */
+    public Order getStoreOrderDetail(Long storeId, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getStore().getId().equals(storeId)) {
+            throw new OrderException(OrderErrorCode.FORBIDDEN_ACCESS_ORDER);
+        }
+
+        return order;
+    }
+
+    /**
+     * 특정 매장의 과거 주문 내역(완료, 취소)을 페이지네이션하여 조회합니다.
+     *
+     * @param storeId  조회할 매장의 ID
+     * @param pageable 페이징 및 정렬 정보
+     * @return         페이지네이션된 과거 주문 내역 DTO
+     */
+    public StoreOrderHistoryListResponse getStoreOrderHistory(Long storeId, Pageable pageable) {
+        storeRepository.findById(storeId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.STORE_NOT_FOUND));
+
+        List<OrderStatus> pastStatuses = List.of(OrderStatus.COMPLETED, OrderStatus.CANCELED);
+        Page<Order> orderPage = orderRepository.findByStoreIdAndOrderStatusIn(storeId, pastStatuses, pageable);
+
+        return StoreOrderHistoryListResponse.from(orderPage);
+    }
+
+    /**
+     * 매장의 특정 주문 상태를 변경합니다.
+     *
+     * @param storeId   요청한 매장의 ID (권한 검증용)
+     * @param orderId   상태를 변경할 주문의 ID
+     * @param newStatus 변경할 새로운 주문 상태
+     */
+    @Transactional
+    public void updateOrderStatus(Long storeId, Long orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.getStore().getId().equals(storeId)) {
+            throw new OrderException(OrderErrorCode.FORBIDDEN_ACCESS_ORDER);
+        }
+
+        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED) {
+            throw new OrderException(OrderErrorCode.CANNOT_UPDATE_COMPLETED_ORDER);
+        }
+
+        order.updateStatus(newStatus);
+    }
 }

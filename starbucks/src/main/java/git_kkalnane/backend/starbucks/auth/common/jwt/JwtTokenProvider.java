@@ -80,12 +80,17 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    // 액세스 토큰 재발급 기능 구현 시 수정할 예정
-//    public String TokenIfValid(String refreshToken) {
-//        String memberId = getMemberId(refreshToken);
-//
-//        return generateToken(Long.parseLong(memberId));
-//    }
+    /**
+     * 매개변수로 주어진 리프레쉬 토큰을 이용해 액세스 토큰을 재발급하여 반환하는 메서드
+     *
+     * @param refreshToken 리프레쉬 토큰
+     * @return 재발급된 액세스 토큰
+     */
+    public TokenInfo reissueAccessTokenIfRefreshTokenIsValid(String refreshToken) {
+        String memberId = getMemberId(refreshToken);
+
+        return generateToken(Long.parseLong(memberId), ACCESS_TOKEN_EXPIRED);
+    }
 
     /**
      * 매개변수로 주어진 토큰의 Payload에서 회원 엔티티의 인덱스를 추출하여 반환하는 메서드

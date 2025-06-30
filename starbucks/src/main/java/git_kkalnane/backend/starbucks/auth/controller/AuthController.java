@@ -1,6 +1,7 @@
 package git_kkalnane.backend.starbucks.auth.controller;
 
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
+import git_kkalnane.backend.starbucks.auth.common.jwt.dto.TokenInfo;
 import git_kkalnane.backend.starbucks.auth.common.success.AuthSuccessCode;
 import git_kkalnane.backend.starbucks.auth.dto.LoginDto;
 import git_kkalnane.backend.starbucks.auth.dto.request.LoginRequest;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +37,7 @@ public class AuthController {
     /**
      * HTTP Request Body에 전송된 정보를 이용해 로그인 요청을 처리하는 컨트롤러 메서드이다.
      *
-     * @param request - LoginRequest 객체
+     * @param request LoginRequest 객체
      * @return - accessToken과 사용자 정보를 담고있는 LoginResponse를 담고 있는 ResponseEntity 객체
      */
     @Operation(
@@ -58,7 +60,6 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
-
         LoginDto loginDto = authService.login(request);
 
         ResponseCookie responseCookie = CookieGenerator.createRefreshTokenCookie(loginDto.refreshToken());
@@ -91,7 +92,6 @@ public class AuthController {
     })
     @PostMapping("/logout")
     public ResponseEntity<SuccessResponse<String>> logout(@RequestAttribute Long memberId) {
-
         // 서비스 레이어 호출
         authService.logout(memberId);
 
@@ -101,5 +101,41 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .body(SuccessResponse.of(AuthSuccessCode.LOGOUT_COMPLETED, "로그아웃 되었습니다."));
+    }
+
+    /**
+     * HTTP Request Header에 전송된 refreshToken과 인터셉터에서 추가된 속성을 이용해 액세스 토큰 갱신을 처리하는 컨트롤러 메서드이다.
+     *
+     * @param refreshToken 리프레쉬 토큰
+     * @param memberId     멤버 엔티티의 식별자
+     * @return
+     */
+    @Operation(
+            summary = "액세스 토큰 재발급",
+            description = "액세스 토큰 재발급시 사용하는 API"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "토큰 재발급 성공"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "JWT 토큰과 관련된 오류 (위변조된 토큰)"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 멤버의 토큰이 DB에 존재하지 않음"
+            )
+    })
+    @PostMapping("/reissue-access-token")
+    public ResponseEntity<SuccessResponse<?>> reissueAccessToken(
+            @RequestHeader(name = "Authorization") String refreshToken,
+            @RequestAttribute(name = "memberId") Long memberId) {
+        TokenInfo accessTokenInfo = authService.reissueAccessToken(refreshToken, memberId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + accessTokenInfo.getToken())
+                .body(SuccessResponse.of(AuthSuccessCode.TOKEN_REISSUE_COMPLETED));
     }
 }
