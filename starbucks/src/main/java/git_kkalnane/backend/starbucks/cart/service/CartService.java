@@ -108,7 +108,7 @@ public class CartService {
         if (addCartItemOptionRequest.itemType() == ItemType.BEVERAGE) {
 
             ItemOption itemOption = itemOptionRepository.findById(addCartItemOptionRequest.itemOptionId())
-                    .orElseThrow(() -> new ItemException(ItemErrorCode.BEVERAGE_NOT_FOUND));
+                    .orElseThrow(() -> new ItemException(ItemErrorCode.OPTION_NOT_FOUND));
             return CartItemOption.builder()
                     .itemOption(itemOption)
                     .build();
@@ -213,8 +213,6 @@ public class CartService {
                 .sum();
 
         return new ModifyCartItemResponse(
-                200,
-                "아이템 수량이 성공적으로 수정되었습니다.",
                 updatedCartItems,
                 totalPrice
         );
@@ -233,6 +231,9 @@ public class CartService {
                 () -> new CartException(CartErrorCode.CART_NOT_FOUND));
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
                 () -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
+        if (!cart.getMember().getId().equals(memberId)) {
+            throw new CartException(CartErrorCode.CART_INVALID);
+        }
         if (!cartItem.getCart().getId().equals(cart.getId())) {
             throw new CartException(CartErrorCode.CART_INVALID);
         }
