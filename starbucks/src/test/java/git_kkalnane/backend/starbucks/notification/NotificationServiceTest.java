@@ -5,23 +5,27 @@ import git_kkalnane.backend.starbucks.notification.common.exception.Notification
 import git_kkalnane.backend.starbucks.notification.domain.Notification;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationTargetType;
 import git_kkalnane.backend.starbucks.notification.domain.NotificationType;
-import git_kkalnane.backend.starbucks.notification.domain.SseEmitterId;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationEvent;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationReceiver;
 import git_kkalnane.backend.starbucks.notification.domain.vo.NotificationSender;
-import git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest;
-import git_kkalnane.backend.starbucks.notification.dto.response.NotificationResponse;
+import git_kkalnane.backend.starbucks.notification.dto.request.OrderNotificationSendRequest;
 import git_kkalnane.backend.starbucks.notification.dto.response.NotificationsResponse;
 import git_kkalnane.backend.starbucks.notification.repository.EmitterRepository;
 import git_kkalnane.backend.starbucks.notification.repository.NotificationRepository;
+import git_kkalnane.backend.starbucks.notification.repository.OrderNotificationRepository;
 import git_kkalnane.backend.starbucks.notification.service.NotificationService;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderErrorCode;
+import git_kkalnane.backend.starbucks.order.common.exception.OrderException;
+import git_kkalnane.backend.starbucks.order.domain.Order;
+import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,24 +35,33 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
     @Mock
     private EmitterRepository emitterRepository;
     @Mock
     private NotificationRepository notificationRepository;
+    @Mock
+    private OrderNotificationRepository orderNotificationRepository;
+    @Mock
+    private OrderRepository orderRepository;
+    
     @InjectMocks
     private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        // MockitoAnnotations.openMocks(this); // @ExtendWith(MockitoExtension.class)로 대체
     }
 
     @Nested
@@ -174,9 +187,18 @@ class NotificationServiceTest {
         @DisplayName("성공: 정상 알림 전송")
         void sendNotification_success() {
             // given
-            NotificationSendRequest request = new NotificationSendRequest(
-                    "title", "message", 1L, 2L, "SUBSCRIBE", "CUSTOMER"
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    1L, 1L, 2L, "SUBSCRIBE", "CUSTOMER"
             );
+            
+            // Order Mock 설정
+            Order mockOrder = Order.builder()
+                    .id(1L)
+                    .orderNumber("ORDER-001")
+                    .orderTotalPrice(5000)
+                    .build();
+            
+            given(orderRepository.findById(request.getOrderId())).willReturn(Optional.of(mockOrder));
             given(emitterRepository.findAllEmitterStartWithByReceiverIdAndNotificationTargetType(anyLong(), any())).willReturn(Collections.emptyMap());
 
             // when
@@ -190,8 +212,8 @@ class NotificationServiceTest {
         @DisplayName("실패: 잘못된 notificationType")
         void sendNotification_invalidType() {
             // given
-            NotificationSendRequest request = new NotificationSendRequest(
-                    "title", "message", 1L, 2L, "INVALID", "CUSTOMER"
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    1L, 1L, 2L, "INVALID", "CUSTOMER"
             );
 
             // when & then
@@ -205,8 +227,8 @@ class NotificationServiceTest {
         @DisplayName("실패: 잘못된 notificationTargetType")
         void sendNotification_invalidTargetType() {
             // given
-            NotificationSendRequest request = new NotificationSendRequest(
-                    "title", "message", 1L, 2L, "SUBSCRIBE", "INVALID"
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    1L, 1L, 2L, "SUBSCRIBE", "INVALID"
             );
 
             // when & then
@@ -214,6 +236,22 @@ class NotificationServiceTest {
                     .isInstanceOf(NotificationException.class)
                     .hasMessageContaining(NotificationErrorCode.INVALID_NOTIFICATION_TYPE
                             .getMessage(request.getNotificationTargetType()));
+        }
+
+        @Test
+        @DisplayName("실패: 주문을 찾을 수 없음")
+        void sendNotification_orderNotFound() {
+            // given
+            OrderNotificationSendRequest request = new OrderNotificationSendRequest(
+                    999L, 1L, 2L, "SUBSCRIBE", "CUSTOMER"
+            );
+            
+            given(orderRepository.findById(request.getOrderId())).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> notificationService.sendNotification(request))
+                    .isInstanceOf(OrderException.class)
+                    .hasMessageContaining(OrderErrorCode.ORDER_NOT_FOUND.getMessage());
         }
     }
 

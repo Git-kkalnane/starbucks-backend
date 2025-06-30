@@ -28,12 +28,9 @@ public class NotificationAspect {
     private final NotificationEventPublisher notificationEventPublisher;
 
     /**
-     * NotificationService의 sendNotification 메서드에 대한 포인트컷 정의
-     * NotificationSendRequest를 파라미터로 받는 메서드를 대상으로 합니다.
+     * 주문 생성 서비스 로직을 수행하는 OrderService.createOrder를 대상으로 포인트 컷을 지정합니다.
      */
-    @Pointcut("execution(* git_kkalnane.backend.starbucks.notification.service" +
-            ".NotificationService" +
-            ".sendNotification(git_kkalnane.backend.starbucks.notification.dto.request.NotificationSendRequest))")
+    @Pointcut("execution(* git_kkalnane.backend.starbucks.order.service.OrderService.createOrder(..))")
     public void notificationServiceMethods() {}
 
     /**
