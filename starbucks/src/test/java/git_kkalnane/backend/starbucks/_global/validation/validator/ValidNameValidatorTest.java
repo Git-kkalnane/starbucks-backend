@@ -1,9 +1,9 @@
-package git_kkalnane.backend.starbucks.member.validation.validator;
+package git_kkalnane.backend.starbucks._global.validation.validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import git_kkalnane.backend.starbucks.member.validation.annotation.ValidName;
+import git_kkalnane.backend.starbucks._global.validation.annotation.ValidName;
 import jakarta.validation.ConstraintValidatorContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
