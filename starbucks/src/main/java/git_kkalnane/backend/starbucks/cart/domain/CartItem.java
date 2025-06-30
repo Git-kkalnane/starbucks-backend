@@ -3,6 +3,8 @@ package git_kkalnane.backend.starbucks.cart.domain;
 import git_kkalnane.backend.starbucks._global.entity.BaseTimeEntity;
 import git_kkalnane.backend.starbucks.item.domain.beverage.BeverageItem;
 import git_kkalnane.backend.starbucks.item.domain.beverage.CartItemOption;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageSizeOption;
+import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageTemperatureOption;
 import git_kkalnane.backend.starbucks.item.domain.dessert.DessertItem;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +44,14 @@ public class CartItem extends BaseTimeEntity {
     @OneToMany(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemOption> cartItemOption = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "beverage_size_option")
+    private BeverageSizeOption beverageSizeOption;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "beverage_temperature_option")
+    private BeverageTemperatureOption beverageTemperatureOption;
+
     public void setCartItemOption(List<CartItemOption> options) {
         this.cartItemOption.clear();
         for (CartItemOption option : options) {
@@ -68,6 +78,5 @@ public class CartItem extends BaseTimeEntity {
     public void changeQuantity(int changeQuantity) {
         this.cartItemQuantity = changeQuantity;
     }
-
 
 }

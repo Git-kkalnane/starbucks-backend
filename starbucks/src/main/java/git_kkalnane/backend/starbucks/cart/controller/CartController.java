@@ -39,10 +39,9 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "카트에 Item 추가 성공")
     })
     @PostMapping
-    public ResponseEntity<SuccessResponse> addItem(@RequestBody AddCartItemRequest addCartItemRequest) {
+    public ResponseEntity<SuccessResponse> addItem(@RequestBody AddCartItemRequest addCartItemRequest,
+                                                   @RequestAttribute(name = "memberId") Long memberId) {
 
-
-        Long memberId = 2L;
         cartService.addItem(addCartItemRequest, memberId);
 
         return ResponseEntity
@@ -55,8 +54,9 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "카트 Item 수정 성공")
     })
     @PutMapping
-    public ResponseEntity<SuccessResponse> updateItem(@RequestBody ModifyCartItemRequest modifyCartItemRequest) {
-        Long memberId = 1L;
+    public ResponseEntity<SuccessResponse> updateItem(@RequestBody ModifyCartItemRequest modifyCartItemRequest,
+                                                      @RequestAttribute(name = "memberId") Long memberId) {
+
 
         ModifyCartItemResponse modifyCartItemResponse = cartService.modifiyCartItem(modifyCartItemRequest, memberId);
 
@@ -70,9 +70,10 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "카트 Item 삭제")
     })
     @DeleteMapping
-    public ResponseEntity<SuccessResponse> deleteItem(@RequestParam Long cartItemId) {
+    public ResponseEntity<SuccessResponse> deleteItem(@RequestParam Long cartItemId,
+                                                      @RequestAttribute(name = "memberId") Long memberId) {
 
-        Long memberId = 1L;
+
         cartService.deleteCartItem(cartItemId, memberId);
 
         return ResponseEntity
@@ -85,7 +86,7 @@ public class CartController {
             @ApiResponse(responseCode = "200", description = "카트 아이템 목록 조회")
     })
     @GetMapping
-    public ResponseEntity<SuccessResponse> getItems(@RequestParam Long memberId) {
+    public ResponseEntity<SuccessResponse> getItems(@RequestAttribute(name = "memberId") Long memberId) {
 
         CheckCartItemResponse checkCartItemResponse = cartService.getCartItems(memberId);
 
