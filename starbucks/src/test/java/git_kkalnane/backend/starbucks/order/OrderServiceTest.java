@@ -15,10 +15,7 @@ import git_kkalnane.backend.starbucks.order.domain.*;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.dto.request.ItemOptionRequest;
 import git_kkalnane.backend.starbucks.order.dto.request.OrderItemRequest;
-import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.*;
 import git_kkalnane.backend.starbucks.order.repository.OrderDailyCounterRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderItemRepository;
 import git_kkalnane.backend.starbucks.order.repository.OrderRepository;
@@ -440,6 +437,87 @@ class OrderServiceTest {
                 .isInstanceOf(OrderException.class)
                 .hasMessageContaining("해당 주문에 접근할 권한이 없습니다.");
     }
+  
+    @Test
+    @DisplayName("매장의 과거 주문 내역 조회 - 성공")
+    void getStoreOrderHistory_Success() {
+        // given
+        Long storeId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+        LocalDateTime fakeCompletedTime = LocalDateTime.now();
+
+        Member testMockMember = mock(Member.class);
+        given(testMockMember.getNickname()).willReturn("워뇽이");
+
+        Store testMockStore = mock(Store.class);
+        given(testMockStore.getName()).willReturn("스타벅스 강남점");
+
+        Order order1 = mock(Order.class);
+        given(order1.getId()).willReturn(100L);
+        given(order1.getOrderNumber()).willReturn("A-1");
+        given(order1.getOrderTotalPrice()).willReturn(15000);
+        given(order1.getOrderStatus()).willReturn(OrderStatus.COMPLETED);
+        given(order1.getPickupType()).willReturn(PickupType.STORE_PICKUP);
+        given(order1.getOrderRequestMemo()).willReturn("테스트 메모 1");
+        given(order1.getModifiedAt()).willReturn(fakeCompletedTime);
+        given(order1.getStore()).willReturn(testMockStore);
+        given(order1.getMember()).willReturn(testMockMember);
+        given(order1.getOrderItems()).willReturn(new ArrayList<>());
+
+        List<Order> orderList = List.of(order1);
+        Page<Order> orderPage = new PageImpl<>(orderList, pageable, orderList.size());
+
+        given(storeRepository.findById(storeId)).willReturn(Optional.of(mockStore));
+        given(orderRepository.findByStoreIdAndOrderStatusIn(eq(storeId), anyList(), eq(pageable)))
+                .willReturn(orderPage);
+
+        // when
+        StoreOrderHistoryListResponse response = orderService.getStoreOrderHistory(storeId, pageable);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.orders()).hasSize(1);
+        assertThat(response.orders().get(0).id()).isEqualTo(100L);
+        assertThat(response.orders().get(0).memberNickname()).isEqualTo("워뇽이");
+    }
+
+    @Test
+    @DisplayName("과거 주문 내역이 없을 경우 빈 페이지 반환 - 성공")
+    void getStoreOrderHistory_Success_WhenEmpty() {
+        // given
+        Long storeId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Order> emptyOrderPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+        given(storeRepository.findById(storeId)).willReturn(Optional.of(mockStore));
+        given(orderRepository.findByStoreIdAndOrderStatusIn(eq(storeId), anyList(), eq(pageable)))
+                .willReturn(emptyOrderPage);
+
+        // when
+        StoreOrderHistoryListResponse response = orderService.getStoreOrderHistory(storeId, pageable);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.orders()).isEmpty(); 
+        assertThat(response.totalElements()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("과거 주문 내역 조회 - 실패(존재하지 않는 매장)")
+    void getStoreOrderHistory_Fail_StoreNotFound() {
+        // given
+        Long nonExistentStoreId = 999L;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        given(storeRepository.findById(nonExistentStoreId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> orderService.getStoreOrderHistory(nonExistentStoreId, pageable))
+                .isInstanceOf(OrderException.class)
+                .hasMessageContaining("해당 매장을 찾을 수 없습니다.");
+
+        verify(orderRepository, never()).findByStoreIdAndOrderStatusIn(anyLong(), anyList(), any(Pageable.class));
 
     @Test
     @DisplayName("주문 상태 변경 - 성공")

@@ -3,13 +3,12 @@ package git_kkalnane.backend.starbucks.order.controller;
 import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
 import git_kkalnane.backend.starbucks.order.domain.Order;
+import git_kkalnane.backend.starbucks.order.dto.response.*;
 import git_kkalnane.backend.starbucks.order.dto.request.StoreOrderStatusUpdateRequest;
 import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
 import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
-import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderDetailResponse;
-import git_kkalnane.backend.starbucks.order.dto.response.StoreOrderResponse;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -134,6 +133,30 @@ public class OrderController {
 
         return ResponseEntity
                 .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDERS_VIEWED, result));
+    }
+
+    /**
+     * [매장용 API] 특정 매장의 과거 주문 내역(완료, 취소)을 페이지네이션하여 조회합니다.
+     *
+     * @param storeId      조회할 매장의 ID (임시로 URL 경로에서 받습니다)
+     * @param pageable     페이지네이션 정보 (예: ?page=0&size=10&sort=updatedAt,desc)
+     * @return 페이지네이션된 과거 주문 내역
+     */
+    @Operation(summary = "[매장용] 과거 주문 내역 조회", description = "특정 매장의 과거 주문(완료/취소) 목록을 페이지네이션하여 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("/store/{storeId}/history") // 임시
+    public ResponseEntity<SuccessResponse> getStoreOrderHistory(
+            @PathVariable Long storeId, // 임시
+            @PageableDefault(page =0, size = 15, sort = "modifiedAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        // TODO: 인증 구현 후 @AuthenticationPrincipal 사용
+        StoreOrderHistoryListResponse responseDto = orderService.getStoreOrderHistory(storeId, pageable);
+
+        return ResponseEntity
+                .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDER_HISTORY_VIEWED, responseDto));
     }
 
     /**
