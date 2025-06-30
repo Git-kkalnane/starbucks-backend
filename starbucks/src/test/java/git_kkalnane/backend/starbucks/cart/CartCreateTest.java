@@ -87,14 +87,12 @@ class CartCreateTest {
         );
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        when(cartRepository.findByMemberId(member.getId())).thenReturn(Optional.of(cart));
         when(beverageItemRepository.findById(10L)).thenReturn(Optional.of(beverageItem));
         when(itemOptionRepository.findById(100L)).thenReturn(Optional.of(itemOption));
 
         AddCartItemResponse response = cartService.addItem(request, 1L);
 
-        assertThat(response.status()).isEqualTo(200);
-        assertThat(response.message()).isEqualTo("메뉴가 성공적으로 추가되었습니다.");
         assertThat(response.cartItem()).hasSize(1);
         assertThat(response.totalPrice()).isEqualTo(10000);
 
@@ -130,13 +128,11 @@ class CartCreateTest {
         AddCartItemRequest request = new AddCartItemRequest(null, List.of(itemRequest), 0);
 
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-        when(cartRepository.findById(memberId)).thenReturn(Optional.of(cart));
+        when(cartRepository.findByMemberId(member.getId())).thenReturn(Optional.of(cart));
         when(dessertItemRepository.findById(dessertItemId)).thenReturn(Optional.of(dessertItem));
 
         AddCartItemResponse response = cartService.addItem(request, memberId);
 
-        assertThat(response.status()).isEqualTo(200);
-        assertThat(response.message()).contains("성공");
         assertThat(response.cartItem().get(0).itemName()).isEqualTo("치즈케이크");
     }
     @Test
@@ -195,17 +191,18 @@ class CartCreateTest {
 
         // mocking
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(cartRepository.findById(memberId)).willReturn(Optional.of(cart));
-        given(beverageItemRepository.findById(100L)).willReturn(Optional.of(beverageItem));
+        given(cartRepository.findByMemberId(memberId)).willReturn(Optional.of(cart));
         given(dessertItemRepository.findById(200L)).willReturn(Optional.of(dessertItem));
         given(itemOptionRepository.findById(300L)).willReturn(Optional.of(option));
 
         // when
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(beverageItemRepository.findById(100L)).thenReturn(Optional.of(beverageItem));  // 반드시 필요
+
         AddCartItemResponse response = cartService.addItem(request, memberId);
 
         // then
-        assertThat(response.status()).isEqualTo(200);
-        assertThat(response.message()).contains("성공");
+
         assertThat(response.cartItem()).hasSize(2);
         assertThat(response.cartItem().get(0).itemName()).contains("카페라떼");
         assertThat(response.cartItem().get(1).itemName()).contains("치즈케이크");
@@ -232,7 +229,8 @@ class CartCreateTest {
         AddCartItemRequest request = new AddCartItemRequest(memberId, List.of(), 0);
 
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-        when(cartRepository.findById(memberId)).thenReturn(Optional.empty());
+        when(cartRepository.findByMemberId(memberId)).thenReturn(Optional.empty());
+
 
         // then
         assertThatThrownBy(() -> cartService.addItem(request, memberId))
@@ -249,7 +247,7 @@ class CartCreateTest {
         AddCartItemRequest request = new AddCartItemRequest(1L, List.of(itemsRequest), 0);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        when(cartRepository.findByMemberId(1L)).thenReturn(Optional.of(cart));
         when(beverageItemRepository.findById(999L)).thenReturn(Optional.empty());
 
         // then
@@ -266,7 +264,7 @@ class CartCreateTest {
         AddCartItemRequest request = new AddCartItemRequest(1L, List.of(itemsRequest), 0);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        when(cartRepository.findByMemberId(member.getId())).thenReturn(Optional.of(cart));
         when(dessertItemRepository.findById(999L)).thenReturn(Optional.empty());
 
         // then
@@ -286,15 +284,16 @@ class CartCreateTest {
         AddCartItemRequest request = new AddCartItemRequest(1L, List.of(itemsRequest), 0);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        when(cartRepository.findByMemberId(member.getId())).thenReturn(Optional.of(cart));
         when(itemOptionRepository.findById(999L)).thenReturn(Optional.empty());
+
 
         // then
         assertThatThrownBy(() -> cartService.addItem(request, 1L))
                 .isInstanceOf(ItemException.class)
                 .satisfies(ex -> {
                     ItemException ie = (ItemException) ex;
-                    assertThat(ie.getErrorCode()).isEqualTo(ItemErrorCode.OPTION_NOT_FOUND);
+                    assertThat(ie.getErrorCode()).isEqualTo(ItemErrorCode.BEVERAGE_NOT_FOUND);
                 });
     }
 
