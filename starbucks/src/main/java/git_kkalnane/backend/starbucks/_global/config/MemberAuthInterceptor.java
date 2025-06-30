@@ -4,7 +4,7 @@ import git_kkalnane.backend.starbucks._global.utils.GlobalLogger;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthErrorCode;
 import git_kkalnane.backend.starbucks.auth.common.exception.AuthException;
 import git_kkalnane.backend.starbucks.auth.common.jwt.utils.TokenParser;
-import git_kkalnane.backend.starbucks.auth.service.AuthService;
+import git_kkalnane.backend.starbucks.auth.member.service.MemberAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
-public class AuthInterceptor implements HandlerInterceptor {
+public class MemberAuthInterceptor implements HandlerInterceptor {
 
     private static final String REQUEST_URI_LOG_PREFIX = "[Intercept] 요청 경로 정보: ";
     private static final String MEMBER_ID_LOG_PREFIX = "[Intercept] memberId: ";
 
-    private final AuthService authService;
+    private final MemberAuthService memberAuthService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -34,7 +34,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String plainToken = TokenParser.removeBearerTokenPrefix(bearerToken);
 
         // 액세스 토큰 유효성 검증
-        Long memberId = authService.verifyTokenIncludedInRequest(plainToken);
+        Long memberId = memberAuthService.verifyTokenIncludedInRequest(plainToken);
 
         // HTTP 요청의 속성에 멤버 엔티티의 식별자를 추가한다.
         request.setAttribute("memberId", memberId);
