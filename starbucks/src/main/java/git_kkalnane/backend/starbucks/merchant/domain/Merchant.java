@@ -19,9 +19,9 @@ public class Merchant extends BaseTimeEntity {
     @Column(name = "merchant_name", nullable = false, length = 50, unique = true)
     private String merchantName;
 
-    @Column(name = "email", nullable = false, length = 255, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 }
