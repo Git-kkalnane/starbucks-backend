@@ -294,6 +294,24 @@
 
         }
 
+        /**
+         *
+         * @param member : 카트가 존재하는 지 확인하기 위한 용도
+         * @return : 만약 카트에 멤버가 없다면 카트 Repository에 저장
+         */
+        @Transactional
+        public Cart createCartForMember(Member member) {
+            // 이미 존재하는지 확인
+            if (cartRepository.existsByMemberId(member.getId())) {
+                throw new CartException(CartErrorCode.CART_ALREADY_EXISTS);
+            }
+
+            Cart cart = Cart.builder()
+                    .member(member)
+                    .build();
+            return cartRepository.save(cart);
+        }
+
     }
 
 
