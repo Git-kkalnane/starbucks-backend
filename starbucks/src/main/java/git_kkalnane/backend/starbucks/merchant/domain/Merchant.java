@@ -6,16 +6,18 @@ import lombok.*;
 
 @Entity
 @Table(name = "merchant")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@Getter
 public class Merchant extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "merchantname", nullable = false, length = 50, unique = true)
-    private String merchantname;
+    @Column(name = "merchant_name", nullable = false, length = 50, unique = true)
+    private String merchantName;
 
     @Column(name = "email", nullable = false, length = 255, unique = true)
     private String email;
