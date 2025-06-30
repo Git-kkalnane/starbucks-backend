@@ -1,6 +1,6 @@
 package git_kkalnane.backend.starbucks.member.dto.request;
 
-import git_kkalnane.backend.starbucks.member.validation.annotation.ValidNickname;
+import git_kkalnane.backend.starbucks._global.validation.annotation.ValidNickname;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

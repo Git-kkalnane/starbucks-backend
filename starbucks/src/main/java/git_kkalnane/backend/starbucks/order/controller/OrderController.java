@@ -4,6 +4,10 @@ import git_kkalnane.backend.starbucks._global.success.SuccessResponse;
 import git_kkalnane.backend.starbucks.order.common.success.OrderSuccessCode;
 import git_kkalnane.backend.starbucks.order.domain.Order;
 import git_kkalnane.backend.starbucks.order.dto.response.*;
+import git_kkalnane.backend.starbucks.order.dto.request.StoreOrderStatusUpdateRequest;
+import git_kkalnane.backend.starbucks.order.dto.response.CurrentOrderResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderDetailResponse;
+import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -155,4 +159,26 @@ public class OrderController {
                 .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDER_HISTORY_VIEWED, responseDto));
     }
 
+    /**
+     * [매장용 API] 특정 주문의 상태를 변경합니다. (예: 접수 -> 준비중)
+     *
+     * // TODO: 추후 Auth 로직 구현 시, @AuthenticationPrincipal을 사용하도록 변경.
+     *
+     * @param storeId           상태를 변경할 주문이 속한 매장의 ID (임시로 URL 경로에서 받습니다)
+     * @param orderId           상태를 변경할 주문의 ID
+     * @param request           새로운 주문 상태를 담은 DTO
+     * @return 성공 응답
+     */
+    @PatchMapping("/store/{storeId}/{orderId}/status") // 임시
+    public ResponseEntity<SuccessResponse> updateOrderStatus(
+            @PathVariable Long storeId, // 임시
+            @PathVariable Long orderId,
+            @Valid @RequestBody StoreOrderStatusUpdateRequest request
+    ) {
+
+        orderService.updateOrderStatus(storeId, orderId, request.newStatus());
+
+        return ResponseEntity
+                .ok(SuccessResponse.of(OrderSuccessCode.ORDER_STATUS_UPDATED));
+    }
 }
