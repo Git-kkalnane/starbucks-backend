@@ -17,6 +17,7 @@ import git_kkalnane.backend.starbucks.member.dto.request.UpdateNicknameRequest;
 import git_kkalnane.backend.starbucks.member.dto.request.UpdatePasswordRequest;
 import git_kkalnane.backend.starbucks.member.dto.response.MemberDetailInfo;
 import git_kkalnane.backend.starbucks.member.dto.response.SignUpResponse;
+import git_kkalnane.backend.starbucks.member.event.MemberSignedUpEvent;
 import git_kkalnane.backend.starbucks.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,6 @@ class MemberServiceTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
-    // TODO: 이벤트 발행을 추가하도록 테스트 코드 수정해야함
 
     @InjectMocks
     private MemberService memberService;
@@ -57,8 +57,12 @@ class MemberServiceTest {
         signUpRequest = new SignUpRequest("홍길동", "나는야홍길동", "test@example.com", "password123");
 
         String encryptedPassword = encryptor.encrypt(signUpRequest.password());
-        savedMember = Member.builder().name(signUpRequest.name()).nickname(signUpRequest.nickname())
-                .email(signUpRequest.email()).password(encryptedPassword).build();
+        savedMember = Member.builder()
+                .name(signUpRequest.name())
+                .nickname(signUpRequest.nickname())
+                .email(signUpRequest.email())
+                .password(encryptedPassword)
+                .build();
     }
 
     @Nested
@@ -81,6 +85,7 @@ class MemberServiceTest {
                 assertThat(response).isNotNull();
                 assertThat(response.name()).isEqualTo(signUpRequest.name());
                 verify(memberRepository, times(1)).save(any(Member.class));
+                verify(eventPublisher, times(1)).publishEvent(any(MemberSignedUpEvent.class));
             }
 
             @Test
@@ -93,8 +98,8 @@ class MemberServiceTest {
                 memberService.createMember(signUpRequest);
 
                 // then
-                verify(memberRepository, times(1)).save(argThat(
-                        member -> encryptor.isMatch(signUpRequest.password(), member.getPassword())));
+                verify(memberRepository, times(1))
+                        .save(argThat(member -> encryptor.isMatch(signUpRequest.password(), member.getPassword())));
             }
 
             @Test
@@ -107,11 +112,11 @@ class MemberServiceTest {
                 memberService.createMember(signUpRequest);
 
                 // then
-                verify(memberRepository, times(1))
-                        .save(argThat(member -> member.getName().equals(signUpRequest.name())
-                                && member.getNickname().equals(signUpRequest.nickname())
-                                && member.getEmail().equals(signUpRequest.email())
-                                && encryptor.isMatch(signUpRequest.password(), member.getPassword())));
+                verify(memberRepository, times(1)).save(argThat(member -> member
+                        .getName().equals(signUpRequest.name())
+                        && member.getNickname().equals(signUpRequest.nickname())
+                        && member.getEmail().equals(signUpRequest.email())
+                        && encryptor.isMatch(signUpRequest.password(), member.getPassword())));
             }
 
             @Test
@@ -209,6 +214,28 @@ class MemberServiceTest {
 
                 // 같은 비밀번호이지만 해시값은 서로 다른지 확인 (BCrypt의 salt 특성)
                 assertThat(savedMembers.get(0).getPassword()).isNotEqualTo(savedMembers.get(1).getPassword());
+            }
+
+            @Test
+            @DisplayName("회원가입 시 MemberSignedUpEvent가 올바른 정보로 발행된다")
+            void createMember_EventPublished() {
+                // given
+                when(memberRepository.save(any(Member.class)))
+                        .thenReturn(savedMember);
+
+                // when
+                memberService.createMember(signUpRequest);
+
+                // then
+                ArgumentCaptor<MemberSignedUpEvent> eventCaptor =
+                        ArgumentCaptor.forClass(MemberSignedUpEvent.class);
+                verify(eventPublisher, times(1))
+                        .publishEvent(eventCaptor.capture());
+
+                MemberSignedUpEvent capturedEvent = eventCaptor.getValue();
+                assertThat(capturedEvent).isNotNull();
+                assertThat(capturedEvent.getSource()).isEqualTo(memberService);
+                assertThat(capturedEvent.getMember()).isEqualTo(savedMember);
             }
         }
 
