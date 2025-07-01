@@ -102,7 +102,7 @@ public class CartController {
 
     @Operation(
             summary = "장바구니 상품 목록 조회",
-            description = "현재 로그인한 사용자의 장바구니에 담긴 모든 상품 목록과 총액 정보를 조회합니다. **(인증 필수)**"
+            description = "현재 로그인한 사용자의 장바구니에 담긴 모든 상품 목록과 총액 정보를 조회합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "장바구니 아이템 목록 조회 성공"),

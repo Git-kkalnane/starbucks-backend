@@ -43,7 +43,7 @@ public class MerchantAuthController {
      */
     @Operation(
             summary = "점주 로그인",
-            description = "맹점주의 이메일과 비밀번호를 받아 로그인을 처리하고, 토큰을 발급합니다."
+            description = "점주의 이메일과 비밀번호를 받아 로그인을 처리하고, 토큰을 발급합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
