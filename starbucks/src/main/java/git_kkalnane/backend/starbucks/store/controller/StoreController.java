@@ -6,6 +6,7 @@ import git_kkalnane.backend.starbucks.store.dto.response.StoreDetailsResponse;
 import git_kkalnane.backend.starbucks.store.dto.response.StoreListResponse;
 import git_kkalnane.backend.starbucks.store.service.StoreService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/stores")
 @RequiredArgsConstructor
-@Tag(name = "Store", description = "스타벅스 매장 관련 API")
+@Tag(name = "Store", description = "매장 관련 API")
 public class StoreController {
 
     private final StoreService storeService;
@@ -39,16 +40,17 @@ public class StoreController {
 
     @Operation(
             summary = "지점 상세 정보 조회",
-            description = "특정 지점의 상세 정보를 조회합니다. ID를 통해 해당 지점의 이름, 주소, 전화번호, 운영시간, 편의시설, 혼잡도 등을 반환"
+            description = "매장 ID를 통해 특정 매장의 상세 정보를 조회합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "지점 상제 정보 조회 성공 "),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 ID"),
             @ApiResponse(responseCode = "404", description = "해당 ID의 지점을 찾을 수 없음")
     })
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<SuccessResponse<StoreDetailsResponse>> getStoreDetails(@PathVariable Long storeId) {
+    public ResponseEntity<SuccessResponse<StoreDetailsResponse>> getStoreDetails(
+            @Parameter(description = "조회할 매장의 ID", required = true, example = "1")
+            @PathVariable Long storeId) {
 
         StoreDetailsResponse response = storeService.getStoreDetails(storeId);
 
@@ -65,12 +67,12 @@ public class StoreController {
     @Operation(summary = "전체 지점 목록 조회", description = "페이징 처리된 전체 지점 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "지점 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 페이지 번호 또는 크기 요청 시"),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생 시")
+            @ApiResponse(responseCode = "400", description = "잘못된 페이지 번호 또는 크기 요청 시")
     })
     @GetMapping
     public ResponseEntity<SuccessResponse<StoreListResponse>>getStoreList(
-           @PageableDefault(size = 15, sort = "name", direction = Sort.Direction.ASC)
+            @Parameter(hidden = true)
+            @PageableDefault(size = 15, sort = "name", direction = Sort.Direction.ASC)
     Pageable pageable
     ) {
         StoreListResponse response = storeService.getStoreList(pageable);

@@ -10,8 +10,10 @@ import git_kkalnane.backend.starbucks.member.dto.response.MemberDetailInfo;
 import git_kkalnane.backend.starbucks.member.dto.response.SignUpResponse;
 import git_kkalnane.backend.starbucks.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
+@Tag(name = "Member", description = "사용자(회원) 관련 API")
 public class MemberController {
 
     private final MemberService memberService;
@@ -37,7 +40,7 @@ public class MemberController {
      */
     @Operation(
             summary = "회원가입",
-            description = "회원가입 시 사용하는 API"
+            description = "사용자 정보를 받아 회원가입을 처리합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -46,11 +49,12 @@ public class MemberController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "이미 존재하는 이메일, 이름 길이 초과, 사용자 성명 규칙 위배"
+                    description = "요청 데이터 유효성 오류 (이메일 중복, 이름 길이, 형식 등)"
             )
     })
     @PostMapping("/signup")
-    public ResponseEntity<SuccessResponse<SignUpResponse>> signup(@RequestBody @Valid SignUpRequest request) {
+    public ResponseEntity<SuccessResponse<SignUpResponse>> signup(
+            @Parameter(description = "회원가입에 필요한 정보") @RequestBody @Valid SignUpRequest request) {
 
         return ResponseEntity.ok(
                 (SuccessResponse.of(MemberSuccessCode.SIGN_UP_COMPLETED, memberService.createMember(request))));
@@ -64,12 +68,16 @@ public class MemberController {
      */
     @Operation(
             summary = "멤버 상세 정보 조회",
-            description = "멤버 상세 정보를 조회 시 사용하는 API"
+            description = "현재 로그인한 사용자의 상세 정보를 조회합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "멤버 상세 정보가 성공적으로 조회됨"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자"
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -88,13 +96,21 @@ public class MemberController {
      * HTTP Request 속성에 있는 멤버 ID를 이용해 멤버의 닉네임을 변경하는 컨트롤러 메서드이다.
      */
     @Operation(
-            summary = "멤버 닉네임 갱신",
-            description = "멤버 닉네임을 갱신 시 사용하는 API"
+            summary = "닉네임 변경",
+            description = "현재 로그인한 사용자의 닉네임을 변경합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "멤버 닉네임이 성공적으로 갱신됨"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "요청 데이터 유효성 오류 (예: 닉네임 형식 위반)"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자"
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -104,7 +120,7 @@ public class MemberController {
     @PostMapping("/update/nickname")
     public ResponseEntity<SuccessResponse<?>> updateNickname(
             @RequestAttribute(name = "memberId") Long memberId,
-            @RequestBody @Valid UpdateNicknameRequest request) {
+            @Parameter(description = "새로운 닉네임 정보") @RequestBody @Valid UpdateNicknameRequest request) {
 
         memberService.updateNickname(memberId, request);
 
@@ -116,13 +132,21 @@ public class MemberController {
      */
     @Operation(
             summary = "멤버 비밀번호 갱신",
-            description = "멤버 비밀번호를 갱신 시 사용하는 API"
+            description = "현재 로그인한 사용자의 비밀번호를 변경합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "멤버 비밀번호가 성공적으로 갱신됨"
             ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "요청 데이터 유효성 오류 (예: 비밀번호 정책 위반)")
+            ,
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자")
+            ,
             @ApiResponse(
                     responseCode = "404",
                     description = "해당 멤버를 찾을 수 없음"
@@ -131,7 +155,7 @@ public class MemberController {
     @PostMapping("/update/password")
     public ResponseEntity<SuccessResponse<?>> updatePassword(
             @RequestAttribute(name = "memberId") Long memberId,
-            @RequestBody @Valid UpdatePasswordRequest request) {
+            @Parameter(description = "새로운 비밀번호 정보") @RequestBody @Valid UpdatePasswordRequest request) {
 
         memberService.updatePassword(memberId, request);
 

@@ -11,8 +11,10 @@ import git_kkalnane.backend.starbucks.auth.utils.CookieGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@Tag(name = "Auth (Member)", description = "사용자 인증/인가 관련 API")
 public class MemberAuthController {
 
     public static final String ACCESS_PREFIX_STRING = "Bearer ";
@@ -41,8 +44,8 @@ public class MemberAuthController {
      * @return - accessToken과 사용자 정보를 담고있는 LoginResponse를 담고 있는 ResponseEntity 객체
      */
     @Operation(
-            summary = "로그인",
-            description = "로그인 시 사용하는 API"
+            summary = "사용자 로그인",
+            description = "이메일과 비밀번호를 받아 로그인을 처리하고, 토큰을 발급합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -51,8 +54,12 @@ public class MemberAuthController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "올바르지 않은 이메일 또는 패스워드"
-            )
+                    description = "요청 데이터 유효성 오류"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 이메일이거나 비밀번호가 틀렸을 경우")
+
     })
     @Parameters({
             @Parameter(name = "email", description = "회원 이메일", example = "user0123@gmail.com"),
@@ -78,7 +85,7 @@ public class MemberAuthController {
      */
     @Operation(
             summary = "로그아웃",
-            description = "로그아웃 시 사용하는 API"
+            description = "현재 로그인된 사용자의 토큰을 만료시키고 로그아웃 처리합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -90,6 +97,7 @@ public class MemberAuthController {
                     description = "JWT 토큰과 관련된 오류"
             )
     })
+    @Parameter(name = "Authorization", description = "Access Token", required = true, in = ParameterIn.HEADER)
     @PostMapping("/logout")
     public ResponseEntity<SuccessResponse<String>> logout(@RequestAttribute(name = "id") Long memberId) {
         // 서비스 레이어 호출
@@ -112,7 +120,7 @@ public class MemberAuthController {
      */
     @Operation(
             summary = "액세스 토큰 재발급",
-            description = "액세스 토큰 재발급시 사용하는 API"
+            description = "만료된 Access Token을 Refresh Token을 이용해 재발급합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(

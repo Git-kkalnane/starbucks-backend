@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-@Tag(name = "Item", description = "스타벅스 아이템(상품) 관련 API")
+@Tag(name = "Item", description = "아이템(상품) 관련 API")
 public class ItemController {
 
     private final ItemService itemService;
@@ -38,13 +38,15 @@ public class ItemController {
     /**
      * 모든 음료(커피 포함) 아이템 목록을 조회합니다.
      */
-    @Operation(summary = "전체 음료 목록 조회")
+    @Operation(summary = "전체 음료 목록 조회",
+               description = "모든 음료 아이템 목록을 페이지네이션하여 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음료 목록 조회 성공")
     })
     @GetMapping("/drinks")
     public ResponseEntity<SuccessResponse<ItemListResponse>> getDrinkItems(
-           @PageableDefault(size= 15, sort = "beverageItemNameKo", direction = Sort.Direction.ASC)
+            @Parameter(hidden = true)
+            @PageableDefault(size= 15, sort = "beverageItemNameKo", direction = Sort.Direction.ASC)
     Pageable pageable
     ) {
         ItemListResponse response = itemService.getDrinkItems(pageable);
@@ -57,7 +59,8 @@ public class ItemController {
      * @param id 조회할 음료의 ID
      * @return 음료 상세 정보
      */
-    @Operation(summary = "음료 상세 정보 조회", description = "음료 ID로 상세 정보를 조회합니다.")
+    @Operation(summary = "음료 상세 정보 조회",
+               description = "음료 ID로 상세 정보를 조회합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "음료 상세 정보 조회 성공"),
         @ApiResponse(responseCode = "404", description = "해당 ID의 음료를 찾을 수 없음")
@@ -74,12 +77,14 @@ public class ItemController {
     /**
      * 모든 디저트 아이템 목록을 조회합니다.
      */
-    @Operation(summary = "전체 디저트 목록 조회")
+    @Operation(summary = "전체 디저트 목록 조회",
+               description = "모든 디저트 아이템 목록을 페이지네이션하여 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "디저트 목록 조회 성공")
     })
     @GetMapping("/desserts")
     public ResponseEntity<SuccessResponse<ItemListResponse>> getDessertItems(
+            @Parameter(hidden = true)
             @PageableDefault(size = 15, sort = "dessertItemNameKo", direction = Sort.Direction.ASC)
             Pageable pageable
     ) {
@@ -92,14 +97,15 @@ public class ItemController {
      * @param id 조회할 디저트의 ID
      * @return 디저트 상세 정보
      */
-    @Operation(summary = "디저트 상세 정보 조회", description = "디저트 ID로 상세 정보를 조회합니다.")
+    @Operation(summary = "디저트 상세 정보 조회",
+               description = "디저트 ID로 상세 정보를 조회합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "디저트 상세 정보 조회 성공"),
         @ApiResponse(responseCode = "404", description = "해당 ID의 디저트를 찾을 수 없음")
     })
     @GetMapping("/desserts/{id}")
     public ResponseEntity<SuccessResponse<ItemDetailResponse>> getDessertDetail(
-        @Parameter(description = "디저트 ID", required = true, example = "1")
+        @Parameter(description = "디저트 ID", required = true, example = "201")
         @PathVariable Long id
     ) {
         ItemDetailResponse response = itemService.getDessertDetail(id);
