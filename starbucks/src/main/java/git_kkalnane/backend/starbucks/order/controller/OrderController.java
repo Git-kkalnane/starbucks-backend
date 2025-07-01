@@ -11,8 +11,10 @@ import git_kkalnane.backend.starbucks.order.dto.response.OrderListResponse;
 import git_kkalnane.backend.starbucks.order.dto.request.CreateOrderDTO;
 import git_kkalnane.backend.starbucks.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -35,18 +37,22 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/orders")
+@Tag(name = "Order", description = "주문 관련 API")
 public class OrderController {
 
     private final OrderService orderService;
 
-    @Operation(summary = "주문 생성")
+    @Operation(summary = "주문 생성", description = "로그인한 사용자가 상품을 주문합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "주문 생성 성공")
+            @ApiResponse(responseCode = "201", description = "주문 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "요청 데이터 유효성 오류"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "사용자, 매장 또는 상품을 찾을 수 없음")
     })
     @PostMapping
     public ResponseEntity<SuccessResponse> createOrder(
         @RequestAttribute(name = "memberId") Long memberId,
-            @Valid @RequestBody CreateOrderDTO request) {
+        @Parameter(description = "주문에 필요한 정보") @Valid @RequestBody CreateOrderDTO request) {
         
         orderService.createOrder(request, memberId);
         return ResponseEntity
@@ -54,13 +60,16 @@ public class OrderController {
                 .body(SuccessResponse.of(OrderSuccessCode.ORDER_SUCCESS_CREATED, request));
     }
 
-    @Operation(summary = "주문 상세 조회", description = "특정 주문의 상세 정보를 조회합니다.")
+    @Operation(summary = "[사용자용] 주문 상세 조회", description = "사용자가 특정 주문의 상세 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "주문 상세 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "403", description = "해당 주문에 접근 권한 없음"),
             @ApiResponse(responseCode = "404", description = "주문 찾을 수 없음")
     })
     @GetMapping("/{orderId}")
-    public ResponseEntity<SuccessResponse> getOrderDetail(@PathVariable Long orderId) {
+    public ResponseEntity<SuccessResponse> getOrderDetail(
+            @Parameter(description = "조회할 주문의 ID") @PathVariable Long orderId) {
         OrderDetailResponse orderDetail = orderService.getOrderDetail(orderId);
 
         return ResponseEntity
@@ -68,13 +77,14 @@ public class OrderController {
                 .body(SuccessResponse.of(OrderSuccessCode.ORDER_DETAIL_VIEWED, orderDetail));
     }
 
-    @Operation(summary = "과거 주문 내역 목록 조회", description = "특정 회원의 과거 주문 목록을 페이지네이션하여 조회합니다.")
+    @Operation(summary = "[사용자용] 과거 주문 내역 목록 조회", description = "로그인한 사용자의 과거 주문 목록을 페이지네이션하여 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "주문 목록 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "회원 찾을 수 없음")
+            @ApiResponse(responseCode = "404", description = "인증되지 않은 사용자")
     })
     @GetMapping("/history")
     public ResponseEntity<SuccessResponse> getOrderHistory(
+            @Parameter(hidden = true)
             @RequestParam Long memberId,
             @PageableDefault(page = 0, size = 15, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
@@ -86,9 +96,10 @@ public class OrderController {
                 .body(SuccessResponse.of(OrderSuccessCode.ORDER_DETAIL_VIEWED, orderList));
     }
 
-    @Operation(summary = "고객 현재 주문 목록 조회", description = "현재 로그인한 사용자의 진행중인(접수, 준비중, 픽업 가능) 모든 주문 목록을 조회합니다.")
+    @Operation(summary = "[사용자용] 현재 주문 목록 조회", description = "현재 로그인한 사용자의 진행중인(접수, 준비중, 픽업 가능) 모든 주문 목록을 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공")
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
     })
     @GetMapping("/users/{memberId}/current")
     public ResponseEntity<SuccessResponse> getCurrentOrders(@PathVariable Long memberId) {
@@ -108,8 +119,16 @@ public class OrderController {
      * @param orderId 조회할 주문의 ID
      * @return 주문 상세 정보를 담은 ResponseEntity
      */
+    @Operation(summary = "[매장용] 특정 주문 상세 조회", description = "로그인한 매장의 특정 주문 하나에 대한 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "403", description = "해당 주문에 접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "주문을 찾을 수 없음")
+    })
     @GetMapping("/store/{storeId}/{orderId}") // 임시 url
     public ResponseEntity<SuccessResponse> getStoreOrderDetail(
+            @Parameter(description = "조회할 주문의 ID")
             @PathVariable Long storeId, // 임시
             @PathVariable Long orderId
     ) {
@@ -121,10 +140,11 @@ public class OrderController {
                 .ok(SuccessResponse.of(OrderSuccessCode.STORE_ORDER_DETAIL_VIEWED, responseDto));
     }
 
-    @Operation(summary = "매장의 현재 주문 목록 조회", description = "특정 매장의 진행중인(접수, 준비중, 픽업 가능) 모둔 주문 목록을 조회합니다.")
+    @Operation(summary = "[매장용] 현재 주문 목록 조회", description = "특정 매장의 진행중인(접수, 준비중, 픽업 가능) 모둔 주문 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(responseCode = "404", description = "매장을 찾을 수 없음")
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "403", description = "매장 계정으로 로그인 필요")
     })
     @GetMapping("/store/{storeId}")
     public ResponseEntity<SuccessResponse> getStoreCurrentOrders(@PathVariable Long storeId) {
@@ -144,11 +164,14 @@ public class OrderController {
      */
     @Operation(summary = "[매장용] 과거 주문 내역 조회", description = "특정 매장의 과거 주문(완료/취소) 목록을 페이지네이션하여 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공")
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "403", description = "매장 계정으로 로그인 필요")
     })
     @GetMapping("/store/{storeId}/history") // 임시
     public ResponseEntity<SuccessResponse> getStoreOrderHistory(
             @PathVariable Long storeId, // 임시
+            @Parameter(hidden = true)
             @PageableDefault(page =0, size = 15, sort = "modifiedAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
@@ -169,11 +192,19 @@ public class OrderController {
      * @param request           새로운 주문 상태를 담은 DTO
      * @return 성공 응답
      */
+    @Operation(summary = "[매장용] 주문 상태 변경", description = "로그인한 매장의 특정 주문 상태를 변경합니다. (예: 접수 -> 준비중)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "주문 상태 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "요청 데이터가 유효하지 않거나, 변경할 수 없는 주문 상태입니다."),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "403", description = "해당 주문에 접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "주문을 찾을 수 없음")
+    })
     @PatchMapping("/store/{storeId}/{orderId}/status") // 임시
     public ResponseEntity<SuccessResponse> updateOrderStatus(
             @PathVariable Long storeId, // 임시
-            @PathVariable Long orderId,
-            @Valid @RequestBody StoreOrderStatusUpdateRequest request
+            @Parameter(description = "상태를 변경할 주문의 ID") @PathVariable Long orderId,
+            @Parameter(description = "새로운 주문 상태 정보") @Valid @RequestBody StoreOrderStatusUpdateRequest request
     ) {
 
         orderService.updateOrderStatus(storeId, orderId, request.newStatus());
