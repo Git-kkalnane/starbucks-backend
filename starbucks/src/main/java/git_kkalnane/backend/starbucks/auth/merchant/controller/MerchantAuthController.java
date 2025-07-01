@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/merchant/auth")
+@Tag(name = "Auth (Store)", description = "점주(매장) 인증/인가 관련 API")
 public class MerchantAuthController {
 
     public static final String ACCESS_PREFIX_STRING = "Bearer ";
@@ -40,8 +42,8 @@ public class MerchantAuthController {
      * @return - accessToken과 사용자 정보를 담고있는 LoginResponse를 담고 있는 ResponseEntity 객체
      */
     @Operation(
-            summary = "로그인",
-            description = "로그인 시 사용하는 API"
+            summary = "점주 로그인",
+            description = "맹점주의 이메일과 비밀번호를 받아 로그인을 처리하고, 토큰을 발급합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -50,7 +52,11 @@ public class MerchantAuthController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "올바르지 않은 이메일 또는 패스워드"
+                    description = "요청 데이터 유효성 오류"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "존재하지 않는 이메일이거나 비밀번호가 틀렸을 경우"
             )
     })
     @Parameters({
