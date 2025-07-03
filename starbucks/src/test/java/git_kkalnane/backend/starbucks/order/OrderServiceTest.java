@@ -98,7 +98,7 @@ class OrderServiceTest {
 
         List<OrderItemRequest> orderItems = List.of(
                 new OrderItemRequest(
-                        mockBeverage.getId(), ItemType.COFFEE, BeverageSizeOption.TALL,
+                        mockBeverage.getId(), ItemType.BEVERAGE, BeverageSizeOption.TALL,
                         BeverageTemperatureOption.HOT, new ArrayList<>(), beveragePrice,
                         totalPrice, requestedQuantity
                 )

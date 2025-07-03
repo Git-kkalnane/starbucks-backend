@@ -79,7 +79,7 @@ class PointTransactionServiceTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getAmount()).isEqualTo(500.0);
+        assertThat(result.getAmount()).isEqualTo(500);
         assertThat(result.getTransactionType()).isEqualTo(TransactionType.PAYMENT);
         assertThat(result.getMember()).isEqualTo(member);
         assertThat(result.getPayment()).isEqualTo(payment);
@@ -114,7 +114,7 @@ class PointTransactionServiceTest {
         PointTransaction result = pointTransactionService.createPointTransaction(payment, reasonMessage);
 
         // Then
-        assertThat(result.getAmount()).isEqualTo(1000.0);
+        assertThat(result.getAmount()).isEqualTo(1000);
     }
 
     @Test
@@ -131,7 +131,7 @@ class PointTransactionServiceTest {
         verify(pointTransactionRepository).save(pointTransactionCaptor.capture());
         PointTransaction capturedTransaction = pointTransactionCaptor.getValue();
         
-        assertThat(capturedTransaction.getAmount()).isEqualTo(500.0);
+        assertThat(capturedTransaction.getAmount()).isEqualTo(500);
         assertThat(capturedTransaction.getDescription()).isEqualTo(reasonMessage.getDescription());
         assertThat(capturedTransaction.getTransactionType()).isEqualTo(TransactionType.PAYMENT);
         assertThat(capturedTransaction.getMember()).isEqualTo(member);
@@ -167,6 +167,6 @@ class PointTransactionServiceTest {
         PointTransaction result = pointTransactionService.createPointTransaction(payment, reasonMessage);
 
         // Then
-        assertThat(result.getAmount()).isEqualTo(0.0);
+        assertThat(result.getAmount()).isEqualTo(0);
     }
 } 
