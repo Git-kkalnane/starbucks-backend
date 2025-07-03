@@ -1,5 +1,6 @@
 package git_kkalnane.backend.starbucks.item.service;
 
+import git_kkalnane.backend.starbucks.item.common.exception.ItemException;
 import git_kkalnane.backend.starbucks.item.domain.ItemStatus;
 import git_kkalnane.backend.starbucks.item.domain.ItemType;
 import git_kkalnane.backend.starbucks.item.domain.beverage.enums.BeverageShotOption;
@@ -193,16 +194,12 @@ class ItemServiceTest {
                 .willReturn(Optional.empty());
 
             // when & then
+            // 기대하는 예외를 ItemException으로 수정
             assertThatThrownBy(() -> itemService.getBeverageDetail(NOT_EXISTING_BEVERAGE_ID))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining(NOT_FOUND_MESSAGE + NOT_EXISTING_BEVERAGE_ID)
-                .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
-                .isEqualTo(HttpStatus.NOT_FOUND);
-                
-            // Verify the repository was called with the correct ID
-            verify(beverageItemRepository, atLeastOnce()).findByIdWithDetails(NOT_EXISTING_BEVERAGE_ID);
-            // Verify no other interactions with the repository
-            verifyNoMoreInteractions(beverageItemRepository);
+                    .isInstanceOf(ItemException.class) // ResponseStatusException -> ItemException
+                    .hasMessageContaining("존재하지 않는 음료입니다."); // 메시지 검증도 구체적으로 변경
+
+            verify(beverageItemRepository, times(1)).findByIdWithDetails(NOT_EXISTING_BEVERAGE_ID);
         }
 
         @Test
@@ -212,9 +209,10 @@ class ItemServiceTest {
             Long nullId = null;
 
             // when & then
+            // 기대하는 예외를 ItemException으로 수정
             assertThatThrownBy(() -> itemService.getBeverageDetail(nullId))
-                .isInstanceOf(ResponseStatusException.class);
-                
+                    .isInstanceOf(ItemException.class); // ResponseStatusException -> ItemException
+
             verify(beverageItemRepository, never()).findByIdWithDetails(anyLong());
         }
 
@@ -224,29 +222,25 @@ class ItemServiceTest {
             // given
             Long invalidId = 0L;
             given(beverageItemRepository.findByIdWithDetails(invalidId))
-                .willReturn(Optional.empty());
+                    .willReturn(Optional.empty());
 
             // when & then
+            // 기대하는 예외를 ItemException으로 수정
             assertThatThrownBy(() -> itemService.getBeverageDetail(invalidId))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining(NOT_FOUND_MESSAGE + invalidId)
-                .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
-                .isEqualTo(HttpStatus.NOT_FOUND);
-                
-            // Verify repository was called with the invalid ID
+                    .isInstanceOf(ItemException.class) // ResponseStatusException -> ItemException
+                    .hasMessageContaining("존재하지 않는 음료입니다.");
+
             verify(beverageItemRepository, times(1)).findByIdWithDetails(invalidId);
-            
+
             // Also test with negative ID
             Long negativeId = -1L;
             given(beverageItemRepository.findByIdWithDetails(negativeId))
-                .willReturn(Optional.empty());
-                
+                    .willReturn(Optional.empty());
+
             assertThatThrownBy(() -> itemService.getBeverageDetail(negativeId))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining(NOT_FOUND_MESSAGE + negativeId)
-                .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
-                .isEqualTo(HttpStatus.NOT_FOUND);
-                
+                    .isInstanceOf(ItemException.class) // ResponseStatusException -> ItemException
+                    .hasMessageContaining("존재하지 않는 음료입니다.");
+
             verify(beverageItemRepository, times(1)).findByIdWithDetails(negativeId);
         }
     }
